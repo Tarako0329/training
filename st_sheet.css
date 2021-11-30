@@ -1,0 +1,251 @@
+/*共通ボタン*/
+button {
+    display: inline-block;
+    padding: 0.3em 1em;
+    text-decoration: none;
+    color: #551d8d;
+    border: solid 1px #67c5ff;
+    border-radius: 10px;
+    transition: .4s;
+    background: #f1f8ff;
+}
+
+button:hover {
+    background: #67c5ff;
+    color: #551d8d;
+}
+
+/*記録エリア表示部*/
+#modal-open {
+}
+
+/* モーダル コンテンツエリア */
+.edit {
+  display: none;
+  z-index: 3;
+  width: 80%;
+  max-width: 300px;
+  margin: 0;
+  position:fixed;
+  /*top:22;*/
+  bottom:10;
+  /*left:0;*/
+  background-color: #4E9ABE;
+  color: #fff;
+
+  border:2px solid #333;
+  padding:15px;
+  opacity:0.9;
+  -moz-border-radius:6px;
+  -webkit-border-radius:6px;
+  -moz-box-shadow: 0 0 50px #ccc;
+  -webkit-box-shadow: 0 0 50px #ccc;
+}
+
+/* モーダル 背景エリア */
+#modal-bg {
+  display:none;
+  width:100%;
+  height:130%;
+  background-color:rgba(0,0,0, 0.50);
+  position:fixed;
+  top:0;
+  left:0;
+  z-index: 2;
+}
+
+/*履歴リスト表示部*/
+ul{
+  padding: 0;
+  position: relative;
+}
+
+ul.shu li.shu{
+  color: #2d8fdd;
+  border-left: solid 6px #2d8fdd;/*左側の線*/
+  background: #f1f8ff;/*背景色*/
+  margin-bottom: 0.8px;/*下のバーとの余白*/
+  line-height: 0.8;
+  padding-top: 0.4em;
+  padding-bottom: 10px;
+  list-style-type: none!important;/*ポチ消す*/
+}
+
+li.editsb{
+    list-style-type: none!important;/*ポチ消す*/
+    font-size:12px;
+    padding-top: 0.2em;
+    /*margin-left: 15px;*/
+    position:relative;
+    left:-50%;
+    /*border-left: solid 6px #4E9ABE;左側の線*/
+}
+
+ul.ymd li.ymd {
+  line-height: 1.3;
+  padding: 0.5em 0.5em 0.5em 1.7em;
+  list-style-type: none!important;
+  background: -webkit-linear-gradient(top, skyblue 0%, #5aade6 100%);/*グラデーション*/
+  background: linear-gradient(to bottom, skyblue 0%, #5aade6 100%);/*グラデーション*/
+  color: #fff;
+}
+ul.ymd li.ymd:before {/*疑似要素*/
+  font-family: FontAwesome;
+  content: "\f138";
+  position: absolute;
+  left : 0.5em;
+  color: white;
+}
+
+ul.ttl li.ttl{
+  border-top: 1px solid #1e50a2;
+  border-bottom: 1px solid #1e50a2;
+  padding: 7px;
+  list-style-type: none!important;/*ポチ消す*/
+}
+
+/*履歴リストのテーブル表示部*/
+table {
+  border-collapse: collapse;
+  background:#f1f8ff;
+  margin-left: 2px;
+  margin-bottom: 0.5px;
+}
+table td.lst {
+  border-bottom: 1px solid #E0E0F8;
+  box-shadow: 0 1px 0 rgba(255,255,255,1);
+  color: #B40431;
+  height:30px;
+}
+
+body{    /*トップページ用*/
+	background: #f1f8ff;
+    margin: 0;
+    padding: 50px 0 70px 0;
+}
+div#headerArea {  /*トップページ用*/
+    position: fixed !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #4E9ABE;
+    color: #fff;
+	font-size:10px;
+}
+div#footerArea {  /*トップページ用*/
+    position: fixed !important;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #4E9ABE;
+    color: #fff;
+}
+
+body.graphe{  /*グラフページ用*/
+	background: #f1f8ff;
+    margin: 0;
+    padding: 310px 0 45px 0;
+}
+* *.graphe html html.graphe body body.graphe{
+   /* overflow: hidden;  */
+}
+div#headerArea2 {  /*グラフページ用*/
+    position: fixed !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height:310px;
+    background-color: #fff;
+    color: #4E9ABE;
+}
+div#footerArea2 {    /*グラフページ用*/
+    position: fixed !important;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45px;
+    background-color: #4E9ABE;
+    color: #fff;
+}
+
+.open_button{
+    background-color: #4E9ABE;
+}
+#graph {
+	width : 90%;
+	height: 220px;
+	margin: 10px auto; /*上 右 下 左*/
+}
+.graph-title {
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	margin:10px 0 0;
+}
+
+#menu {
+  width:100%;
+  padding:0;
+  margin:0;
+  list-style-type: none;
+}
+#menu li {
+  width:33.3%;
+  float:left;
+  padding:0;
+  margin:0;
+  text-align:center;
+}
+
+#menu li a {
+  width:auto;
+  color:#fff;
+  /*font-size:12px;*/
+  /*font-weight:bold;*/
+  /*text-shadow:0 -1px 0px #333,0 1px 0px #555;*/
+  padding:17px 0;
+  text-decoration:none;
+  display:block;
+  /*background:#666;*/
+  background:#4E9ABE;
+  /*background-image: -moz-linear-gradient(top, #888 0%, #777 50%, #666 50%, #777 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #888), color-stop(0.50, #777), color-stop(0.50, #666), color-stop(1, #777));*/
+  border-left:1px solid #fff;
+  box-shadow: 1px 0px 0px rgba(225,0,0,0.3) inset,
+			 -1px 0px 0px rgba(225,0,0,0.3) inset,
+			  0px 1px 1px rgba(0,0,0,0.1) inset,
+			  0px -1px 1px rgba(0,0,0,0.3) inset,
+			  0px 1px 3px #4E9ABE;
+}
+#menu li:first-child a{
+  border-left:0px;
+  border-radius:5px 0 0 5px;
+  border-left:0;
+  box-shadow:-1px 0px 0px rgba(225,225,225,0.3) inset,
+			  0px 1px 1px rgba(0,0,0,0.1) inset,
+			  0px -1px 1px rgba(0,0,0,0.3) inset,
+			  0px 1px 3px #4E9ABE;
+}
+#menu li:last-child a{
+  border-radius:0 5px 5px 0;
+  box-shadow: 1px 0px 0px rgba(225,225,225,0.3) inset,
+			  0px 1px 1px rgba(0,0,0,0.1) inset,
+			  0px -1px 1px rgba(0,0,0,0.3) inset,
+			  0px 1px 3px #4E9ABE;
+}
+#menu li a:hover {
+  background:#555;
+  background-image: -moz-linear-gradient(top, #555 0%, #444 50%, #333 50%, #444 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #555), color-stop(0.50, #444), color-stop(0.50, #333), color-stop(1, #444));
+  box-shadow: 1px 0px 0px rgba(225,225,225,0) inset,
+			 -1px 0px 0px rgba(225,225,225,0) inset,
+			  0px 1px 1px rgba(0,0,0,0.1) inset,
+			  0px -1px 1px rgba(0,0,0,0.3) inset,
+			  0px 1px 3px #666;
+}

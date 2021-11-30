@@ -1,0 +1,10 @@
+[01-Nov-2017 08:10:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'ifduktdo_MASSURU.safety' doesn't exist in /home/ifduktdo/public_html/training/script/BK_Insert_safety.php:12
+Stack trace:
+#0 /home/ifduktdo/public_html/training/script/BK_Insert_safety.php(12): mysqli->query('LOCK TABLES saf...')
+#1 {main}
+  thrown in /home/ifduktdo/public_html/training/script/BK_Insert_safety.php on line 12
+[01-Nov-2017 08:20:39 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'safety' was not locked with LOCK TABLES in /home/ifduktdo/public_html/training/script/BK_Insert_safety.php:17
+Stack trace:
+#0 /home/ifduktdo/public_html/training/script/BK_Insert_safety.php(17): mysqli->prepare('delete from saf...')
+#1 {main}
+  thrown in /home/ifduktdo/public_html/training/script/BK_Insert_safety.php on line 17
