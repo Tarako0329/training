@@ -1,5 +1,7 @@
 <?php
 // 共通ヘッダー
+date_default_timezone_set('Asia/Tokyo');
+
 ?>
 <META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
 <META http-equiv='Content-Style-Type' content='text/css'>

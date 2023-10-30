@@ -75,11 +75,11 @@ function edit_usanso($id_f,$jun_f,$ymd_f){
     //]]>
     </script>
 <BR>
-<button type="submit" onclick="return chk();" name="btn" value="<?php echo $btn_val?>" <?php echo $disabled?> > <?php echo $btn_nm?> </button>
+<button type="submit" style="padding:1em 2em;" onclick="return chk();" name="btn" value="<?php echo $btn_val?>" <?php echo $disabled?> > <?php echo $btn_nm?> </button>
 <?php
 	if($jun_f=="0"){
 	}else{
-		echo "<button type='submit' onclick='return chk3();' name='btn' value='del_bt' ".$disabled."> 削　除 </button>";
+		echo "<button type='submit' style='padding:1em 2em;'' onclick='return chk3();' name='btn' value='del_bt' ".$disabled."> 削　除 </button>";
 	}
 ?>
 </CENTER>

@@ -23,12 +23,13 @@ function edit_wt($id_f,$jun_f,$ymd_f){
 	
 	if($jun_f=="0"){
 	    $style2 = "";
+	    $style2 = 'style="padding:1em 4em;position: absolute; left: 30%; top: 85%"';
 		$btn_val = "ins_bt";
 		$btn_nm = "記　録";
 		$label_nm = "トレーニング記録";
 	}else{
-	    $style2 = 'style="position: absolute; left: 55%; top: 85%"';
-	    $style3 = 'style="position: absolute; left: 35%; top: 85%"';
+	    $style2 = 'style="padding:1em 2em;position: absolute; left: 55%; top: 85%"';
+	    $style3 = 'style="padding:1em 2em;position: absolute; left: 30%; top: 85%"';
 		$btn_val = "upd_bt";
 		$btn_nm = "更　新";
 		$label_nm = "トレーニング記録修正";
@@ -52,6 +53,7 @@ function edit_wt($id_f,$jun_f,$ymd_f){
 
 <FORM method="post" name = "form2" action="TOP.php" style="display:inline;color:#fff">
 <BR>
+<div>
 <ul style = "float:left; position:relative; left:50%;">
     <li class='editsb'>日付</li>
     <li style = "<?php echo $style?>"><INPUT type="date" size="10" name="ymd" maxlength="10" style="font-size:20px;width:200px;height:<?php echo $height?>px;" value="<?php echo $ymd_f?>"></li>
@@ -83,11 +85,25 @@ function edit_wt($id_f,$jun_f,$ymd_f){
     <li style = "<?php echo $style?>"><INPUT type="tel" name="rep2" value="<?php echo $row2["rep2"]?>" maxlength="2" style="ime-mode:disabled;font-size:13px; width:40px;height:<?php echo $height?>px;"></li>
     <li class='editsb'>メモ</li>
     <li style = "<?php echo $style?>"><INPUT type="text" name="memo" value="<?php echo $row2["memo"]?>" maxlength="50"style="font-size:13px;width:200px;height:<?php echo $height?>px;"></li>
-    <li class='editsb'>　</li>
+    <!--<li class='editsb'>　</li>-->
 </ul>
+</div>
+<button type="submit" <?php echo $style2?> onclick="return chk();" name="btn" value="<?php echo $btn_val?>" <?php echo $disabled?> > <?php echo $btn_nm?> </button><CENTER>
+<?php
+	if($jun_f=="0"){
+	}else{
+		echo "<button type='submit' ".$style3." onclick='return chk3();' name='btn' value='del_bt' ".$disabled."> 削　除 </button>";
+	}
+?>
 
-<CENTER>
-
+</CENTER>
+<INPUT type="hidden" name="id" value="<?php echo $id?>">
+<INPUT type="hidden" name="pass" value="<?php echo $pass?>">
+<INPUT type="hidden" name="edit_date" value="<?php echo $now?>">
+<INPUT type="hidden" name="typ" value="0">
+<INPUT type="hidden" name="k_ymd" value="<?php echo $ymd_f?>">
+<INPUT type="hidden" name="k_jun" value="<?php echo $jun_f?>">
+</FORM>
 <script type="text/javascript">
     //<![CDATA[
         var elem1 = document.getElementById("required");
@@ -104,24 +120,7 @@ function edit_wt($id_f,$jun_f,$ymd_f){
         var loop = window.setInterval( check, 500 );
     //]]>
 </script>
-<BR>
-    
-<button type="submit" <?php echo $style2?> onclick="return chk();" name="btn" value="<?php echo $btn_val?>" <?php echo $disabled?> > <?php echo $btn_nm?> </button>
-<?php
-	if($jun_f=="0"){
-	}else{
-		echo "<button type='submit' ".$style3." onclick='return chk3();' name='btn' value='del_bt' ".$disabled."> 削　除 </button>";
-	}
-?>
 
-</CENTER>
-<INPUT type="hidden" name="id" value="<?php echo $id?>">
-<INPUT type="hidden" name="pass" value="<?php echo $pass?>">
-<INPUT type="hidden" name="edit_date" value="<?php echo $now?>">
-<INPUT type="hidden" name="typ" value="0">
-<INPUT type="hidden" name="k_ymd" value="<?php echo $ymd_f?>">
-<INPUT type="hidden" name="k_jun" value="<?php echo $jun_f?>">
-</FORM>
 <?php 
 }
 ?>

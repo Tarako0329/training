@@ -29,7 +29,15 @@ if (isset($_GET['user'])){
 }
 
 $now = date('Y-m-d');
-
+$week = [
+  '日', //0
+  '月', //1
+  '火', //2
+  '水', //3
+  '木', //4
+  '金', //5
+  '土', //6
+];
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	//$fname = ($_POST["fname"]);
 	//$id = ($_POST["id"]);
@@ -230,7 +238,7 @@ while($row = $result->fetch_assoc()){
 			echo "</TABLE>";
 			echo "</div>";
 		}
-		echo "<ul class = 'ymd'><li class = 'ymd'>".$row["ymd"]."</li>";
+		echo "<ul class = 'ymd'><li class = 'ymd'>".$row["ymd"]."(".$week[date('w', strtotime($row["ymd"]))].")</li>";
 	}
 	if($shu_chk == $row["shu"] && $ymd_chk == $row["ymd"]){
 	}else{
@@ -327,7 +335,7 @@ while($row = $result->fetch_assoc()){
 <!--↑履歴取得完了 -->
 
 <!--↓体組織系記録エリア-->
-<div class="edit" id="taisosiki-edit" style="position:fixed;bottom:55px;display:none;">
+<div class="edit" id="taisosiki-edit" style="height:350px;position:fixed;bottom:55px;display:none;">
 <?php
 	edit_taisosiki($id,"0",$enow);
 ?>
@@ -335,7 +343,7 @@ while($row = $result->fetch_assoc()){
 <!--↑体組織系記録エリア -->
 
 <!--↓有酸素系記録エリア-->
-<div class="edit" id="usanso-edit" style="position:fixed;bottom:55px;display:none;">
+<div class="edit" id="usanso-edit" style="height:370px;position:fixed;bottom:55px;display:none;">
 <?php
 	edit_usanso($id,"0",$enow);
 ?>
@@ -343,7 +351,7 @@ while($row = $result->fetch_assoc()){
 <!--↑有酸素系記録エリア -->
 
 <!--↓ウェイト記録エリア-->
-<div class="edit" id="wt-edit" style="position:fixed;bottom:55px;display:none;">
+<div class="edit" id="wt-edit" style="height:470px;position:fixed;bottom:55px;display:none;">
 <?php
 	edit_wt($id,"0",$enow);
 ?>
