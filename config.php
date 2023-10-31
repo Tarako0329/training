@@ -18,7 +18,7 @@ define("key","bonBer");
 //  有効にしたいコードをコメントから外してください。
 //=========================================================
 //データベース切り替え
-
+define("dbname", "ifduktdo_MASSURU");
 if(__FILE__=="/home/ifduktdo/public_html/training_test/config.php"){
 	//echo "test";
 	define("dbname", "ifduktdo_MASSURU_test");
@@ -26,12 +26,12 @@ if(__FILE__=="/home/ifduktdo/public_html/training_test/config.php"){
 	//echo "本番";
 	define("dbname", "ifduktdo_MASSURU");
 }else{
-	echo "ERROR<BR>";
-	exit();
+	//echo "ERROR<BR>";
+	//exit();
 }
 
 $mysqli = new mysqli(sv, user, pass, dbname);
-
+$mysqli->set_charset("utf8mb4");
 // =========================================================
 // MySQLエラーレポート用共通宣言
 // =========================================================

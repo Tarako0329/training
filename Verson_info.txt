@@ -1,0 +1,21 @@
+ver1.01.0:構造改革
+
+
+【Issues】
+売上修正の領収書再発行機能を考える
+売上取消の領収証再発行機能を考える
+レジの入出金機能を考える
+
+
+ローカルからテスト環境へ
+cd /home/ifduktdo/public_html/SaleM/TEST
+git fetch --all
+git reset --hard origin/master
+
+cd /home/ifduktdo/public_html/SaleM/WebRez
+git fetch --all
+git reset --hard origin/master
+
+cd /home/ifduktdo/public_html/SaleM/WebRez_Trial
+git fetch --all
+git reset --hard origin/master

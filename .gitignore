@@ -1,0 +1,10 @@
+.env
+*error_log*
+*.sql
+*.sh
+*.log
+.bk
+backup
+xxx*
+*copy.php
+.ini
