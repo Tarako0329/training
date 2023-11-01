@@ -167,4 +167,13 @@ function get_token() {
   return bin2hex($bytes);
 }
 
+// =========================================================
+// PDO の接続オプション取得
+// =========================================================
+function get_pdo_options() {
+  return array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+               PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,   //sqlの複文禁止 "select * from hoge;delete from hoge"みたいなの
+               PDO::ATTR_EMULATE_PREPARES => false);        //同上
+}
+
 ?>

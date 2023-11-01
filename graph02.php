@@ -2,7 +2,7 @@
 // 設定ファイルインクルード
 //体組織系のグラフ・履歴画面
 require "config.php";
-require "functions.php";
+//require "functions.php";
 
 $now = date('Y-m-d');
 $hyoji = $_GET['hyoji'];

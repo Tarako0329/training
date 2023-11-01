@@ -1,7 +1,7 @@
 <?php
 // 設定ファイルインクルード
 require "config.php";
-require "functions.php";
+//require "functions.php";
 
 $now = date('Y-m-d');
 $id = ($_GET["id"]);

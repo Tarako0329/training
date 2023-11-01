@@ -1,6 +1,6 @@
 <?php
   require "config.php";
-  require "functions.php";
+  //require "functions.php";
   //トランザクション処理
   
   if($_POST["btn"] == "ユーザー登録"){

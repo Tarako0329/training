@@ -1,7 +1,7 @@
 <?php
 // 設定ファイルインクルード
 require "config.php";
-require "functions.php";
+//require "functions.php";
 require "edit_wt.php"; 		//ウェイト記録画面
 require "edit_usanso.php"; 	//有酸素系記録画面
 
