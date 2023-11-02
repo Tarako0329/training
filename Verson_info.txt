@@ -6,6 +6,8 @@ ver1.01.0:構造改革
 売上取消の領収証再発行機能を考える
 レジの入出金機能を考える
 
+ALTER TABLE `tr_log` CHANGE `ymd` `ymd` DATE NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `tr_log` ADD `insdatetime` DATETIME  DEFAULT CURRENT_TIMESTAMP AFTER `typ`;
 
 ローカルから本番環境へ
 cd /home/ifduktdo/public_html/SaleM/training

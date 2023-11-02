@@ -9,17 +9,6 @@ function edit_wt($id_f,$jun_f,$ymd_f){
 	//種目リスト
 	$sql = "select shu,max(ymd) from tr_log where id in ('".$id_f."','list') and typ = '0' group by shu order by max(ymd) desc,jun desc ";
 	$result = $mysqli->query( $sql );
-	//実施結果
-	$sql2 = "select * from tr_log where id = '".$id_f."' and ymd = '".$ymd_f."' and jun = '".$jun_f."' order by jun desc";
-	$result2 = $mysqli->query( $sql2 );
-	$row_cnt2 = $result2->num_rows;
-	$row2 = $result2->fetch_assoc();
-	
-	if($jun_f=="0" || $row2["tani"]=="0"){
-		$tani1 = "Selected";
-	}else{
-		$tani2 = "Selected";
-	}
 	
 	if($jun_f=="0"){
 	    $style2 = "";

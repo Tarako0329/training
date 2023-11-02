@@ -4,6 +4,16 @@ require "config.php";
 //トランザクション処理
 
 //結果書き込み
+if(isset($_SESSION['USER_ID'])){
+	$id = $_SESSION['USER_ID'];
+	decho ("session:".$id);
+}else if (check_auto_login($_COOKIE['token'])==0) {
+	$id = $_SESSION['USER_ID'];
+	decho ("クッキー:".$id);
+}else{
+	header("HTTP/1.1 301 Moved Permanently");
+	header("Location: index.php");
+}
 
 if(trim($_POST["shu2"]) == ""){
 	//種目追加欄が空白の場合はリストの種目
@@ -14,19 +24,22 @@ if(trim($_POST["shu2"]) == ""){
 }
 
 try{
-  $pdo_h->beginTransaction();
-	$sql = "select max(jun) as junban from tr_log where ymd = '".$_POST["ymd"]."';";
-	//echo $sql;
-
-	$result = $mysqli->query( $sql );
-	$row_cnt = $result->num_rows;
-	$row = $result->fetch_assoc(); 
-	if($row_cnt==0){
-		$jun=1;
-	}else{
-		$jun=$row["junban"]+1;
-		//echo $row["junban"];
+	$sql = "select max(jun) as junban from tr_log where ymd = ? and id = ?;";
+	echo $sql."<BR>";
+	var_dump($_POST);
+	$result = $pdo_h->prepare($sql);
+	$result->bindValue(1, $_POST["ymd"], PDO::PARAM_STR);
+	$result->bindValue(2, $id, PDO::PARAM_STR);
+	$result->execute();
+	$row_cnt = $result->rowCount();
+	$row = $result->fetchAll(PDO::FETCH_ASSOC);
+	var_dump($row);
+	$jun=1;
+	if($row_cnt!==0){
+		$jun=$row[0]["junban"]+1;
+		
 	}
+	echo "No:".$row[0]["junban"];
 
 	if($_POST["rep2"] == ""){
 		$rep2 = 0;
@@ -40,33 +53,37 @@ try{
 	}
 
 	
+	$sql = "insert into tr_log(id,shu,jun,weight,rep,tani,rep2,sets,cal,ymd,memo,typ) values(?,?,?,?,?,?,?,?,?,?,?,?)";
 
-	$sql = "insert into tr_log values('";
-	$sql = $sql.$id."','";
-	$sql = $sql.$shu."','";
-	$sql = $sql.$jun."','";
-	$sql = $sql.$_POST["weight"]."','";
-	$sql = $sql.$_POST["rep"]."','";
-	$sql = $sql.$_POST["tani"]."','";
-	$sql = $sql.$rep2."','";
-	$sql = $sql.$_POST["sets"]."','";
-	$sql = $sql.$cal."','";
-	$sql = $sql.$_POST["ymd"]."','";
-	$sql = $sql.$_POST["memo"]."','";
-	$sql = $sql.$_POST["typ"]."')";
-
-	//echo $sql;
-
-	$stmt = $mysqli->query("LOCK TABLES tr_log WRITE");
-	$stmt = $mysqli->prepare($sql);
+	//$stmt = $pdo_h->query("LOCK TABLES tr_log WRITE");
+  $pdo_h->beginTransaction();
+	$stmt = $pdo_h->prepare($sql);
+	$stmt->bindValue(1, $id, PDO::PARAM_STR);
+	$stmt->bindValue(2, $shu, PDO::PARAM_STR);
+	$stmt->bindValue(3, $jun, PDO::PARAM_INT);
+	$stmt->bindValue(4, $_POST["weight"], PDO::PARAM_INT);
+	$stmt->bindValue(5, $_POST["rep"], PDO::PARAM_INT);
+	$stmt->bindValue(6, $_POST["tani"], PDO::PARAM_STR);
+	$stmt->bindValue(7, $rep2, PDO::PARAM_STR);
+	$stmt->bindValue(8, $_POST["sets"], PDO::PARAM_INT);
+	$stmt->bindValue(9, $cal, PDO::PARAM_INT);
+	$stmt->bindValue(10, $_POST["ymd"], PDO::PARAM_STR);
+	$stmt->bindValue(11, $_POST["memo"], PDO::PARAM_STR);
+	$stmt->bindValue(12, $_POST["typ"], PDO::PARAM_STR);
 	$stmt->execute();
-	$stmt = $mysqli->query("UNLOCK TABLES");
+	//$stmt = $pdo_h->query("UNLOCK TABLES");
+	$pdo_h->commit();
+	header("HTTP/1.1 301 Moved Permanently");
+	header("Location: TOP.php?msg=success");
+	exit();
 }catch(Exception $e){
+	echo $e;
   $pdo_h->rollBack();
+	//header("HTTP/1.1 301 Moved Permanently");
+	//header("Location: TOP.php?msg=error:".$e);
+	exit();
 }
     //ログイン失敗
     //リダイレクト
-    header("HTTP/1.1 301 Moved Permanently");
-    header("Location: index.php");
 
 ?>

@@ -1,62 +1,42 @@
 /*共通ボタン*/
-/*
-button {
-    display: inline-block;
-    padding: 0.3em 2em;
-    text-decoration: none;
-    color: #551d8d;
-    border: solid 1px #67c5ff;
-    border-radius: 10px;
-    transition: .4s;
-    background: #f1f8ff;
-}
-*/
-button:hover {
-    background: #67c5ff;
-    color: #551d8d;
-}
 body {
   background: #f0fff0;
 }
 
-/*記録エリア表示部*/
-#modal-open {
-}
 
 /* モーダル コンテンツエリア */
 .edit {
-  display: none;
-  z-index: 3;
-  width: 80%;
-  max-width: 300px;
-  margin: 0;
-  position:fixed;
-  /*top:22;*/
-  bottom:10;
-  /*left:0;*/
   background-color: #4E9ABE;
   color: #fff;
 
   border:2px solid #333;
-  padding:15px;
   opacity:0.9;
   -moz-border-radius:6px;
   -webkit-border-radius:6px;
-  -moz-box-shadow: 0 0 50px #ccc;
-  -webkit-box-shadow: 0 0 50px #ccc;
+}
+.mbtn{/*モーダルフッタボタン*/
+  width:150px;
+  height: 45px;
+  font-size:20px;
+}
+.selected{
+  background-color: darkseagreen;
+}
+.input-btn{/*数字ボタン*/
+  width:40px;
+  height: 30px;
+  padding:3px;
+}
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
 }
 
-/* モーダル 背景エリア */
-#modal-bg {
-  display:none;
-  width:100%;
-  height:130%;
-  background-color:rgba(0,0,0, 0.50);
-  position:fixed;
-  top:0;
-  left:0;
-  z-index: 2;
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
+
 
 /*履歴リスト表示部*/
 ul{
@@ -133,7 +113,8 @@ body{    /*トップページ用*/
     height: 50px;
     background-color: #4E9ABE;
     color: #fff;
-	font-size:10px;
+	  font-size:10px;
+    z-index:99;
 }
 .footerArea {  /*トップページ用*/
     position: fixed !important;
