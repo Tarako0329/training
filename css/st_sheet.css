@@ -15,16 +15,16 @@ body {
   -webkit-border-radius:6px;
 }
 .mbtn{/*モーダルフッタボタン*/
-  width:150px;
-  height: 45px;
-  font-size:20px;
+  width:120px;
+  height: 35px;
+  font-size:16px;
 }
 .selected{
   background-color: darkseagreen;
 }
 .input-btn{/*数字ボタン*/
-  width:40px;
-  height: 30px;
+  width:25%;
+  height:50px;
   padding:3px;
 }
 .v-enter-active,

@@ -157,11 +157,11 @@
 							<div class='modal-body container'>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
-									<input type='date' class="form-control" id='ymd' name='ymd' value="<?php echo $now?>">
+									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' value="<?php echo $now?>">
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
-									<select id='shu1' class="form-select" name='shu1'>
+									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1'>
 										<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
 											<option :value='`${list.shu}`'>{{list.shu}}</option>
 										</template>
@@ -169,7 +169,7 @@
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
-									<input type='text' class="form-control" id='shu2' name='shu2' value="" placeholder='リストにない場合は手入力'>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='shu2' name='shu2' value="" placeholder='リストにない場合は手入力'>
 								</div>
 								<div class='row' style='margin:1px 10px;'>
 									<label class="form-label" style='padding-left:0;margin-bottom:1px;'>重量</label>
@@ -178,7 +178,7 @@
 								<div class='row' style='margin:1px 0px 1px 20px;display:flexbox;'>
 									<input type='number' :class="input_select[0]" readonly style='width:70px;padding:6 6;' @Click='setindex(0)' name='weight' :value="kiroku[0]"><span style='padding:8px 0 0 5px;width:40px;'>kg x</span>
 									<input type='number' :class="input_select[1]" readonly style='width:50px;padding:6 6;' @Click='setindex(1)' name='rep' :value="kiroku[1]">
-									<select class="form-select" style='width:50px;padding-left:5px;padding-right:15px;margin-left:5px;' name='tani'>
+									<select class="form-select form-select-sm" style='width:50px;padding-left:5px;padding-right:15px;margin-left:5px;' name='tani'>
 										<option value='0' selected>回</option>
 										<option value='1'>秒</option>
 									</select><span style='padding:8px 0 0 5px;width:15px;'>x</span>
@@ -190,38 +190,45 @@
 								</div>
 
 								<Transition>
-								<template v-if='keybord_show'>
-									<div class='row' style='margin:15px 20px 1px 20px;'>
-										<button type='button' class='btn btn-primary' style='width:100' @click='keydown' value='-1'>≪</button>
-										<button type='button' class='btn btn-primary' style='width:100' @click='keydown' value='1'>≫</button>
-										<button type="button" class="btn btn-close btn-secondary input-btn" @click='keydown' value='99'></button>
-									</div>
-									</template>
-									</Transition>
-									<Transition>
 									<template v-if='keybord_show'>
-									<div class='row' style='margin:1px 20px;'>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>5</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
-									</div>
+										<div class='row' style='margin:15px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
+										</div>
 									</template>
-									</Transition>
-									<Transition>
+								</Transition>
+								<Transition>
 									<template v-if='keybord_show'>
-									<div class='row' style='margin:1px 20px 15px 20px;'>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>8</button>
+										<div class='row' style='margin:1px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>5</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>8</button>
+										</div>
+									</template>
+								</Transition>
+								<Transition>
+									<template v-if='keybord_show'>
+									<div class='row' style='margin:1px 20px 1px 20px;'>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
-										<button type='button' class='btn btn-secondary input-btn' @click='keydown'>C</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
 									</div>
 								</template>
 								</Transition>
+								<Transition>
+									<template v-if='keybord_show'>
+										<div class='row' style='margin:1px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary' style='width:50%' @click='keydown' value='-1'>≪</button>
+											<button type='button' class='btn btn-primary' style='width:50%' @click='keydown' value='1'>≫</button>
+											<!--<button type="button" class="btn btn-secondary input-btn" @click='keydown' value='99'>Ｘ</button>-->
+										</div>
+									</template>
+								</Transition>
+
 								<div class='row' style='margin:1px 20px;'>
 								</div>
 
@@ -230,11 +237,11 @@
 
 								<div class='row' style='margin:1px 20px;'>
 									<label for='memo' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
-									<input type='text' class="form-control" id='memo' name='memo' value="">
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo' name='memo' value="">
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='condition' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
-									<input type='text' class="form-control" id='condition' name='condition' value='' placeholder='好調・寝不足・調整日など'>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='condition' name='condition' value='' placeholder='好調・寝不足・調整日など'>
 								</div>
 							</div>
 							<div class='modal-footer'>
@@ -273,17 +280,21 @@
 						kiroku_index.value = Number(i)
 						keybord_show.value=true
 					}
-					let before_val = 0
+					let before_val = '-'
 					const keybord_show = ref(false)
 					const keydown = (e) => {//電卓ボタンの処理
-						//console_log(e.target.value,'lv3')
+						console_log('target.value=' + e.target.value)
+						console_log('target.innerHTML=' + e.target.innerHTML)
 						if(e.target.innerHTML==="C"){
 							kiroku.value[kiroku_index.value] = 0
-							before_val=0
+							before_val='-'
+							console_log('c')
 						}else if(e.target.value==='-1'){
+							console_log('<')
 							if(kiroku_index.value===0){return}
 							kiroku_index.value = Number(kiroku_index.value) - 1
 						}else if(e.target.value==='1'){
+							console_log('>')
 							if(kiroku_index.value===3){
 								kiroku_index.value=''
 								keybord_show.value=false
@@ -291,24 +302,31 @@
 							}
 							kiroku_index.value = Number(kiroku_index.value) + 1
 						}else if(e.target.value==='99'){
+							console_log('99')
 							kiroku_index.value=''
 							keybord_show.value=false
 						}else if(e.target.innerHTML==="."){
+							console_log('.')
 							if(kiroku.value[kiroku_index.value].toString().indexOf('.')!==-1){
 								//小数点連続は無視
 								return
 							}
 							before_val = "."
-						}else{
+						}else if((Number(e.target.innerHTML) >= 0 && Number(e.target.innerHTML)<=9 && e.target.innerHTML !== '') || before_val==='.'){
+							console_log('key input')
 							if(before_val==='.'){
 								kiroku.value[kiroku_index.value] = Number(kiroku.value[kiroku_index.value].toString() + '.' + e.target.innerHTML.toString())
 							}else{
 								kiroku.value[kiroku_index.value] = Number(kiroku.value[kiroku_index.value].toString() + e.target.innerHTML.toString())
 							}
-							before_val=0
+							before_val='-'
+						}else{
+							console_log('else')
+							kiroku_index.value=''
+							keybord_show.value=false
 						}
 					}
-					const input_select = ref([['form-control',''],['form-control',''],['form-control',''],['form-control','']])
+					const input_select = ref([['form-control','form-control-sm',''],['form-control','form-control-sm',''],['form-control','form-control-sm',''],['form-control','form-control-sm','']])
 					watch([kiroku_index],()=>{
 						console_log('watch')
 						console_log(input_select.value)
