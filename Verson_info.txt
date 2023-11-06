@@ -10,6 +10,6 @@ ALTER TABLE `tr_log` CHANGE `ymd` `ymd` DATE NOT NULL DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE `tr_log` ADD `insdatetime` DATETIME  DEFAULT CURRENT_TIMESTAMP AFTER `typ`;
 
 ローカルから本番環境へ
-cd /home/ifduktdo/public_html/SaleM/training
+cd /home/ifduktdo/public_html/training
 git fetch --all
 git reset --hard origin/master

@@ -53,6 +53,8 @@
  
      //古いトークンの削除
      delete_old_token($cookie_token);
+
+     $_SESSION['USER_ID'] = $id;
   
   }
  
