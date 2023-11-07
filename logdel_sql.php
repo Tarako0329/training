@@ -4,14 +4,18 @@ require "config.php";
 //トランザクション処理
 
 //結果書き込み
-
-if(trim($_POST["shu2"]) == ""){
-	//種目追加欄が空白の場合はリストの種目
-	$shu = $_POST["shu1"];
+if(isset($_SESSION['USER_ID'])){
+	$id = $_SESSION['USER_ID'];
+	decho ("session:".$id);
+}else if (check_auto_login($_COOKIE['token'])==0) {
+	$id = $_SESSION['USER_ID'];
+	decho ("クッキー:".$id);
 }else{
-	//種目追加欄が記入されてる場合は種目追加欄の種目
-	$shu = $_POST["shu2"];
+	header("HTTP/1.1 301 Moved Permanently");
+	header("Location: index.php");
+	exit();
 }
+
 
 try{
   $pdo_h->beginTransaction();

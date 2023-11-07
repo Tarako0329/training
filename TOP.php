@@ -66,7 +66,7 @@
 	}
 
 	//履歴取得
-	$sql = "select *,replace(ymd,'-','') as ymd2,SUM(weight*rep*sets) OVER (PARTITION BY id,shu,ymd) as total,RANK() OVER(PARTITION BY id,ymd,shu order by jun ) as setjun from tr_log where id = ? and ymd >= ? order by ymd desc,jun ";
+	$sql = "select *,replace(ymd,'-','') as ymd2,ymd as ymd3,SUM(weight*rep*sets) OVER (PARTITION BY id,shu,ymd) as total,RANK() OVER(PARTITION BY id,ymd,shu order by jun ) as setjun from tr_log where id = ? and ymd >= ? order by ymd desc,jun ";
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue(1, $id, PDO::PARAM_STR);
 	$result->bindValue(2, date("Y-m-d",strtotime("-13 month")), PDO::PARAM_STR);
@@ -110,14 +110,22 @@
 							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' aria-expanded='false' aria-controls='collapseOne'>
 								{{list.shu}} {{Number(list.total).toLocaleString()}}kg
 							</button>
+							<button class='icn-btn' style='width:25px;padding:2px;position: absolute; right: 10;'><i class='fa fa-line-chart' ></i></button>
 						</div>
 						<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 							<div class='row lst accordion-body'>
-								<div class='col-1'>{{list.setjun}}</div>
+								<div class='col-1' style='padding:0 0 0 6px;'>
+									{{list.setjun}}
+								</div>
 								<div class='col-2 text-end' style='padding:0;'>{{list.weight}}kg</div>
 								<div class='col-2' style='padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
 								<div class='col-2' style='padding-right:0;'>{{list.sets}}sets</div>
 								<div class='col-5' style='padding:0;'>{{list.memo}}</div>
+								<button type='button' class='icn-btn' style='width:35px;padding:2px;position:absolute;right:10px;' 
+								@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo)'
+								data-bs-toggle='modal' data-bs-target='#edit_wt'>
+									<i class='fa fa-edit'></i>
+								</button>
 							</div>
 						</div>
 					</div>
@@ -149,7 +157,7 @@
 			<div class='modal fade' id='edit_wt' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
-						<form method = 'post' action='logins_sql.php'>
+						<form method = 'post' action='logInsUpd_sql.php'>
 							<div class='modal-header'>
 	        			<h5 class="modal-title">トレーニング記録</h5>
   	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -157,11 +165,11 @@
 							<div class='modal-body container'>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
-									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' value="<?php echo $now?>">
+									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd">
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
-									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1'>
+									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
 										<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
 											<option :value='`${list.shu}`'>{{list.shu}}</option>
 										</template>
@@ -232,12 +240,9 @@
 								<div class='row' style='margin:1px 20px;'>
 								</div>
 
-
-
-
 								<div class='row' style='margin:1px 20px;'>
 									<label for='memo' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo' name='memo' value="">
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo' name='memo' :value="memo">
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='condition' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
@@ -245,10 +250,13 @@
 								</div>
 							</div>
 							<div class='modal-footer'>
-								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" >閉じる</button>
-								<button type='submit'  class="btn btn-primary mbtn" data-bs-dismiss="modal" >登録</button>
+								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel'>{{mBtnName[1]}}</button>
+								<button type='submit'  class="btn btn-primary mbtn" data-bs-dismiss="modal" >{{mBtnName[0]}}</button>
+								<template v-if='mBtnName[0]==="更新"'> <button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(Num,motoymd)'>削除</button> </template>
 							</div>
 							<INPUT type="hidden" name="typ" value="0">
+							<INPUT type="hidden" name="NO" :value="Num">
+							<INPUT type="hidden" name="motoYMD" :value="motoymd">
 						</form>
 					</div>
 				</div>
@@ -260,6 +268,8 @@
 			createApp({
 				setup(){
 					const kintore_log = (<?php echo $kintore_log;?>)
+					const id = ref('<?php echo $id;?>')
+					const pass = ref('<?php echo $pass;?>')
 					const week = (date) =>{
 						const WeekChars = [ "(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)" ];
 						let dObj = new Date( date );
@@ -338,6 +348,65 @@
 							}
 						})
 					})
+
+					const mBtnName = ref(['登録','閉じる'])
+					const Num = ref('')
+					const ymd = ref('<?php echo $now?>')
+					const motoymd = ref('')
+					const shu = ref('')
+					const memo = ref('')
+					const setUpdate = (NO,YMD,SHU,wt,rep,set,rep2,MEMO) =>{
+						console_log('setUpdate start')
+						Num.value = NO
+						ymd.value = YMD
+						motoymd.value = YMD
+						shu.value = SHU
+						kiroku.value[0]=wt
+						kiroku.value[1]=rep
+						kiroku.value[2]=set
+						kiroku.value[3]=rep2
+						memo.value=MEMO
+						mBtnName.value[0] = '更新'
+						mBtnName.value[1] = 'キャンセル'
+					}
+					const setCancel = () =>{
+						console_log('setCancel start')
+						Num.value = 0
+						ymd.value = '<?php echo $now?>'
+						shu.value = ''
+						kiroku.value[0]=0
+						kiroku.value[1]=0
+						kiroku.value[2]=0
+						kiroku.value[3]=0
+						memo.value=''
+						mBtnName.value[0] = '登録'
+						mBtnName.value[1] = '閉じる'
+					}
+					const delete_log = (NO,YMD) =>{
+						if(confirm('削除してよいですか？')===false){
+							return
+						}
+						let form = document.createElement('form');
+    				let numbers = document.createElement('input');
+						let date = document.createElement('input');
+
+    				form.method = 'POST';
+    				form.action = 'logdel_sql.php';
+						
+    				numbers.type = 'hidden'; //入力フォームが表示されないように
+    				numbers.name = 'k_jun';
+    				numbers.value = NO;
+						
+    				date.type = 'hidden'; //入力フォームが表示されないように
+    				date.name = 'k_ymd';
+    				date.value = YMD;
+
+						form.appendChild(numbers);
+						form.appendChild(date);
+    				document.body.appendChild(form);
+						
+    				form.submit();						
+					}
 					onMounted(() => {
 						console_log('onMounted')
 					})
@@ -352,6 +421,17 @@
 						setindex,
 						kiroku_index,
 						input_select,
+						id,
+						pass,
+						mBtnName,
+						Num,
+						ymd,
+						motoymd,
+						shu,
+						memo,
+						setUpdate,
+						setCancel,
+						delete_log,
 					}
 				}
 			}).mount('#logger');
