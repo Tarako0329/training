@@ -30,7 +30,7 @@ if($row_cnt==0){
 	?><a href="index.php"> 戻る</a><?php
 	exit();
 }
-$user_name = rot13decrypt($row["name"]);
+
 
 //履歴取得
 if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出

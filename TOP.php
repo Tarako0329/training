@@ -15,6 +15,7 @@
 	}else{
 		header("HTTP/1.1 301 Moved Permanently");
 		header("Location: index.php");
+		exit();
 	}
 	$msg="";
 	if(isset($_GET["msg"])==="error"){
@@ -61,7 +62,7 @@
 			exit();
 		}
 
-		$user_name = rot13decrypt($row["name"]);
+		$user_name = rot13decrypt($row[0]["name"]);
 		//echo "ログインＯＫ<BR>";
 	}
 
