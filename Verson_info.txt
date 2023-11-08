@@ -1,5 +1,5 @@
 ver1.01.0:構造改革:トレーニングの記録・更新・削除まで完了
-ver1.02.0:グラフ関連
+ver1.02.0:トレーニンググラフ関連完了
   create view tr_log_max_record as 
   select 
   tr.id,tr.shu,0 as jun,tr.weight,tr.rep,tr.tani,tr.rep2,tr.sets,tr.cal,tr.ymd,tr.memo,tr.typ,tr.insdatetime
