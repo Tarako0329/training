@@ -1,13 +1,12 @@
-ver1.01.0:構造改革
-
+ver1.01.0:構造改革:トレーニングの記録・更新・削除まで完了
+ver1.02.0:グラフ関連
 
 【Issues】
-売上修正の領収書再発行機能を考える
-売上取消の領収証再発行機能を考える
-レジの入出金機能を考える
 
-ALTER TABLE `tr_log` CHANGE `ymd` `ymd` DATE NOT NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE `tr_log` ADD `insdatetime` DATETIME  DEFAULT CURRENT_TIMESTAMP AFTER `typ`;
+create view tr_log_max_record as 
+select 
+tr.id,tr.shu,0 as jun,tr.weight,tr.rep,tr.tani,tr.rep2,tr.sets,tr.cal,tr.ymd,tr.memo,tr.typ,tr.insdatetime
+from tr_log tr inner join ( SELECT id,shu,ymd,jun,ROW_NUMBER() OVER(partition by id,shu,ymd order by CAST(weight as SIGNED) desc,CAST(rep as SIGNED) desc ) as sort FROM `tr_log` ) as maxrows on tr.id = maxrows.id and tr.shu = maxrows.shu and tr.ymd = maxrows.ymd and tr.jun = maxrows.jun and maxrows.sort = 1 ORDER BY `tr`.`id`,tr.ymd desc,tr.jun;
 
 ローカルから本番環境へ
 cd /home/ifduktdo/public_html/training

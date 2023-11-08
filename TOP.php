@@ -2,9 +2,9 @@
 	// 設定ファイルインクルード【開発中】
 	require "config.php";
 	//require "functions.php";
-	require "edit_wt.php"; 		//ウェイト記録画面
-	require "edit_usanso.php"; 	//有酸素系記録画面
-	require "edit_taisosiki.php"; 	//体組織記録画面
+	//require "edit_wt.php"; 		//ウェイト記録画面
+	//require "edit_usanso.php"; 	//有酸素系記録画面
+	//require "edit_taisosiki.php"; 	//体組織記録画面
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
@@ -107,10 +107,12 @@
 					<div v-if='index==0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}}</div>
 					<div class='accordion-item'>
 						<div v-if='index==0 || (index!==0 && list.shu !== log_edit[index-1].shu)' class='row shu accordion-header'>
-							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' aria-expanded='false' aria-controls='collapseOne'>
+							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
+							aria-expanded='false' aria-controls='collapseOne' >
 								{{list.shu}} {{Number(list.total).toLocaleString()}}kg
 							</button>
-							<button class='icn-btn' style='width:25px;padding:2px;position: absolute; right: 10;'><i class='fa fa-line-chart' ></i></button>
+							<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style='width:25px;padding:2px;position: absolute; right: 10;'>
+							<i class='fa fa-line-chart' ></i></button>
 						</div>
 						<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 							<div class='row lst accordion-body'>
@@ -383,6 +385,7 @@
 						mBtnName.value[1] = '閉じる'
 					}
 					const delete_log = (NO,YMD) =>{
+						console_log('delete_log start')
 						if(confirm('削除してよいですか？')===false){
 							return
 						}
@@ -403,6 +406,29 @@
 
 						form.appendChild(numbers);
 						form.appendChild(date);
+    				document.body.appendChild(form);
+						
+    				form.submit();						
+					}
+					const GoGrapho01 = (SHURUI,HYOUJI) =>{
+						console_log('GoGrapho01 start')
+						let form = document.createElement('form');
+    				let shu = document.createElement('input');
+						let hyoji = document.createElement('input');
+
+    				form.method = 'POST';
+    				form.action = 'graph01.php';
+						
+    				shu.type = 'hidden'; //入力フォームが表示されないように
+    				shu.name = 'shu';
+    				shu.value = SHURUI;
+						
+    				hyoji.type = 'hidden'; //入力フォームが表示されないように
+    				hyoji.name = 'hyoji';
+    				hyoji.value = HYOUJI;
+
+						form.appendChild(shu);
+						form.appendChild(hyoji);
     				document.body.appendChild(form);
 						
     				form.submit();						
@@ -432,6 +458,7 @@
 						setUpdate,
 						setCancel,
 						delete_log,
+						GoGrapho01,
 					}
 				}
 			}).mount('#logger');
