@@ -129,13 +129,13 @@ foreach($dataset_work as $row){
 		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
 			<!--<div v-if='index==0 || (index!==0 && list.ymd !== kintore_log[index-1].ymd)' class='row ymd'>{{list.ymd}}</div>-->
 			<div class='accordion-item'>
-				<div v-if='list.jun===0' class='row shu accordion-header'>
+				<div v-if='list.jun==="0"' class='row shu accordion-header'>
 					<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd}${list.shu}`' 
 					aria-expanded='false' aria-controls='collapseOne' >
 						{{list.ymd}} {{(list.head_wt)}} kg
 					</button>
 				</div>
-				<div v-if='list.jun!==0'  :id='`collapseOne${list.ymd}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
+				<div v-if='list.jun!=="0"'  :id='`collapseOne${list.ymd}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 					<div class='row lst accordion-body'>
 						<div class='col-1' style='padding:0 0 0 6px;'>
 							{{list.No - 1}}
