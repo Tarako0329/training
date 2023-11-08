@@ -117,9 +117,9 @@ foreach($dataset_work as $row){
 <BODY class = "graphe">
 	<div id="headerArea2">
 		<p class="graph-title"><?php echo $graph_title ?></p>
-		<div id="graph"></div>
+		<div id="graph" style='margin-bottom:5px;'></div>
 			<FORM method="post" action="graph01.php" style='text-align: center;'>
-				<button type="submit"> <?php echo $btn_name;?> </button>
+				<button class='btn btn-primary' type="submit"> <?php echo $btn_name;?> </button>
 				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
 				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
 				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
@@ -129,13 +129,13 @@ foreach($dataset_work as $row){
 		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
 			<!--<div v-if='index==0 || (index!==0 && list.ymd !== kintore_log[index-1].ymd)' class='row ymd'>{{list.ymd}}</div>-->
 			<div class='accordion-item'>
-				<div v-if='list.jun==="0"' class='row shu accordion-header'>
+				<div v-if='String(list.jun)==="0"' class='row shu accordion-header'>
 					<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd}${list.shu}`' 
 					aria-expanded='false' aria-controls='collapseOne' >
 						{{list.ymd}} {{(list.head_wt)}} kg
 					</button>
 				</div>
-				<div v-if='list.jun!=="0"'  :id='`collapseOne${list.ymd}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
+				<div v-if='String(list.jun)!=="0"'  :id='`collapseOne${list.ymd}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 					<div class='row lst accordion-body'>
 						<div class='col-1' style='padding:0 0 0 6px;'>
 							{{list.No - 1}}
@@ -150,7 +150,8 @@ foreach($dataset_work as $row){
 		</template>
 	</main>
 	<div id="footerArea2" style='text-align: center;'>
-		<button style ='margin-top: 1em;'><a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> style = 'text-decoration: none;'>戻る</a></button>
+		<!--<button class='btn btn-secondary' style ='margin-top: 1em;'><a href=<?php //echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> style = 'text-decoration: none;'>戻る</a></button>-->
+		<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
 	</div>
 	<script type="text/javascript">
 		(function basic(container) {
