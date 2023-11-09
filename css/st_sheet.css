@@ -15,8 +15,8 @@ body {
   -webkit-border-radius:6px;
 }
 .mbtn{/*モーダルフッタボタン*/
-  width:100px;
-  height: 35px;
+  width:130px;
+  height: 45px;
   font-size:16px;
 }
 .selected{

@@ -67,7 +67,8 @@
 	}
 
 	//履歴取得
-	$sql = "select *,replace(ymd,'-','') as ymd2,ymd as ymd3,SUM(weight*rep*sets) OVER (PARTITION BY id,shu,ymd) as total,RANK() OVER(PARTITION BY id,ymd,shu order by jun ) as setjun from tr_log where id = ? and ymd >= ? order by ymd desc,jun ";
+	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd) as total,RANK() OVER(PARTITION BY log.id,log.ymd,shu order by jun ) as setjun 
+	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = ? and log.ymd >= ? order by log.ymd desc,jun ";
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue(1, $id, PDO::PARAM_STR);
 	$result->bindValue(2, date("Y-m-d",strtotime("-13 month")), PDO::PARAM_STR);
@@ -105,7 +106,7 @@
 			</header>
 			<main class='container-fluid'>
 				<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun'>
-					<div v-if='index==0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}}</div>
+					<div v-if='index==0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div>
 					<div class='accordion-item'>
 						<div v-if='index==0 || (index!==0 && list.shu !== log_edit[index-1].shu)' class='row shu accordion-header'>
 							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
@@ -166,11 +167,13 @@
   	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class='modal-body container'>
-								<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
-									<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
-									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd">
-								</div>
-								<div class='row' style='margin:1px 20px;'>
+								<Transition>
+									<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
+										<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
+										<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
+									</div>
+								</Transition>
+								<div v-if='keybord_show===false && shu2===""' class='row' style='margin:1px 20px;'>
 									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
 									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
 										<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
@@ -178,28 +181,28 @@
 										</template>
 									</select>
 								</div>
-								<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
-									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='shu2' name='shu2' value="" placeholder='リストにない場合は手入力'>
-								</div>
+								<Transition>
+									<div v-if='keybord_show===false && shu2==""' class='row' style='margin:1px 20px;'>
+										<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
+										<input type='text' @focus='keydown' class="form-control form-control-sm" id='shu2' name='shu2' v-model='shu2' placeholder='リストにない場合は手入力'>
+									</div>
+								</Transition>
 								<div class='row' style='margin:1px 10px;'>
 									<label class="form-label" style='padding-left:0;margin-bottom:1px;'>重量</label>
 								</div>
-
 								<div class='row' style='margin:1px 0px 1px 20px;display:flexbox;'>
-									<input type='number' :class="input_select[0]" readonly style='width:70px;padding:6 6;' @Click='setindex(0)' name='weight' :value="kiroku[0]"><span style='padding:8px 0 0 5px;width:40px;'>kg x</span>
-									<input type='number' :class="input_select[1]" readonly style='width:50px;padding:6 6;' @Click='setindex(1)' name='rep' :value="kiroku[1]">
-									<select class="form-select form-select-sm" style='width:50px;padding-left:5px;padding-right:15px;margin-left:5px;' name='tani'>
+									<input type='number' :class="input_select[0]" readonly style='width:70px;padding:6 6;' @Click='setindex(0)' name='weight' :value="kiroku[0]" required='required'><span style='padding:8px 0 0 5px;width:40px;'>kg x</span>
+									<input type='number' :class="input_select[1]" readonly style='width:50px;padding:6 6;' @Click='setindex(1)' name='rep' :value="kiroku[1]" required='required'>
+									<select class="form-select form-select-sm" style='width:50px;padding-left:5px;padding-right:15px;margin-left:5px;' name='tani' required='required'>
 										<option value='0' selected>回</option>
 										<option value='1'>秒</option>
 									</select><span style='padding:8px 0 0 5px;width:15px;'>x</span>
-									<input type='number' :class="input_select[2]" readonly style='width:40px;padding:6 6;' @Click='setindex(2)' name='sets' :value="kiroku[2]"><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
+									<input type='number' :class="input_select[2]" readonly style='width:40px;padding:6 6;' @Click='setindex(2)' name='sets' :value="kiroku[2]" required='required'><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>内 有補助回数</label>
 									<input type='number' :class="input_select[3]" readonly style='width:50px;' id='rep2' @Click='setindex(3)' name='rep2' :value="kiroku[3]">
 								</div>
-
 								<Transition>
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:15px 20px 1px 20px;'>
@@ -241,7 +244,6 @@
 										<div class='row' style='margin:1px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='-1'>≪</button>
 											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='1'>≫</button>
-											<!--<button type="button" class="btn btn-secondary input-btn" @click='keydown' value='99'>Ｘ</button>-->
 										</div>
 									</template>
 								</Transition>
@@ -259,9 +261,11 @@
 								</div>
 							</div>
 							<div class='modal-footer'>
-								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel'>{{mBtnName[1]}}</button>
-								<button type='submit'  class="btn btn-primary mbtn" data-bs-dismiss="modal" >{{mBtnName[0]}}</button>
-								<template v-if='mBtnName[0]==="更新"'> <button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(Num,motoymd)'>削除</button> </template>
+								<template v-if='mBtnName[0]==="更新"'>
+									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(Num,motoymd)'>削除</button>
+								</template>
+								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel'>{{mBtnName[1]}}</button><!--キャンセル-->
+								<input type='submit'  class="btn btn-primary mbtn" :value='mBtnName[0]'>{{}}<!--登録・更新-->
 							</div>
 							<INPUT type="hidden" name="typ" value="0">
 							<INPUT type="hidden" name="NO" :value="Num">
@@ -293,14 +297,15 @@
 						return kintore_log
 					})
 					const shumoku_wt = ref(<?php echo $shumoku_wt_list;?>)
-					const kiroku = ref([0,0,0,0])
+					const kiroku = ref([])
 					const kiroku_index = ref('')
+					const keybord_show = ref(false)
 					const setindex = (i) =>{
+						console_log('setindex')
 						kiroku_index.value = Number(i)
 						keybord_show.value=true
 					}
 					let before_val = '-'
-					const keybord_show = ref(false)
 					const keydown = (e) => {//電卓ボタンの処理
 						console_log('target.value=' + e.target.value)
 						console_log('target.innerHTML=' + e.target.innerHTML)
@@ -357,12 +362,12 @@
 							}
 						})
 					})
-
 					const mBtnName = ref(['登録','閉じる'])
 					const Num = ref('')
 					const ymd = ref('<?php echo $now?>')
 					const motoymd = ref('')
 					const shu = ref(shumoku_wt.value[0]["shu"])
+					const shu2 = ref('')
 					const memo = ref('')
 					const setUpdate = (NO,YMD,SHU,wt,rep,set,rep2,MEMO) =>{
 						console_log('setUpdate start')
@@ -390,6 +395,8 @@
 						memo.value=''
 						mBtnName.value[0] = '登録'
 						mBtnName.value[1] = '閉じる'
+						keybord_show.value=false
+						kiroku_index.value=''
 					}
 					const delete_log = (NO,YMD) =>{
 						console_log('delete_log start')
@@ -466,6 +473,7 @@
 						setCancel,
 						delete_log,
 						GoGrapho01,
+						shu2,
 					}
 				}
 			}).mount('#logger');

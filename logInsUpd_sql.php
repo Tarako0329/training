@@ -70,7 +70,6 @@ try{
 		$stmt->bindValue(11, $_POST["memo"], PDO::PARAM_STR);
 		$stmt->bindValue(12, $_POST["typ"], PDO::PARAM_STR);
 		$stmt->execute();
-		$pdo_h->commit();
 	}else{
 		$sql = "select max(jun) as junban from tr_log where  ymd = ? and id = ?;";
 	
@@ -132,15 +131,35 @@ try{
 		$stmt->bindValue(11, $_POST["motoYMD"], PDO::PARAM_STR);
 		$stmt->bindValue(12, $jun, PDO::PARAM_INT);
 		$stmt->execute();
-		$pdo_h->commit();
 
 	}
+
+	if(!empty($_POST["condition"])){
+		//デリイン
+		$sql = "delete from tr_condition where id = ? and ymd = ?";
+		$stmt = $pdo_h->prepare($sql);
+		$stmt->bindValue(1, $id, PDO::PARAM_STR);
+		$stmt->bindValue(2, $_POST["ymd"], PDO::PARAM_STR);
+		$stmt->execute();
+
+		$sql = "insert into tr_condition values(?,?,?)";
+		$stmt = $pdo_h->prepare($sql);
+		$stmt->bindValue(1, $id, PDO::PARAM_STR);
+		$stmt->bindValue(2, $_POST["ymd"], PDO::PARAM_STR);
+		$stmt->bindValue(3, $_POST["condition"], PDO::PARAM_STR);
+		$stmt->execute();
+	}
+
+	$pdo_h->commit();
+
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: TOP.php?msg=success");
 	exit();
 
 }catch(Exception $e){
-	echo $e;
+	echo "catch(Exception \$e)<br>";
+	echo $sql."<br><br>";
+	echo $e."<br>";
   $pdo_h->rollBack();
 	//header("HTTP/1.1 301 Moved Permanently");
 	//header("Location: TOP.php?msg=error:".$e);

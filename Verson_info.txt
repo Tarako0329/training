@@ -7,6 +7,8 @@ ver1.02.0:トレーニンググラフ関連完了
 ver1.02.1:軽微な修正
 ver1.03.0:コンディション追加
   CREATE TABLE `ifduktdo_massuru`.`tr_condition` (`id` VARCHAR(20) NOT NULL , `ymd` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `condition` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+  ALTER TABLE `tr_condition` CHANGE `id` `id` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+  ALTER TABLE `tr_condition` DROP PRIMARY KEY, ADD PRIMARY KEY(`id`, `ymd`);
 
 【Issues】
 
