@@ -166,7 +166,7 @@
   	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class='modal-body container'>
-								<div class='row' style='margin:1px 20px;'>
+								<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
 									<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
 									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd">
 								</div>
@@ -178,7 +178,7 @@
 										</template>
 									</select>
 								</div>
-								<div class='row' style='margin:1px 20px;'>
+								<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
 									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
 									<input type='text' @focus='keydown' class="form-control form-control-sm" id='shu2' name='shu2' value="" placeholder='リストにない場合は手入力'>
 								</div>
@@ -206,35 +206,41 @@
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
 										</div>
 									</template>
 								</Transition>
 								<Transition>
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>5</button>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>8</button>
 										</div>
 									</template>
 								</Transition>
 								<Transition>
 									<template v-if='keybord_show'>
-									<div class='row' style='margin:1px 20px 1px 20px;'>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
-									</div>
-								</template>
+										<div class='row' style='margin:1px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>8</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
+										</div>
+									</template>
 								</Transition>
 								<Transition>
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
-											<button type='button' class='btn btn-primary' style='width:50%' @click='keydown' value='-1'>≪</button>
-											<button type='button' class='btn btn-primary' style='width:50%' @click='keydown' value='1'>≫</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
+										</div>
+									</template>
+								</Transition>
+								<Transition>
+									<template v-if='keybord_show'>
+										<div class='row' style='margin:1px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='-1'>≪</button>
+											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='1'>≫</button>
 											<!--<button type="button" class="btn btn-secondary input-btn" @click='keydown' value='99'>Ｘ</button>-->
 										</div>
 									</template>
@@ -345,9 +351,9 @@
 						console_log(input_select.value)
 						input_select.value.forEach((row,index)=>{
 							if(index===kiroku_index.value){
-								row[1] = 'selected'
+								row[2] = 'selected'
 							}else{
-								row[1] = ''
+								row[2] = ''
 							}
 						})
 					})
@@ -356,7 +362,7 @@
 					const Num = ref('')
 					const ymd = ref('<?php echo $now?>')
 					const motoymd = ref('')
-					const shu = ref('')
+					const shu = ref(shumoku_wt.value[0]["shu"])
 					const memo = ref('')
 					const setUpdate = (NO,YMD,SHU,wt,rep,set,rep2,MEMO) =>{
 						console_log('setUpdate start')

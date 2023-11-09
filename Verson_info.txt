@@ -4,6 +4,9 @@ ver1.02.0:トレーニンググラフ関連完了
   select 
   tr.id,tr.shu,0 as jun,tr.weight,tr.rep,tr.tani,tr.rep2,tr.sets,tr.cal,tr.ymd,tr.memo,tr.typ,tr.insdatetime
   from tr_log tr inner join ( SELECT id,shu,ymd,jun,ROW_NUMBER() OVER(partition by id,shu,ymd order by CAST(weight as SIGNED) desc,CAST(rep as SIGNED) desc ) as sort FROM `tr_log` ) as maxrows on tr.id = maxrows.id and tr.shu = maxrows.shu and tr.ymd = maxrows.ymd and tr.jun = maxrows.jun and maxrows.sort = 1 ORDER BY `tr`.`id`,tr.ymd desc,tr.jun;
+ver1.02.1:軽微な修正
+ver1.03.0:コンディション追加
+  CREATE TABLE `ifduktdo_massuru`.`tr_condition` (`id` VARCHAR(20) NOT NULL , `ymd` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `condition` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 
 【Issues】
 
