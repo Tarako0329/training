@@ -429,6 +429,7 @@
 						let form = document.createElement('form');
     				let shu = document.createElement('input');
 						let hyoji = document.createElement('input');
+						let gtype = document.createElement('input');
 
     				form.method = 'POST';
     				form.action = 'graph01.php';
@@ -441,8 +442,13 @@
     				hyoji.name = 'hyoji';
     				hyoji.value = HYOUJI;
 
+    				gtype.type = 'hidden'; //入力フォームが表示されないように
+    				gtype.name = 'gtype';
+    				gtype.value = 'year';
+
 						form.appendChild(shu);
 						form.appendChild(hyoji);
+						form.appendChild(gtype);
     				document.body.appendChild(form);
 						
     				form.submit();						

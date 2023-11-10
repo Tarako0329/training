@@ -61,6 +61,7 @@ ul{
   background: #f1f8ff;/*背景色*/
   margin-bottom: 0.8px;/*下のバーとの余白*/
   line-height: 0.8;
+  height:30px;
   padding-top: 0.4em;
   padding-bottom: 10px;
   list-style-type: none!important;/*ポチ消す*/

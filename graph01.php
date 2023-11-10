@@ -34,7 +34,6 @@ if($row_cnt==0){
 
 //履歴取得
 if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
-//	$sql2 = "select * from tr_log where id = '".$id."' and shu = '".$shu."' and ymd = '".$row["ymd"]."' order by CAST(weight as SIGNED) desc,CAST(rep as SIGNED) desc ";
 	$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select * from tr_log where id = ? and shu = ? ";
 	$sql .= "UNION ALL select * from  tr_log_max_record where id = ? and shu = ?) as T ";
 	$sql .= "order by T.ymd desc,T.jun ";
@@ -67,13 +66,13 @@ $dataset_work=[];
 
 //ぐらふでーた取得
 if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
-	$sql = "select ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2 from  tr_log_max_record where id = ? and shu = ? ";
+	$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2 from  tr_log_max_record where id = ? and shu = ? ";
 	$sql .= "order by ymd";
 	$graph_title = "『".$shu."のＭＡＸ推移』";
 	$btn_name = "トレーニング量グラフへ";
 	$typ=1;
 }else{//total表示
-	$sql = "select ROW_NUMBER() OVER(order by ymd) as No,sum(weight*rep*sets) as weight ";
+	$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,sum(weight*rep*sets) as weight ";
 	$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu,id ";
 	$sql .= "order by ymd";
 	$graph_title = "『".$shu."トレーニング量推移』";
@@ -91,18 +90,47 @@ $i=1;
 $maxline=0;
 $minline=999999;
 $graph_data="";
+$graph_data2="";
 foreach($dataset_work as $row){
 	if($hyoji == "0"){//MAX表示
 		$weight = number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
 	}else{
 		$weight = ($row["weight"]);
 	}
-	if($maxline<$weight){$maxline=$weight;}
-	if($minline>$weight){$minline=$weight;}
-	//$dataset[$i] = array('No' => $row["No"],'weight'=> $weight);
-	$graph_data .= "[".$i.",".$weight."],";
+
+	if($_POST["gtype"]==="year"){//直近1年
+		if($row["beforedate"]<=365){
+			if($maxline<$weight){$maxline=$weight+10;}
+			if($minline>$weight){$minline=$weight-10;}
+			$graph_data .= "[".(356-$row["beforedate"]).",".$weight."],";	
+		}else if($row["beforedate"]<=730){
+			if($maxline<$weight){$maxline=$weight+10;}
+			if($minline>$weight){$minline=$weight-10;}
+			$graph_data2 .= "[".(730-$row["beforedate"]).",".$weight."],";	
+		}
+	}else if($_POST["gtype"]==="all"){//全期間
+		if($maxline<$weight){$maxline=$weight+10;}
+		if($minline>$weight){$minline=$weight-10;}
+		
+		$graph_data .= "[".$i.",".$weight."],";
+	}else{
+		exit();
+	}
+	
 	$i++;
 }
+if($_POST["gtype"]==="year"){//直近1年
+	$btn_name2="全期間";
+	$kikan="all";
+	$glabel1="直近1年";
+	$glabel2="１年前";
+}else if($_POST["gtype"]==="all"){//全期間
+	$btn_name2="直近1年";
+	$kikan="year";
+	$glabel1="全期間";
+	$glabel2="";
+}
+
 //$graph_data = json_encode($dataset, JSON_UNESCAPED_UNICODE);
 //var_dump($shu);
 //exit();
@@ -118,16 +146,25 @@ foreach($dataset_work as $row){
 	<div id="headerArea2">
 		<p class="graph-title"><?php echo $graph_title ?></p>
 		<div id="graph" style='margin-bottom:5px;'></div>
+		<div style='display: flexbox;'>
 			<FORM method="post" action="graph01.php" style='text-align: center;'>
 				<button class='btn btn-primary' type="submit"> <?php echo $btn_name;?> </button>
 				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
 				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
 				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
+				<INPUT type="hidden" name="gtype" value="<?php echo $_POST["gtype"];?>">
 			</FORM>
+			<FORM method="post" action="graph01.php" style='text-align: center;'>
+				<button class='btn btn-primary' type="submit"> <?php echo $btn_name2;?> </button>
+				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
+				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
+				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
+				<INPUT type="hidden" name="gtype" value="<?php echo $kikan;?>">
+			</FORM>
+		</div>
 	</div>
 	<main class='container-fluid' id='app'>
 		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
-			<!--<div v-if='index==0 || (index!==0 && list.ymd !== kintore_log[index-1].ymd)' class='row ymd'>{{list.ymd}}</div>-->
 			<div class='accordion-item'>
 				<div v-if='String(list.jun)==="0"' class='row shu accordion-header'>
 					<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd}${list.shu}`' 
@@ -150,17 +187,22 @@ foreach($dataset_work as $row){
 		</template>
 	</main>
 	<div id="footerArea2" style='text-align: center;'>
-		<!--<button class='btn btn-secondary' style ='margin-top: 1em;'><a href=<?php //echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> style = 'text-decoration: none;'>戻る</a></button>-->
 		<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
 	</div>
-	<script type="text/javascript">
+	<script>
 		(function basic(container) {
-		  var d1 = [<?php echo $graph_data;?>
-		  ],
-		  data = [{
+		  var d1 = [<?php echo $graph_data;?>],
+			d2 = [<?php echo $graph_data2;?>],
+		  data = [
+				{
 		      data: d1,
-		      label: "2017年"
-		  }];
+		      label: "<?php echo $glabel1;?>"
+				},{
+		      data: d2,
+					label: "<?php echo $glabel2;?>"
+		      
+				}
+		  ];
 		  function labelFn(label) {
 		      return label;
 		  }
