@@ -146,15 +146,15 @@ if($_POST["gtype"]==="year"){//直近1年
 	<div id="headerArea2">
 		<p class="graph-title"><?php echo $graph_title ?></p>
 		<div id="graph" style='margin-bottom:5px;'></div>
-		<div style='display: flexbox;'>
-			<FORM method="post" action="graph01.php" style='text-align: center;'>
+		<div class='row' style='text-align: center;'>
+			<FORM method="post" action="graph01.php" style='width:200px;margin-left:50px;;'>
 				<button class='btn btn-primary' type="submit"> <?php echo $btn_name;?> </button>
 				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
 				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
 				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
 				<INPUT type="hidden" name="gtype" value="<?php echo $_POST["gtype"];?>">
 			</FORM>
-			<FORM method="post" action="graph01.php" style='text-align: center;'>
+			<FORM method="post" action="graph01.php" style='width:100px;'>
 				<button class='btn btn-primary' type="submit"> <?php echo $btn_name2;?> </button>
 				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
 				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
