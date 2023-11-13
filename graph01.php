@@ -154,7 +154,7 @@ if($_POST["gtype"]==="year"){//直近1年
 				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
 				<INPUT type="hidden" name="gtype" value="<?php echo $_POST["gtype"];?>">
 			</FORM>
-			<FORM method="post" action="graph01.php" style='width:100px;'>
+			<FORM method="post" action="graph01.php" style='width:130px;'>
 				<button class='btn btn-primary' type="submit"> <?php echo $btn_name2;?> </button>
 				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
 				<INPUT type="hidden" name="id" value="<?php echo $id;?>">

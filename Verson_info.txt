@@ -10,6 +10,7 @@ ver1.03.0:コンディション追加
   ALTER TABLE `tr_condition` CHANGE `id` `id` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
   ALTER TABLE `tr_condition` DROP PRIMARY KEY, ADD PRIMARY KEY(`id`, `ymd`);
 ver1.02.0:トレーニンググラフ表示追加
+ver1.02.1:トレーニンググラフ表示追加
 
 【Issues】
 
