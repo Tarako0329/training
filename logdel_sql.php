@@ -19,18 +19,19 @@ if(isset($_SESSION['USER_ID'])){
 
 try{
   $pdo_h->beginTransaction();
-	$sql = "delete from tr_log where id ='".$id."' and ymd = '".$_POST["k_ymd"]."' and jun = '".$_POST["k_jun"]."'";
-	$stmt = $mysqli->query("LOCK TABLES tr_log WRITE");
-	$stmt = $mysqli->prepare($sql);
+	$sql = "delete from tr_log where id =? and ymd = ? and jun = ?";
+	$stmt = $pdo_h->prepare($sql);
+	$stmt->bindValue(1, $id, PDO::PARAM_STR);
+	$stmt->bindValue(2, $_POST["k_ymd"], PDO::PARAM_STR);
+	$stmt->bindValue(3, $_POST["k_jun"], PDO::PARAM_STR);
 	$stmt->execute();
-	$stmt = $mysqli->query("UNLOCK TABLES");
-
+	$pdo_h->commit();
 }catch(Exception $e){
   $pdo_h->rollBack();
 }
-    //ログイン失敗
-    //リダイレクト
-    header("HTTP/1.1 301 Moved Permanently");
-    header("Location: index.php");
-
+//ログイン失敗
+//リダイレクト
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: index.php");
+exit();
 ?>

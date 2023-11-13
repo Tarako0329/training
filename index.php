@@ -22,7 +22,7 @@ $height = '30';
 		<DIV class='text-center'>
 			<IMG src="img/kanban.png" style="width:300px;">
 		</DIV>
-
+		<MAIN id='main'>
 		<FORM method="post" action="logincheck.php" style='margin-top:30px;'>
 			<DIV style='text-align: center;'>
 				<div style='display:flex; justify-content:center;'>
@@ -55,9 +55,9 @@ $height = '30';
 								<div class='col-1 col-md-0' ></div>
 								<div class='col-10 col-md-7' >
 									<FORM method="post" action="recording.php">
-										<DIV>ＩＤ：<INPUT type="text" class='form-control' name="id2" maxlength="10" style='ime-mode:disabled;'></DIV>
-										<DIV>パスワード：<INPUT type="password" class='form-control' name="pass2" maxlength="10" style=''></DIV>
-										<DIV>名前：<INPUT type="text" class='form-control' name="fname" maxlength="10" style=''></DIV>
+										<DIV>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="10" style='ime-mode:disabled;'></DIV>
+										<DIV>パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="10" style=''></DIV>
+										<DIV>名前：<INPUT required='required' type="text" class='form-control' name="fname" maxlength="10" style=''></DIV>
 										<DIV>身長：<INPUT type="number" class='form-control' step="0.1" name="height" maxlength="10" style=''> cm</DIV>
 										<DIV>性別：
 											<SELECT size="1" name="sex" class='form-select' style=''>
@@ -77,5 +77,18 @@ $height = '30';
 				</div>
 			</div>
 		</div><!--ユーザー登録-->		
+		</MAIN>
+		<script>
+			document.getElementById('main').onkeypress = (e) => {
+				// form1に入力されたキーを取得
+				const key = e.keyCode || e.charCode || 0;
+				// 13はEnterキーのキーコード
+				if (key == 13) {
+					// アクションを行わない
+					console_log('enter 無効');
+					e.preventDefault();
+				}
+			}
+		</script>
 	</BODY>
 </HTML>

@@ -137,17 +137,57 @@
 			</main>
 			<footer class="footerArea">
 			<ul id="menu">
-		  	<li><a href="#" id="taisosiki">体組織</a></li>
+			  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki'>体組織</a></li>
 		  	<li><a href="#" id="running">有酸素系</a></li>
 			  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'>ウェイト</a></li>
 			</ul>
 			</footer>
 			<!--↑footerArea -->
 			<!--↓体組織系記録エリア-->
-			<div class="edit" id="taisosiki-edit" style="height:350px;position:fixed;bottom:55px;display:none;">
-			<?php
-			//edit_taisosiki($id,"0",$enow);
-			?>
+			<div class='modal fade' id='taisosiki' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
+				<div class='modal-dialog  modal-dialog-centered'>
+					<div class='modal-content edit' style=''>
+						<form method = 'post' action='taisosiki_ins.php'>
+							<div class='modal-header'>
+	        			<h5 class="modal-title">体組織の記録</h5>
+  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class='modal-body container'>
+								<div class='row' style='margin:1px 20px;'>
+									<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
+									<input type='date' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
+								</div>
+								<div class='row' style='margin:1px 20px;'>
+									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>体重（KG）</label>
+									<input type='Number' step="0.01" class="form-control form-control-sm" id='shu2' name='weight' >
+								</div>
+								<div class='row' style='margin:1px 20px;'>
+									<label for='sibo' class="form-label" style='padding-left:0;margin-bottom:1px;'>体脂肪率（％）</label>
+									<input type='Number' step="0.01" class="form-control form-control-sm" id='sibo' name='sibo'>
+								</div>
+								<div class='row' style='margin:1px 20px;'>
+									<label for='yobi1' class="form-label" style='padding-left:0;margin-bottom:1px;'>予備１</label>
+									<input type='text' class="form-control form-control-sm" id='yobi1' name='yobi1'>
+								</div>
+								<div class='row' style='margin:1px 20px;'>
+									<label for='yobi2' class="form-label" style='padding-left:0;margin-bottom:1px;'>予備２</label>
+									<input type='text' class="form-control form-control-sm" id='yobi2' name='yobi2'>
+								</div>
+								<div class='row' style='margin:1px 20px;'>
+									<label for='memo' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
+									<input type='text' class="form-control form-control-sm" id='memo' name='memo' value='' placeholder='空腹時・食後など'>
+								</div>
+							</div>
+							<div class='modal-footer'>
+								<button type='button' style='width:90px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" >キャンセル</button><!--キャンセル-->
+								<button type='submit' style='width:90px;' name='btn' value='w_rireki' class="btn btn-primary mbtn" data-bs-dismiss="modal" >履歴</button><!--キャンセル-->
+								<button type='submit' style='width:90px;' name='btn' value='w_ins_bt' class="btn btn-primary mbtn" data-bs-dismiss="modal" >登録</button><!--キャンセル-->
+							</div>
+							<input type='hidden' name='hyoji' value='1'>
+							<input type='hidden' name='gtype' value='all'>
+						</form>
+					</div>
+				</div>
 			</div>
 
 			<!--↓有酸素系記録エリア-->
@@ -483,6 +523,18 @@
 					}
 				}
 			}).mount('#logger');
+			// Enterキーが押された時にSubmitされるのを抑制する
+			document.getElementById('logger').onkeypress = (e) => {
+				// form1に入力されたキーを取得
+				const key = e.keyCode || e.charCode || 0;
+				// 13はEnterキーのキーコード
+				if (key == 13) {
+					// アクションを行わない
+					console_log('enter 無効');
+					e.preventDefault();
+				}
+			}
+
 		</script>
 	</BODY>
 </HTML>

@@ -28,28 +28,10 @@
     header("Location: TOP.php");
     exit();
   }
-  if($_POST["btn"] == "w_rireki"){
-    //体組織記録画面の「履歴」ボタン
-    //リダイレクト
-    header("HTTP/1.1 301 Moved Permanently");
-    header("Location: graph02.php");
-    exit();
-  }
-  if($_POST["btn"] == "w_ins_bt"){
-    //体組織記録画面の「記録」ボタン
-  	$sql = "insert into taisosiki values ('".$_POST["id"]."','".$_POST["ymd"]."','".$_POST["weight"]."','".$_POST["sibo"]."','".$_POST["yobi1"]."','".$_POST["yobi2"]."','','','".$_POST["memo"]."');";
-	$stmt = $mysqli->query("LOCK TABLES taisosiki WRITE");
-	$stmt = $mysqli->prepare($sql);
-	$stmt->execute();
-	$stmt = $mysqli->query("UNLOCK TABLES");
-    //リダイレクト
-    header("HTTP/1.1 301 Moved Permanently");
-    header("Location: graph02.php");
-    exit();
-  } 
-    //ログイン失敗
-    //リダイレクト
-    header("HTTP/1.1 301 Moved Permanently");
-    header("Location: index.php");
-
+   
+  //ログイン失敗
+  //リダイレクト
+  header("HTTP/1.1 301 Moved Permanently");
+  header("Location: index.php");
+  exit();
 ?>

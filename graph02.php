@@ -1,11 +1,9 @@
 <?php
 // 設定ファイルインクルード
-//体組織系のグラフ・履歴画面
 require "config.php";
-//require "functions.php";
 
 $now = date('Y-m-d');
-$hyoji = $_GET['hyoji'];
+$hyoji = $_POST['hyoji'];//最初は１：体重・体脂肪率
 
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
@@ -18,226 +16,193 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	header("Location: index.php");
 }	
 
+//ユーザー確認
+unset($sql);
+$sql = "select * from users where ((id)='".$id."')";
+$result = $mysqli->query( $sql );
+$row_cnt = $result->num_rows;
+$row = $result->fetch_assoc(); 
+if($row_cnt==0){
+	echo "<P>ＩＤ 又はパスワードが間違っています。</P>".$id.$pass;
+	?><a href="index.php"> 戻る</a><?php
+	exit();
+}
+
+
+//履歴取得
+$sql = "select ROW_NUMBER() OVER(partition by id order by id,ymd) as No,taisosiki.*,round(weight*taisibou/100,1) as sibouryou,round(weight-(weight*taisibou/100),1) as josibou 
+from taisosiki where id = ? order by ymd desc ";
+
+$result = $pdo_h->prepare( $sql );
+$result->bindValue(1, $id, PDO::PARAM_STR);
+$result->execute();
+$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
+$dataset = [];
+$kintore_log = json_encode($dataset_work, JSON_UNESCAPED_UNICODE);
+//var_dump($kintore_log);
+//exit();
+
+//ぐらふでーた取得
+if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
+	$graph_title = "『筋骨・脂肪量 の推移』";
+	$btn_name = "体重・体脂肪率へ";
+	$glabel1="徐脂肪";
+	$glabel2="脂肪";
+	$typ=1;
+}else{//total表示
+	$graph_title = "『体重・体脂肪率 の推移』";
+	$btn_name = "筋骨・脂肪量へ";
+	$glabel1="体重";
+	$glabel2="体脂肪率";
+	$typ=0;
+}
+
+$i=1;
+$maxline=0;
+$minline=999999;
+$maxline2=0;
+$minline2=999999;
+$graph_data="";
+$graph_data2="";
+foreach($dataset_work as $row){
+	if($hyoji == "0"){//MAX表示
+		$weight = ($row["josibou"]);
+		$taisibou = ($row["sibouryou"]);
+	}else{
+		$weight = ($row["weight"]);
+		$taisibou = ($row["taisibou"]);
+	}
+
+	if($_POST["gtype"]==="year"){//直近1年
+		if($row["beforedate"]<=365){
+			if($maxline<$weight){$maxline=$weight+10;}
+			if($minline>$weight){$minline=$weight-10;}
+			$graph_data .= "[".(356-$row["beforedate"]).",".$weight."],";	
+		}else if($row["beforedate"]<=730){
+			if($maxline<$weight){$maxline=$weight+10;}
+			if($minline>$weight){$minline=$weight-10;}
+			$graph_data2 .= "[".(730-$row["beforedate"]).",".$weight."],";	
+		}
+	}else if($_POST["gtype"]==="all"){//全期間
+		if($maxline<$weight){$maxline=$weight+10;}
+		if($minline>$weight){$minline=$weight-10;}
+		$graph_data .= "[".$row["No"].",".$weight."],";
+
+		if($maxline2<$taisibou){$maxline2=$taisibou+2;}
+		if($minline2>$taisibou){$minline2=$taisibou-1;}
+		$graph_data2 .= "[".$row["No"].",".$taisibou."],";
+	}else{
+		echo "are?";
+		exit();
+	}
+	
+	$i++;
+}
+if($_POST["gtype"]==="year"){//直近1年
+	$btn_name2="全期間";
+	$kikan="all";
+}else if($_POST["gtype"]==="all"){//全期間
+	$btn_name2="直近1年";
+	$kikan="year";
+}
+
+//var_dump($graph_data);
+//exit();
 ?>
 <HTML>
 <HEAD>
-<?php
-	require "header.php";
-?>
-<TITLE>肉体改造ネットワーク</TITLE>
+	<?php
+		require "header.php";
+	?>
+	<TITLE>肉体改造ネットワーク</TITLE>
 </HEAD>
 <BODY class = "graphe">
-
-<?php
-//履歴取得
-
-$sql = "select *,weight*taisibou/100 as sibouryou,weight-(weight*taisibou/100) as josibou from taisosiki where id = '".$id."' order by ymd desc ";
-$result = $mysqli->query( $sql );
-$row_cnt = $result->num_rows;
-//$Lcounter = 0;
-//$seq = 1;
-echo "<CENTER>";
-echo "<TABLE cellSpacing='0' border='0' >";
-echo "<TR style='font-size:12px'><TD class = 'lst' align='CENTER'>日付</TD><TD class = 'lst' align='CENTER'>体重</TD><TD class = 'lst' align='right'>体脂肪率</TD><TD class = 'lst' align='right'>脂肪量</TD><TD class = 'lst' align='right'>筋骨</TD></TR>";
-
-while($row = $result->fetch_assoc()){
-	//$link = "tr_edit.php?id=".$id."&pass=".$pass."&ymd=".$row["ymd"]."&jun=".$row["jun"];
-	
-	echo "<TR>";
-	echo "<TD class = 'lst' align='right' >".$row["ymd"].".</TD><TD class = 'lst' align='right' width='55'>".number_format($row["weight"],1)."kg</TD>";
-	echo "<TD class = 'lst' align='right' width='55'>".$row["taisibou"]."%</TD><TD class = 'lst' align='right' width='55'>".number_format($row["sibouryou"],1)."kg</TD>";
-	echo "<TD class = 'lst' align='right' width='60'> ".number_format($row["josibou"],1)."kg</TD>";
-	echo "</TR>";
-}
-?>
-</TABLE>
-</CENTER>
-
-<div id="headerArea2">
-<?php 
-
-if($hyoji == "0"){ ?>
-	<p class="graph-title">『筋骨・脂肪量 の推移』</p>
-<?php }else{ ?>
-	<p class="graph-title">『体重・体脂肪率 の推移』</p>
-<?php } ?>
-<div id="graph"></div>
-<script type="text/javascript">
-(function basic(container) {
-
-<?php
-	$Lcounter = 1;
-	$gymd = "";
-	$min_weight1 = 99999; //最小重量・グラフの最小値に使用
-	$max_weight1 = 0;
-	$min_weight2 = 99999; //最小重量・グラフの最小値に使用
-	$max_weight2 = 0;
-	$label1 = "";
-	$label2 = "";
-	
-	if($hyoji == "0"){//脂肪・除脂肪体重の表示
-	    $label1 = "筋骨等";
-	    $label2 = "脂肪";
-	    //除脂肪体重のリスト取得
-	    //取得結果配列を最初の行に戻す
-        $result->data_seek($row_cnt-1);
-	    echo "    var d1 = [";
-		while($Lcounter <= $row_cnt+1){
-		    $row = $result->fetch_assoc();
-			if(strtotime($gymd) < strtotime($row["ymd"])){
-				$M_weigt = number_format($row["josibou"],1);
-				echo "[".$Lcounter.",".$M_weigt."],";
-				$Lcounter = $Lcounter + 1;
-				$gymd = $row["ymd"];
-				if($min_weight1 > $M_weigt){
-					$min_weight1 = (number_format($M_weigt,1)) - 20;
+	<div id="headerArea2">
+		<p class="graph-title"><?php echo $graph_title ?></p>
+		<div id="graph" style='margin-bottom:5px;'></div>
+		<div class='row' style='text-align: center;'>
+			<FORM method="post" action="graph02.php" style='width:200px;margin-left:50px;;'>
+				<button class='btn btn-primary' type="submit"> <?php echo $btn_name;?> </button>
+				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
+				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
+				<INPUT type="hidden" name="gtype" value="<?php echo $_POST["gtype"];?>">
+			</FORM>
+			<FORM method="post" action="graph02.php" style='width:130px;'>
+				<button class='btn btn-primary' type="submit"> <?php echo $btn_name2;?> </button>
+				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
+				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
+				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
+				<INPUT type="hidden" name="gtype" value="<?php echo $kikan;?>">
+			</FORM>
+		</div>
+	</div>
+	<main class='container-fluid' id='app'>
+		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.No'>
+			<div class='row lst'>
+				<div class='col-4 text-center' style='padding:0;'>{{list.ymd}}</div>
+				<div class='col-2 text-end' style='padding:0;'>{{list.weight}}kg</div>
+				<div class='col-2 text-end' style='padding:0;'>{{list.taisibou}}%</div>
+				<div class='col-2 text-end' style='padding:0;'>{{list.sibouryou}}kg</div>
+				<div class='col-2 text-end' style='padding:0;'>{{list.josibou}}kg</div>
+				<div class='col-12 text-end' style='padding:0;'>{{list.memo}}</div>
+			</div>
+			
+		</template>
+	</main>
+	<div id="footerArea2" style='text-align: center;'>
+		<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
+	</div>
+	<script>
+		(function basic(container) {
+		  var d1 = [<?php echo $graph_data;?>],
+			d2 = [<?php echo $graph_data2;?>],
+		  data = [
+				{
+		      data: d1,
+		      label: "<?php echo $glabel1;?>"
+				},{
+		      data: d2,
+					label: "<?php echo $glabel2;?>",
+		      yaxis:2
 				}
-				if($max_weight1 < $M_weigt){
-					$max_weight1 = (number_format($M_weigt,1)) + 5;
+		  ];
+		  function labelFn(label) {
+		      return label;
+		  }
+		  graph = Flotr.draw(container, data, {
+				yaxis:{
+					min:<?php echo $minline; ?>,        //y軸の最小値を設定
+					max:<?php echo $maxline; ?>,        //y軸の最大値を設定
+					title:"<?php echo $glabel1;?>"
+				}, //y軸にタイトルを表示
+				y2axis:{
+					min:<?php echo $minline2; ?>,        //y軸の最小値を設定
+					max:<?php echo $maxline2; ?>,        //y軸の最大値を設定
+					title:"<?php echo $glabel2;?>"
+				}, //y軸にタイトルを表示
+		  	legend: {
+		      position: 'se',
+		      labelFormatter: labelFn,
+		      backgroundColor: "#D2E8FF"
+		  	},
+		    HtmlText: false
+		  });
+		})(document.getElementById("graph"));
+	</script>
+	<script>//Vus.js
+		const { createApp, ref, onMounted, computed, VueCookies,watch } = Vue;
+		createApp({
+			setup(){
+				const kintore_log = ref(<?php echo $kintore_log;?>)
+				onMounted(() => {
+					console_log('onMounted')
+				})
+				return{
+					kintore_log,
 				}
-				
-			}else{
-			    $Lcounter = $Lcounter + 1;
 			}
-			$result->data_seek($row_cnt-$Lcounter);
-		}
-		echo "    ],";
-	    //脂肪料のリスト取得
-	    //取得結果配列を最初の行に戻す
-        $result->data_seek($row_cnt-1);
-        $Lcounter = 1;
-        $gymd = "";
-	    echo "    d2 = [";
-		while($Lcounter <= $row_cnt+1){
-		    $row = $result->fetch_assoc();
-			if(strtotime($gymd) < strtotime($row["ymd"])){
-				$M_weigt = number_format($row["sibouryou"],1);
-				echo "[".$Lcounter.",".$M_weigt."],";
-				$Lcounter = $Lcounter + 1;
-				$gymd = $row["ymd"];
-				if($min_weight2 > $M_weigt){
-					$min_weight2 = (number_format($M_weigt,1)) - 1;
-				}
-				if($max_weight2 < $M_weigt){
-					$max_weight2 = (number_format($M_weigt,1)) + 3;
-				}
-				
-			}else{
-			    $Lcounter = $Lcounter + 1;
-			}
-			$result->data_seek($row_cnt-$Lcounter);
-		}
-	}else{//体重・体脂肪率
-	    $label1 = "体重";
-	    $label2 = "体脂肪率";
-	    //体重のリスト取得
-	    //取得結果配列を最初の行に戻す
-        $result->data_seek($row_cnt-1);
-	    echo "    var d1 = [";
-		while($Lcounter <= $row_cnt+1){
-		    $row = $result->fetch_assoc();
-			if(strtotime($gymd) < strtotime($row["ymd"])){
-				$M_weigt = number_format($row["weight"],1);
-				echo "[".$Lcounter.",".$M_weigt."],";
-				$Lcounter = $Lcounter + 1;
-				$gymd = $row["ymd"];
-				if($min_weight1 > $M_weigt){
-					$min_weight1 = (number_format($M_weigt,1)) - 10;
-				}
-				if($max_weight1 < $M_weigt){
-					$max_weight1 = (number_format($M_weigt,1)) + 5;
-				}
-				
-			}else{
-			    $Lcounter = $Lcounter + 1;
-			}
-			$result->data_seek($row_cnt-$Lcounter);
-		}
-		echo "    ],";
-	    //体脂肪率のリスト取得
-	    //取得結果配列を最初の行に戻す
-        $result->data_seek($row_cnt-1);
-        $Lcounter = 1;
-        $gymd = "";
-	    echo "    d2 = [";
-		while($Lcounter <= $row_cnt+1){
-		    $row = $result->fetch_assoc();
-			if(strtotime($gymd) < strtotime($row["ymd"])){
-				$M_weigt = number_format($row["taisibou"],1);
-				echo "[".$Lcounter.",".$M_weigt."],";
-				$Lcounter = $Lcounter + 1;
-				$gymd = $row["ymd"];
-				if($min_weight2 > $M_weigt){
-					$min_weight2 = (number_format($M_weigt,1)) - 1;
-				}
-				if($max_weight2 < $M_weigt){
-					$max_weight2 = (number_format($M_weigt,1)) + 1;
-				}
-				
-			}else{
-			    $Lcounter = $Lcounter + 1;
-			}
-			$result->data_seek($row_cnt-$Lcounter);
-		}
-	}
-?>
-    ],
-    data = [{
-        data: d1,
-        label: "<?php echo $label1 ?>"
-    },{
-        data: d2,
-        label: "<?php echo $label2 ?>",
-        yaxis:2
-        
-}];
-
-    function labelFn(label) {
-        return label;
-    }
-
-    graph = Flotr.draw(container, data, {
-		yaxis:{
-		    color:'#1E90FF',
-			min:<?php echo $min_weight1 ?>,        //y軸の最小値を設定
-			max:<?php echo $max_weight1 ?>},       //y軸の最大値を設定
-		y2axis:{
-		    color:'#6B8E23',
-			min:<?php echo $min_weight2 ?>,        //y軸の最小値を設定
-			max:<?php echo $max_weight2 ?>},       //y軸の最大値を設定
-        legend: {
-            position: "se",
-            labelFormatter: labelFn,
-            backgroundColor: "#D2E8FF"
-        },
-        HtmlText: false
-    });
-})(document.getElementById("graph"));
-</script>
-<CENTER>
-<FORM method="get" action="graph02.php">
-<?php
-if($hyoji == "0"){ ?>
-	<INPUT type="hidden" name="hyoji" value=1>
-	<button type="submit"> 体重・体脂肪率 の推移へ </button>
-<?php }else{ ?>
-	<INPUT type="hidden" name="hyoji" value=0>
-	<button type="submit"> 筋骨・脂肪量 の推移へ </button>
-<?php } ?>
-<INPUT type="hidden" name="id" value="<?php echo $id?>">
-</CENTER>
-
-</div>
-
-<div id="footerArea2">
-<CENTER>
-<button style ='margin-top: 1em;'><a href=<?php echo "'TOP.php'" ?> style = 'text-decoration: none;'>　戻る　</a></button>
-</CENTER>
-</div>
-
-<?php
-$mysqli->close();
-?>
+		}).mount('#app');
+	</script>
 
 </BODY>
 </HTML>
