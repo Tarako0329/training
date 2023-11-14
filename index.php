@@ -2,6 +2,7 @@
 if (isset($_COOKIE['token'])) {
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: logincheck.php");
+	exit();
 }
 
 require "config.php";

@@ -5,9 +5,9 @@
  
  
   //パラメーター取得
-  $id = $_POST['id'];
-  $pass = passEx($_POST["pass"],$id);
-  $auto = $_POST['auto'];
+  $id = !empty($_POST['id'])?$_POST['id']:0;
+  $pass = passEx(!empty($_POST['pass'])?$_POST['id']:0,$id);
+  $auto = !empty($_POST['auto'])?$_POST['id']:0;
   $cookie_token = $_COOKIE['token'];
  
   //ログイン判定フラグ 0:ok 1:ng
@@ -62,12 +62,14 @@
     //リダイレクト
     header("HTTP/1.1 301 Moved Permanently");
     header("Location: TOP.php");
+    exit();
   } else {
     //ログイン失敗
   	
     //リダイレクト
     header("HTTP/1.1 301 Moved Permanently");
     header("Location: index.php");
+    exit();
   }
 
 //---------------------------------------------------------------------------//

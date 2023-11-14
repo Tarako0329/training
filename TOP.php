@@ -32,6 +32,7 @@
 	  '金', //5
 	  '土', //6
 	];
+	/*
 	if($_POST["btn"] == "ユーザー登録"){
 		$id = ($_POST["id2"]);
 		$pass = passEx($_POST["pass2"],$id);
@@ -45,7 +46,7 @@
 		$stmt->execute();
 		$stmt = $pdo_h->query("UNLOCK TABLES");
 		$user_name = $fname;
-	}else{
+	}else{*/
 		//ユーザー確認
 		unset($sql);
 
@@ -64,7 +65,7 @@
 
 		$user_name = rot13decrypt($row[0]["name"]);
 		//echo "ログインＯＫ<BR>";
-	}
+	//}
 
 	//履歴取得
 	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd) as total,RANK() OVER(PARTITION BY log.id,log.ymd,shu order by jun ) as setjun 
@@ -404,7 +405,7 @@
 				setup(){
 					const kintore_log = (<?php echo $kintore_log;?>)
 					const id = ref('<?php echo $id;?>')
-					const pass = ref('<?php echo $pass;?>')
+					//const pass = ref('<?php //echo $pass;?>')
 					const week = (date) =>{
 						const WeekChars = [ "(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)" ];
 						let dObj = new Date( date );
@@ -622,7 +623,7 @@
 						kiroku_index,
 						input_select,
 						id,
-						pass,
+						//pass,
 						mBtnName,
 						Num,
 						ymd,
