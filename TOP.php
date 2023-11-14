@@ -159,7 +159,7 @@
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>体重（KG）</label>
-									<input type='Number' step="0.01" class="form-control form-control-sm" id='shu2' name='weight' >
+									<input type='Number' step="0.01" class="form-control form-control-sm" id='shu2' name='weight' required='required'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='sibo' class="form-label" style='padding-left:0;margin-bottom:1px;'>体脂肪率（％）</label>
@@ -213,7 +213,7 @@
 										<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
 									</div>
 								</Transition>
-								<div v-if='keybord_show===false && shu2===""' class='row' style='margin:1px 20px;'>
+								<div class='row' style='margin:1px 20px;'>
 									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
 									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
 										<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
@@ -222,9 +222,9 @@
 									</select>
 								</div>
 								<Transition>
-									<div v-if='keybord_show===false && shu2==""' class='row' style='margin:1px 20px;'>
+									<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
 										<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
-										<input type='text' @focus='keydown' class="form-control form-control-sm" id='shu2' name='shu2' v-model='shu2' placeholder='リストにない場合は手入力'>
+										<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力'>
 									</div>
 								</Transition>
 								<div class='row' style='margin:1px 10px;'>
@@ -337,11 +337,11 @@
 						return kintore_log
 					})
 					const shumoku_wt = ref(<?php echo $shumoku_wt_list;?>)
-					const kiroku = ref([])
+					const kiroku = ref(['','','',''])
 					const kiroku_index = ref('')
 					const keybord_show = ref(false)
 					const setindex = (i) =>{
-						console_log('setindex')
+						console_log(`setindex:${i}`)
 						kiroku_index.value = Number(i)
 						keybord_show.value=true
 					}
@@ -378,7 +378,9 @@
 							before_val = "."
 						}else if((Number(e.target.innerHTML) >= 0 && Number(e.target.innerHTML)<=9 && e.target.innerHTML !== '') || before_val==='.'){
 							console_log('key input')
-							if(before_val==='.'){
+							if(kiroku.value[kiroku_index.value]==''){
+								kiroku.value[kiroku_index.value] = e.target.innerHTML.toString()
+							}else if(before_val==='.'){
 								kiroku.value[kiroku_index.value] = Number(kiroku.value[kiroku_index.value].toString() + '.' + e.target.innerHTML.toString())
 							}else{
 								kiroku.value[kiroku_index.value] = Number(kiroku.value[kiroku_index.value].toString() + e.target.innerHTML.toString())
@@ -392,7 +394,7 @@
 					}
 					const input_select = ref([['form-control','form-control-sm',''],['form-control','form-control-sm',''],['form-control','form-control-sm',''],['form-control','form-control-sm','']])
 					watch([kiroku_index],()=>{
-						console_log('watch')
+						console_log('watch kiroku_index')
 						console_log(input_select.value)
 						input_select.value.forEach((row,index)=>{
 							if(index===kiroku_index.value){
@@ -493,6 +495,12 @@
 						
     				form.submit();						
 					}
+					const add_shumoku_wt = (e) =>{
+						console_log(`add_shumoku_wt e:${e.target.value}`)
+						shumoku_wt.value.unshift({shu:e.target.value,sort:''})
+						shu.value = e.target.value
+					}
+						
 					onMounted(() => {
 						console_log('onMounted')
 					})
@@ -520,6 +528,7 @@
 						delete_log,
 						GoGrapho01,
 						shu2,
+						add_shumoku_wt,
 					}
 				}
 			}).mount('#logger');
