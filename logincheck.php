@@ -70,5 +70,26 @@
     header("Location: index.php");
   }
 
+//---------------------------------------------------------------------------//
+// ログイン処理
+//---------------------------------------------------------------------------//
+function check_user($id, $pass) {
+//	$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
 
+	unset($sql);
+	$sql = "select * from users where ((id)=?) and ((pass)=?)";
+	$stmt = $pdo_h->prepare($sql);
+	$stmt->bindValue(1, $id, PDO::PARAM_STR);
+	$stmt->bindValue(2, $pass, PDO::PARAM_STR);
+	$stmt->execute();
+	$row_cnt = $stmt->rowCount();
+	//$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	if($row_cnt==0){
+		echo "<P>ＩＤ 又はパスワードが間違っています。</P>".$id.$pass;
+		?><a href="index.php"> 戻る</a><?php
+		exit();
+	}
+	return 0;
+ }
+ 
 ?>

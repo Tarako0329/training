@@ -5,6 +5,8 @@ date_default_timezone_set('Asia/Tokyo');
 require "./vendor/autoload.php";
 require "functions.php";
 
+
+
 //.envの取得
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -26,19 +28,10 @@ $pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
 // =========================================================
 //データベース設定
 
-define("sv", $_ENV["SV"]);
-define("user", $_ENV["DBUSER"]);
-define("pass", $_ENV["PASS"]);
-
 define("key","bonBer");
-define("dbname", $_ENV["DBNAME"]);
-
-$mysqli = new mysqli(sv, user, pass, dbname);
-$mysqli->set_charset("utf8mb4");
 // =========================================================
 // MySQLエラーレポート用共通宣言
 // =========================================================
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 
 
@@ -53,8 +46,6 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 // =========================================================
 // 自動ログインチェック
 // =========================================================
-
-
 
 
 ?>

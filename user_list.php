@@ -20,10 +20,13 @@ $pass = ($_GET["pass"]);
 <?php
 	//ユーザー確認
 	unset($sql);
-	$sql = "select * from users where ((id)='".$id."') and ((pass)='".$pass."')";
-	$result = $mysqli->query( $sql );
-	$row_cnt = $result->num_rows;
-	$row = $result->fetch_assoc(); 
+	$sql = "select * from users where ((id)=?) and ((pass)=?)";
+	$stmt = $pdo_h->query( $sql );
+	$stmt->bindValue(1, $id, PDO::PARAM_STR);
+	$stmt->bindValue(2, $pass, PDO::PARAM_STR);
+	$stmt->execute();
+	$row_cnt = $stmt->rowCount();
+
 	if($row_cnt==0){
 		echo "<P>ＩＤ 又はパスワードが間違っています。</P>".$id.$pass;
 		?><a href="index.php"> 戻る</a><?php
@@ -31,8 +34,8 @@ $pass = ($_GET["pass"]);
 	}
 	$user_name = rot13decrypt($row["name"]);
 	$sql = "select * from users order by id";
-	$result = $mysqli->query( $sql );
-	while($row = $result->fetch_assoc()){
+	$result = $pdo_h->query( $sql );
+	while($row = $result->fetch(PDO::FETCH_ASSOC)){
 		echo "<a href='TOP.php?user=V".$row["id"]."'>".rot13decrypt($row["name"])."</a><br>";
 	}
 ?>
@@ -46,13 +49,5 @@ $pass = ($_GET["pass"]);
 <button type="button" onClick="history.back()"> 戻る </button>
 </div>
 </CENTER>
-<?php
-
-
-
-$mysqli->close();
-
-?>
-
 </BODY>
 </HTML>

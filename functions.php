@@ -67,45 +67,28 @@ function max_r($wt, $rep){
 	
 }
 
-//---------------------------------------------------------------------------//
-// ログイン処理
-//---------------------------------------------------------------------------//
-function check_user($id, $pass) {
-    $mysqli = new mysqli(sv, user, pass, dbname);
 
-	unset($sql);
-	$sql = "select * from users where ((id)='".$id."') and ((pass)='".$pass."')";
-	$result = $mysqli->query( $sql );
-	$row_cnt = $result->num_rows;
-	$row = $result->fetch_assoc(); 
-	if($row_cnt==0){
-		echo "<P>ＩＤ 又はパスワードが間違っています。</P>".$id.$pass;
-		?><a href="index.php"> 戻る</a><?php
-		exit();
-	}
-	return 0;
- }
- 
  
 //---------------------------------------------------------------------------//
 //自動ログイン処理
 //--------------------------------------------------------------------------//
  function check_auto_login($token) {
-    $mysqli = new mysqli(sv, user, pass, dbname);
- 
+	$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
   //2週間前の日付を取得
 	$date = new DateTime("- 14 days");
 	unset($sql);
  	$datetime = $date->format('Y-m-d H:i:s');
 
-	$sql = "SELECT * FROM AUTO_LOGIN WHERE TOKEN = '".$token."' AND REGISTRATED_TIME >= '".$datetime."';";
+	$sql = "SELECT * FROM AUTO_LOGIN WHERE TOKEN = ? AND REGISTRATED_TIME >= ?;";
 
-	$result = $mysqli->query( $sql );
-
-	$row_cnt = $result->num_rows;
+	$stmt = $pdo_h->prepare($sql);
+	$stmt->bindValue(1, $token, PDO::PARAM_STR);
+	$stmt->bindValue(2, $datetime, PDO::PARAM_STR);
+	$stmt->execute();
+	$row_cnt = $stmt->rowCount();
 
 	if ($row_cnt == 1) {
-    	while ($row = $result->fetch_assoc()) {
+    	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
      		$_SESSION['USER_ID']  = $row['USER_ID'];
     	}
   	} else {
@@ -125,14 +108,17 @@ function check_user($id, $pass) {
 //トークンの登録
 //---------------------------------------------------------------------------//
  function register_token($id, $token) {
-    $mysqli = new mysqli(sv, user, pass, dbname);
+	$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
 
-    //プレースホルダで SQL 作成
-    $sql = "INSERT INTO AUTO_LOGIN ( USER_ID, TOKEN, REGISTRATED_TIME) VALUES ('".$id."','".$token."','".date('Y-m-d H:i:s')."');";
-  
-    //パラメーターの型を指定
-    $stmt = $mysqli->prepare($sql);
-  
+  //プレースホルダで SQL 作成
+  $sql = "INSERT INTO AUTO_LOGIN ( USER_ID, TOKEN, REGISTRATED_TIME) VALUES (?,?,?);";
+
+  //パラメーターの型を指定
+  $stmt = $pdo_h->prepare($sql);
+	$stmt->bindValue(1, $id, PDO::PARAM_STR);
+	$stmt->bindValue(2, $token, PDO::PARAM_STR);
+	$stmt->bindValue(3, date('Y-m-d H:i:s'), PDO::PARAM_STR);
+		
     //パラメーターを渡して SQL 実行
 	$stmt->execute();
  	
@@ -144,16 +130,17 @@ function check_user($id, $pass) {
 //トークンの削除
 //---------------------------------------------------------------------------//
 function delete_old_token($token) {
-    //DB接続
-    $mysqli = new mysqli(sv, user, pass, dbname);
- 
-    //プレースホルダで SQL 作成
-    $sql = "DELETE  FROM AUTO_LOGIN WHERE TOKEN = '".$token."'";
-  
-    //パラメーターの型を指定
-    $stmt = $mysqli->prepare($sql);
-  
-    //パラメーターを渡して SQL 実行
+  //DB接続
+  $pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+
+  //プレースホルダで SQL 作成
+  $sql = "DELETE  FROM AUTO_LOGIN WHERE TOKEN = ?";
+
+  //パラメーターの型を指定
+	$stmt = $pdo_h->prepare($sql);
+	$stmt->bindValue(1, $token, PDO::PARAM_STR);
+	
+  //パラメーターを渡して SQL 実行
 	$stmt->execute();
  	return 0;
 }

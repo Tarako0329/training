@@ -17,20 +17,8 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }else{
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: index.php");
-}	
-
-//ユーザー確認
-unset($sql);
-$sql = "select * from users where ((id)='".$id."')";
-$result = $mysqli->query( $sql );
-$row_cnt = $result->num_rows;
-$row = $result->fetch_assoc(); 
-if($row_cnt==0){
-	echo "<P>ＩＤ 又はパスワードが間違っています。</P>".$id.$pass;
-	?><a href="index.php"> 戻る</a><?php
 	exit();
-}
-
+}	
 
 //履歴取得
 if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
