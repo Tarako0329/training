@@ -138,7 +138,7 @@
 			<footer class="footerArea">
 			<ul id="menu">
 			  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki'>体組織</a></li>
-		  	<li><a href="#" id="running">有酸素系</a></li>
+			  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'>有酸素系</a></li>
 			  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'>ウェイト</a></li>
 			</ul>
 			</footer>
@@ -191,19 +191,12 @@
 			</div>
 
 			<!--↓有酸素系記録エリア-->
-			<div class="edit" id="usanso-edit" style="height:370px;position:fixed;bottom:55px;display:none;">
-			<?php
-			//edit_usanso($id,"0",$enow);
-			?>
-			</div>
-
-			<!--↓ウェイト記録エリア-->
-			<div class='modal fade' id='edit_wt' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
+			<div class='modal fade' id='usanso' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
 						<form method = 'post' action='logInsUpd_sql.php'>
 							<div class='modal-header'>
-	        			<h5 class="modal-title">トレーニング記録</h5>
+	        			<h5 class="modal-title">有酸素トレーニング</h5>
   	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class='modal-body container'>
@@ -223,6 +216,124 @@
 								</div>
 								<Transition>
 									<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
+										<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
+										<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力'>
+									</div>
+								</Transition>
+								<div class='row' style='margin:1px 10px;'>
+									<label class="form-label" style='padding-left:0;margin-bottom:1px;'>重量</label>
+								</div>
+								<div class='row' style='margin:1px 0px 1px 20px;display:flexbox;'>
+									<input type='number' :class="input_select[0]" readonly style='width:70px;padding:6 6;' @Click='setindex(0)' name='weight' :value="kiroku[0]" required='required'><span style='padding:8px 0 0 5px;width:40px;'>kg x</span>
+									<input type='number' :class="input_select[1]" readonly style='width:50px;padding:6 6;' @Click='setindex(1)' name='rep' :value="kiroku[1]" required='required'>
+									<select class="form-select form-select-sm" style='width:50px;padding-left:5px;padding-right:15px;margin-left:5px;' name='tani' required='required'>
+										<option value='0' selected>回</option>
+										<option value='1'>秒</option>
+									</select><span style='padding:8px 0 0 5px;width:15px;'>x</span>
+									<input type='number' :class="input_select[2]" readonly style='width:40px;padding:6 6;' @Click='setindex(2)' name='sets' :value="kiroku[2]" required='required'><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
+								</div>
+								<div class='row' style='margin:1px 20px;'>
+									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>内 有補助回数</label>
+									<input type='number' :class="input_select[3]" readonly style='width:50px;' id='rep2' @Click='setindex(3)' name='rep2' :value="kiroku[3]">
+								</div>
+								<Transition>
+									<template v-if='keybord_show'>
+										<div class='row' style='margin:15px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
+										</div>
+									</template>
+								</Transition>
+								<Transition>
+									<template v-if='keybord_show'>
+										<div class='row' style='margin:1px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>5</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
+										</div>
+									</template>
+								</Transition>
+								<Transition>
+									<template v-if='keybord_show'>
+										<div class='row' style='margin:1px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>8</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
+										</div>
+									</template>
+								</Transition>
+								<Transition>
+									<template v-if='keybord_show'>
+										<div class='row' style='margin:1px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
+											<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
+										</div>
+									</template>
+								</Transition>
+								<Transition>
+									<template v-if='keybord_show'>
+										<div class='row' style='margin:1px 20px 1px 20px;'>
+											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='-1'>≪</button>
+											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='1'>≫</button>
+										</div>
+									</template>
+								</Transition>
+
+								<div class='row' style='margin:1px 20px;'>
+								</div>
+
+								<div class='row' style='margin:1px 20px;'>
+									<label for='memo' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo' name='memo' :value="memo">
+								</div>
+								<div class='row' style='margin:1px 20px;'>
+									<label for='condition' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='condition' name='condition' value='' placeholder='好調・寝不足・調整日など'>
+								</div>
+							</div>
+							<div class='modal-footer'>
+								<template v-if='mBtnName[0]==="更新"'>
+									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(Num,motoymd)'>削除</button>
+								</template>
+								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel'>{{mBtnName[1]}}</button><!--キャンセル-->
+								<input type='submit'  class="btn btn-primary mbtn" :value='mBtnName[0]'>{{}}<!--登録・更新-->
+							</div>
+							<INPUT type="hidden" name="typ" value="1">
+							<INPUT type="hidden" name="NO" :value="Num">
+							<INPUT type="hidden" name="motoYMD" :value="motoymd">
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<!--↓ウェイト記録エリア-->
+			<div class='modal fade' id='edit_wt' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
+				<div class='modal-dialog  modal-dialog-centered'>
+					<div class='modal-content edit' style=''>
+						<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit' id='wt'>
+							<div class='modal-header'>
+	        			<h5 class="modal-title">トレーニング記録</h5>
+  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class='modal-body container'>
+								<Transition>
+									<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
+										<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
+										<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
+									</div>
+								</Transition>
+								<div class='row' style='margin:1px 20px;'>
+									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
+									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
+										<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
+											<option :value='`${list.shu}`'>{{list.shu}}</option>
+										</template>
+									</select>
+								</div>
+								<Transition>
+									<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
 										<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
 										<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力'>
 									</div>
@@ -337,7 +448,7 @@
 						return kintore_log
 					})
 					const shumoku_wt = ref(<?php echo $shumoku_wt_list;?>)
-					const kiroku = ref(['','','',''])
+					const kiroku = ref(['','','',0])
 					const kiroku_index = ref('')
 					const keybord_show = ref(false)
 					const setindex = (i) =>{
@@ -500,6 +611,28 @@
 						shumoku_wt.value.unshift({shu:e.target.value,sort:''})
 						shu.value = e.target.value
 					}
+					const OnSubmit = (e) =>{
+						console_log(`OnSubmit e:${e.target.id}`)
+						if(e.target.id==='wt'){
+							keybord_show.value=false
+							if(!ymd.value){
+								alert('日付が未入力です')
+								return
+							}else if(!kiroku.value[0]){
+								alert('重量が未入力です')
+								return
+							}else if(!kiroku.value[1]){
+								alert('回数が未入力です')
+								return
+							}else if(!kiroku.value[2]){
+								alert('セット数が未入力です')
+								return
+							}else if(!kiroku.value[0]){
+								kiroku.value[0]=0
+							}
+						}
+						e.target.submit()
+					}
 						
 					onMounted(() => {
 						console_log('onMounted')
@@ -529,6 +662,7 @@
 						GoGrapho01,
 						shu2,
 						add_shumoku_wt,
+						OnSubmit,
 					}
 				}
 			}).mount('#logger');
