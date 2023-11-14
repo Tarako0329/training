@@ -74,7 +74,7 @@
 // ログイン処理
 //---------------------------------------------------------------------------//
 function check_user($id, $pass) {
-//	$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+	$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
 
 	unset($sql);
 	$sql = "select * from users where ((id)=?) and ((pass)=?)";

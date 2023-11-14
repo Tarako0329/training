@@ -120,7 +120,8 @@
 						<div v-if='index==0 || (index!==0 && list.shu !== log_edit[index-1].shu)' class='row shu accordion-header'>
 							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
 							aria-expanded='false' aria-controls='collapseOne' >
-								{{list.shu}} {{Number(list.total).toLocaleString()}}kg
+								{{list.shu}} 
+								<template v-if="list.typ==='0'">{{Number(list.total).toLocaleString()}}kg</template>
 							</button>
 							<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style='width:25px;padding:2px;position: absolute; right: 10;'>
 							<i class='fa fa-line-chart' ></i></button>
