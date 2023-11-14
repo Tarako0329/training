@@ -7,7 +7,7 @@
     //新規ユーザ登録画面の「登録」ボタン
 	$id = ($_POST["id2"]);
 	$sql = "select * from users where ((id)=?)";
-	$stmt = $pdo_h->query( $sql );
+	$stmt = $pdo_h->prepare( $sql );
 	$stmt->bindValue(1, $id, PDO::PARAM_STR);
 	$stmt->execute();
 	$row_cnt = $stmt->rowCount();
@@ -23,8 +23,8 @@
 	$stmt = $pdo_h->prepare($sql);
 	$stmt->bindValue(1, $id, PDO::PARAM_STR);
 	$stmt->bindValue(2, $pass, PDO::PARAM_STR);
-	$stmt->bindValue(3, rot13encrypt($fname), PDO::PARAM_STR);
-	$stmt->bindValue(4, $sex, PDO::PARAM_STR);
+	$stmt->bindValue(3, rot13encrypt($_POST['fname']), PDO::PARAM_STR);
+	$stmt->bindValue(4, $_POST['sex'], PDO::PARAM_STR);
 	$stmt->bindValue(5, $_POST['height'], PDO::PARAM_INT);
 	$stmt->execute();
     $_SESSION['USER_ID'] = $id;
