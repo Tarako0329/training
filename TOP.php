@@ -122,7 +122,7 @@
 							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
 							aria-expanded='false' aria-controls='collapseOne' >
 								{{list.shu}} 
-								<template v-if="list.typ==='0'">{{Number(list.total).toLocaleString()}}kg</template>
+								<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
 							</button>
 							<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style='width:25px;padding:2px;position: absolute; right: 10;'>
 							<i class='fa fa-line-chart' ></i></button>
@@ -168,7 +168,7 @@
 			</ul>
 			</footer>
 			<!--↑footerArea -->
-			<!--↓体組織系記録エリア-->
+			<!--↓体組織系記録モーダル-->
 			<div class='modal fade' id='taisosiki' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
@@ -215,7 +215,7 @@
 				</div>
 			</div>
 
-			<!--↓有酸素系記録エリア-->
+			<!--↓有酸素系記録モーダル-->
 			<div class='modal fade' id='usanso' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
@@ -280,7 +280,7 @@
 				</div>
 			</div>
 
-			<!--↓ウェイト記録エリア-->
+			<!--↓ウェイト記録モーダル-->
 			<div class='modal fade' id='edit_wt' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
