@@ -157,6 +157,7 @@ div#headerArea2 {  /*グラフページ用*/
     background-color: #fff;
     color: #4E9ABE;
     z-index: 99;
+    text-align:center;
 }
 div#footerArea2 {    /*グラフページ用*/
     position: fixed !important;

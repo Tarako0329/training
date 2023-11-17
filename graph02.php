@@ -21,7 +21,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }	
 
 //履歴取得
-$sql = "select ROW_NUMBER() OVER(partition by id order by id,ymd) as No,taisosiki.*,round(weight*taisibou/100,1) as sibouryou,round(weight-(weight*taisibou/100),1) as josibou 
+$sql = "select ROW_NUMBER() OVER(partition by id order by id,ymd) as No,taisosiki.*,round(weight*taisibou/100,1) as sibouryou,round(weight-(weight*taisibou/100),1) as josibou ,DATEDIFF(now(),ymd) as beforedate
 from taisosiki where id = ? order by ymd desc ";
 
 $result = $pdo_h->prepare( $sql );
@@ -84,10 +84,17 @@ foreach($dataset_work as $row){
 			if($maxline<$weight){$maxline=$weight+10;}
 			if($minline>$weight){$minline=$weight-10;}
 			$graph_data .= "[".(356-$row["beforedate"]).",".$weight."],";	
+			if($maxline2<$taisibou){$maxline2=$taisibou+2;}
+			if($minline2>$taisibou){$minline2=$taisibou-1;}
+			$graph_data2 .= "[".(356-$row["beforedate"]).",".$taisibou."],";	
+			
 		}else if($row["beforedate"]<=730){
 			if($maxline<$weight){$maxline=$weight+10;}
 			if($minline>$weight){$minline=$weight-10;}
 			$graph_data2 .= "[".(730-$row["beforedate"]).",".$weight."],";	
+			if($maxline2<$taisibou){$maxline2=$taisibou+2;}
+			if($minline2>$taisibou){$minline2=$taisibou-1;}
+			$graph_data2 .= "[".(730-$row["beforedate"]).",".$taisibou."],";	
 		}
 	}else if($gtype==="all"){//全期間
 		if($maxline<$weight){$maxline=$weight+10;}
