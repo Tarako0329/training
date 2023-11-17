@@ -6,7 +6,7 @@
  
   //パラメーター取得
   $id = !empty($_POST['id'])?$_POST['id']:0;
-  $pass = passEx(!empty($_POST['pass'])?$_POST['id']:0,$id);
+  $pass = passEx(!empty($_POST['pass'])?$_POST['pass']:0,$id);
   $auto = !empty($_POST['auto'])?$_POST['id']:0;
   $cookie_token = $_COOKIE['token'];
  
@@ -76,7 +76,7 @@
 // ログイン処理
 //---------------------------------------------------------------------------//
 function check_user($id, $pass) {
-	$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+	$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options()); 
 
 	unset($sql);
 	$sql = "select * from users where ((id)=?) and ((pass)=?)";
