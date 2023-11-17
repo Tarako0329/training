@@ -13,7 +13,7 @@
     header("Location: index.php");
     exit();
   }
-  
+  /*
   if($_POST["btn"] == "w_rireki"){
     //体組織記録画面の「履歴」ボタン
     //リダイレクト
@@ -21,10 +21,18 @@
     header("Location: graph02.php");
     exit();
   }
+  */
   if($_POST["btn"] == "w_ins_bt"){
     //体組織記録画面の「記録」ボタン
     try{
+      //デリイン（１日１件）
       $pdo_h->beginTransaction();
+      $sql = "delete from taisosiki where id = ? and ymd = ?;";
+      $stmt = $pdo_h->prepare($sql);
+      $stmt->bindValue(1, $id, PDO::PARAM_STR);
+      $stmt->bindValue(2, $_POST["ymd"], PDO::PARAM_STR);
+      $stmt->execute();
+
       $sql = "insert into taisosiki values (?,?,?,?,?,?,'','',?);";
       $stmt = $pdo_h->prepare($sql);
       $stmt->bindValue(1, $id, PDO::PARAM_STR);

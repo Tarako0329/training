@@ -1,9 +1,11 @@
 <?php
-// 設定ファイルインクルード
+// 設定ファイルインクルード 
 require "config.php";
 
 $now = date('Y-m-d');
-$hyoji = $_POST['hyoji'];//最初は１：体重・体脂肪率
+//$hyoji = $_POST['hyoji'];//最初は１：体重・体脂肪率
+$hyoji = !empty($_POST["hyoji"])?$_POST["hyoji"]:"1";
+$gtype = !empty($_POST["gtype"])?$_POST["gtype"]:"all";
 
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
@@ -12,8 +14,9 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
 	//echo "クッキー:".$id;
 }else{
-	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: index.php");
+	//header("HTTP/1.1 301 Moved Permanently");
+	//header("Location: index.php");
+	var_dump($_SESSION);
 	exit();
 }	
 
@@ -30,19 +33,32 @@ $kintore_log = json_encode($dataset_work, JSON_UNESCAPED_UNICODE);
 //var_dump($kintore_log);
 //exit();
 
+//履歴取得
+$sql = "select * from users where id = ?";
+
+$result = $pdo_h->prepare( $sql );
+$result->bindValue(1, $id, PDO::PARAM_STR);
+$result->execute();
+$user = $result->fetchAll(PDO::FETCH_ASSOC);
+
+
 //ぐらふでーた取得
-if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
-	$graph_title = "『筋骨・脂肪量 の推移』";
+if($hyoji == "2"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
+	$graph_title = "『骨格筋・脂肪量 の推移』";
 	$btn_name = "体重・体脂肪率へ";
-	$glabel1="徐脂肪";
+	$glabel1="骨格筋";
 	$glabel2="脂肪";
 	$typ=1;
-}else{//total表示
+	$hyoji_change=1;
+}else if($hyoji == "1"){//total表示
 	$graph_title = "『体重・体脂肪率 の推移』";
-	$btn_name = "筋骨・脂肪量へ";
+	$btn_name = "骨格筋・脂肪量へ";
 	$glabel1="体重";
 	$glabel2="体脂肪率";
 	$typ=0;
+	$hyoji_change=2;
+}else{
+	exit();
 }
 
 $i=1;
@@ -53,15 +69,17 @@ $minline2=999999;
 $graph_data="";
 $graph_data2="";
 foreach($dataset_work as $row){
-	if($hyoji == "0"){//MAX表示
-		$weight = ($row["josibou"]);
+	if($hyoji == "2"){//MAX表示
+		$weight = ($row["josibou"]/2);
 		$taisibou = ($row["sibouryou"]);
-	}else{
+	}else if($hyoji == "1"){
 		$weight = ($row["weight"]);
 		$taisibou = ($row["taisibou"]);
+	}else{
+		exit();
 	}
 
-	if($_POST["gtype"]==="year"){//直近1年
+	if($gtype==="year"){//直近1年
 		if($row["beforedate"]<=365){
 			if($maxline<$weight){$maxline=$weight+10;}
 			if($minline>$weight){$minline=$weight-10;}
@@ -71,7 +89,7 @@ foreach($dataset_work as $row){
 			if($minline>$weight){$minline=$weight-10;}
 			$graph_data2 .= "[".(730-$row["beforedate"]).",".$weight."],";	
 		}
-	}else if($_POST["gtype"]==="all"){//全期間
+	}else if($gtype==="all"){//全期間
 		if($maxline<$weight){$maxline=$weight+10;}
 		if($minline>$weight){$minline=$weight-10;}
 		$graph_data .= "[".$row["No"].",".$weight."],";
@@ -86,12 +104,14 @@ foreach($dataset_work as $row){
 	
 	$i++;
 }
-if($_POST["gtype"]==="year"){//直近1年
+if($gtype==="year"){//直近1年
 	$btn_name2="全期間";
 	$kikan="all";
-}else if($_POST["gtype"]==="all"){//全期間
+	$gtype_change="";
+}else if($gtype==="all"){//全期間
 	$btn_name2="直近1年";
 	$kikan="year";
+	$gtype_change="all";
 }
 
 //var_dump($graph_data);
@@ -111,13 +131,13 @@ if($_POST["gtype"]==="year"){//直近1年
 		<div class='row' style='text-align: center;'>
 			<FORM method="post" action="graph02.php" style='width:200px;margin-left:50px;;'>
 				<button class='btn btn-primary' type="submit"> <?php echo $btn_name;?> </button>
-				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
+				<INPUT type="hidden" name="hyoji" value=<?php echo $hyoji_change;?>>
 				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
-				<INPUT type="hidden" name="gtype" value="<?php echo $_POST["gtype"];?>">
+				<INPUT type="hidden" name="gtype" value="<?php echo $gtype;?>"><!--期間は変わらない-->
 			</FORM>
 			<FORM method="post" action="graph02.php" style='width:130px;'>
 				<button class='btn btn-primary' type="submit"> <?php echo $btn_name2;?> </button>
-				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
+				<INPUT type="hidden" name="hyoji" value=<?php echo $hyoji_change;?>>
 				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
 				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
 				<INPUT type="hidden" name="gtype" value="<?php echo $kikan;?>">
@@ -125,17 +145,31 @@ if($_POST["gtype"]==="year"){//直近1年
 		</div>
 	</div>
 	<main class='container-fluid' id='app'>
-		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.No'>
-			<div class='row lst'>
-				<div class='col-4 text-center' style='padding:0;'>{{list.ymd}}</div>
-				<div class='col-2 text-end' style='padding:0;'>{{list.weight}}kg</div>
-				<div class='col-2 text-end' style='padding:0;'>{{list.taisibou}}%</div>
-				<div class='col-2 text-end' style='padding:0;'>{{list.sibouryou}}kg</div>
-				<div class='col-2 text-end' style='padding:0;'>{{list.josibou}}kg</div>
-				<div class='col-12 text-end' style='padding:0;'>{{list.memo}}</div>
-			</div>
-			
-		</template>
+		<table class='table'>
+			<thead>
+				<!--<th>日付</th>-->
+				<th>体重<br></th>
+				<th>脂肪率<br></th>
+				<th>脂肪量<br></th>
+				<th>筋肉量<br></th>
+				<th>骨格<br>筋率</th>
+				<th>BMI<br></th>
+			</thead>
+		
+			<template v-for='(list,index) in kintore_log' :key='list.ymd+list.No'>
+				<tr class='lst'>
+					<td class='text-left' colspan="5" style='padding:0;'>{{list.ymd}} memo:{{list.memo}}</td>
+				</tr>
+				<tr class='lst'>
+					<td class='text-end' style='padding:0;'>{{list.weight}}kg</td>
+					<td class='text-end' style='padding:0;'>{{list.taisibou}}%</td>
+					<td class='text-end' style='padding:0;'>{{list.sibouryou}}kg</td>
+					<td class='text-end' style='padding:0;'>{{list.josibou / 2}}kg</td>
+					<td class='text-end' style='padding:0;'>{{Math.round((list.josibou / 2) / list.weight * 100)}}%</td>
+					<td class='text-end' style='padding:0;'>{{Math.round((list.weight / (tall * tall)) * 10) /10}}</td>
+				</tr>
+			</template>
+		</table>
 	</main>
 	<div id="footerArea2" style='text-align: center;'>
 		<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
@@ -182,11 +216,13 @@ if($_POST["gtype"]==="year"){//直近1年
 		createApp({
 			setup(){
 				const kintore_log = ref(<?php echo $kintore_log;?>)
+				const tall = ref(<?php echo $user[0]["height"] / 100;?>)
 				onMounted(() => {
 					console_log('onMounted')
 				})
 				return{
 					kintore_log,
+					tall,
 				}
 			}
 		}).mount('#app');
