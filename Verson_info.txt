@@ -19,6 +19,7 @@ ver1.05.0:構造改革:mysqli撲滅
 ver1.06.0:軽微な修正
 ver1.07.0:パスリセット機能追加・体組織登録メニューのbugfix
   ALTER TABLE `users` ADD `birthday` DATE NOT NULL DEFAULT '2000/01/01' AFTER `height`;
+ver1.07.0:リファクタリング
 
 【Issues】
 
