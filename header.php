@@ -13,7 +13,7 @@
 
 
 <!--最新のjqueryらしい-->
-<script src="js/original.js"></script>-->
+<script src="js/original.js"></script>
 <script type="text/javascript" src="js/flotr2.min.js"></script>
 
 <!-- Bootstrap5 CSS -->
