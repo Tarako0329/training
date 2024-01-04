@@ -21,6 +21,7 @@ ver1.07.0:パスリセット機能追加・体組織登録メニューのbugfix
   ALTER TABLE `users` ADD `birthday` DATE NOT NULL DEFAULT '2000/01/01' AFTER `height`;
 ver1.07.0:リファクタリング
 ver1.07.1:リファクタリング
+ver1.07.2:vue3cdn修正
 
 【Issues】
 
