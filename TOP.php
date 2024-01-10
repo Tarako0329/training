@@ -124,20 +124,23 @@
 								{{list.shu}} 
 								<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
 							</button>
-							<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style='width:25px;padding:2px;position: absolute; right: 10;'>
+							<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style=''>
 							<i class='fa fa-line-chart' ></i></button>
 						</div>
 						<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 							<div class='row lst accordion-body'>
-								<div class='col-1' style='padding:0  0 6px;'>
-									{{list.setjun}}
+								<div class='col-4' style='padding:0  0 6px;display:flex;'>
+									<div style='width: 10%;'>{{list.setjun}}</div>
+									<div class='text-end' style='width: 40%;padding:0;'>{{list.weight}}kg</div>
+									<div class='text-end' style='width: 50%;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
 								</div>
+							
 								<template v-if="list.typ==='0'"><!--ウェイト-->
-									<div class='col-2 text-end' style='padding:0;'>{{list.weight}}kg</div>
-									<div class='col-2' style='padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+									<!--<div class='col-2 text-end' style='padding:0;'>{{list.weight}}kg</div>-->
+									<!--<div class='col-2' style='padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>-->
 									<div class='col-2' style='padding-right:0;'>{{list.sets}}sets</div>
 									<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
-									<button type='button' class='icn-btn' style='width:35px;padding:2px;position:absolute;right:10px;' 
+									<button type='button' class='icn-btn' style='' 
 									@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
 									data-bs-toggle='modal' data-bs-target='#edit_wt'>
 										<i class='fa fa-edit'></i>
@@ -149,7 +152,7 @@
 									
 									<div class='col-2' style='padding-right:0;'>{{list.cal}}kcal</div>
 									<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
-									<button type='button' class='icn-btn' style='width:35px;padding:2px;position:absolute;right:10px;' 
+									<button type='button' class='icn-btn' style='' 
 									@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ)'
 									data-bs-toggle='modal' data-bs-target='#usanso'>
 										<i class='fa fa-edit'></i>

@@ -14,7 +14,7 @@ $height = '30';
 	<HEAD>
 		<?php
 			require "header.php";
-			echo "pass:".passEx("000000","tarako");
+			//echo "pass:".passEx("000000","tarako");
 		?>
 	</HEAD>
 	<!--ログイン画面-->

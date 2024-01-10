@@ -57,13 +57,13 @@ if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなした�
 	$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2 from  tr_log_max_record where id = ? and shu = ? ";
 	$sql .= "order by ymd";
 	$graph_title = "『".$shu."のＭＡＸ推移』";
-	$btn_name = "トレーニング量グラフへ";
+	$btn_name = "ﾄﾚｰﾆﾝｸﾞ量グラフへ";
 	$typ=1;
 }else{//total表示
 	$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,sum(weight*rep*sets) as weight ";
 	$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu,id ";
 	$sql .= "order by ymd";
-	$graph_title = "『".$shu."トレーニング量推移』";
+	$graph_title = "『".$shu."ﾄﾚｰﾆﾝｸﾞ量推移』";
 	$btn_name = "MAX記録グラフへ";
 	$typ=0;
 }
