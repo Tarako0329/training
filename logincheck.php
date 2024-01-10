@@ -1,9 +1,5 @@
 <?php
   require "config.php";
-
-  //require "functions.php";
- 
- 
   //パラメーター取得
   $id = !empty($_POST['id'])?$_POST['id']:0;
   $pass = passEx(!empty($_POST['pass'])?$_POST['pass']:0,$id);
@@ -37,7 +33,7 @@
     //ログイン成功
 
     //セッション ID の振り直し
-   session_regenerate_id(0);
+    //session_regenerate_id(0);
     
     //トークン生成処理
     if (($normal_result  == 0 && $auto == true) || $auto_result == 0) {
@@ -49,7 +45,7 @@
      register_token($id, $token);
  
      //自動ログインのトークンを２週間の有効期限でCookieにセット
-     setCookie("token", $token, time()+60*60*24*14, "/", null, 0, 0);
+     setCookie("token", $token, time()+60*60*24*14, "/", "",true,true);
  
      //古いトークンの削除
      delete_old_token($cookie_token);
