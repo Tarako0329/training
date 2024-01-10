@@ -10,7 +10,7 @@
 		$sql = "select * from users where id=? and name = ? and birthday = ? and sex = ?";
 		$stmt = $pdo_h->prepare( $sql );
 		$stmt->bindValue(1, $_POST["id2"], PDO::PARAM_STR);
-		$stmt->bindValue(2, rot13encrypt($_POST['fname']), PDO::PARAM_STR);
+		$stmt->bindValue(2, ($_POST['fname']), PDO::PARAM_STR);
 		$stmt->bindValue(3, $birthday, PDO::PARAM_STR);
 		$stmt->bindValue(4, $_POST["sex"], PDO::PARAM_STR);
 		$stmt->execute();
@@ -18,7 +18,7 @@
 		if($row_cnt!==1){
 			echo "<P>入力されたIDに紐づく情報が一致してません。</P>";
 			echo "<a href='index.php'> 戻る</a>";
-			echo $birthday." / ".rot13encrypt($_POST['fname']);
+			echo $birthday." / ".($_POST['fname']);
 			exit();
 		}
 		$pass = passEx($_POST["pass2"],$id);

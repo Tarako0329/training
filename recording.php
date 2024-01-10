@@ -23,7 +23,7 @@
 		$stmt = $pdo_h->prepare($sql);
 		$stmt->bindValue(1, $id, PDO::PARAM_STR);
 		$stmt->bindValue(2, $pass, PDO::PARAM_STR);
-		$stmt->bindValue(3, rot13encrypt($_POST['fname']), PDO::PARAM_STR);
+		$stmt->bindValue(3, ($_POST['fname']), PDO::PARAM_STR);
 		$stmt->bindValue(4, $_POST['sex'], PDO::PARAM_STR);
 		$stmt->bindValue(5, $_POST['height'], PDO::PARAM_INT);
 		$stmt->execute();

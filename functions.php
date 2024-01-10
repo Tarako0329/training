@@ -29,12 +29,14 @@ function passEx($str,$uid){
 // =========================================================
 function rot13encrypt ($str) {
 	//暗号化
-    return str_rot13(base64_encode($str));
+  //return str_rot13(base64_encode($str));
+	return $str;
 }
 
 function rot13decrypt ($str) {
 	//暗号化解除
-    return base64_decode(str_rot13($str));
+  //return base64_decode(str_rot13($str));
+	return $str;
 }
 
 // =========================================================

@@ -32,11 +32,11 @@ $pass = ($_GET["pass"]);
 		?><a href="index.php"> 戻る</a><?php
 		exit();
 	}
-	$user_name = rot13decrypt($row["name"]);
+	$user_name = ($row["name"]);
 	$sql = "select * from users order by id";
 	$result = $pdo_h->query( $sql );
 	while($row = $result->fetch(PDO::FETCH_ASSOC)){
-		echo "<a href='TOP.php?user=V".$row["id"]."'>".rot13decrypt($row["name"])."</a><br>";
+		echo "<a href='TOP.php?user=V".$row["id"]."'>".($row["name"])."</a><br>";
 	}
 ?>
 <CENTER>

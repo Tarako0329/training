@@ -63,7 +63,7 @@
 			exit();
 		}
 
-		$user_name = rot13decrypt($row[0]["name"]);
+		$user_name = ($row[0]["name"]);
 		//echo "ログインＯＫ<BR>";
 	//}
 
