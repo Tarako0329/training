@@ -28,6 +28,6 @@ ver1.08.0:レイアウト調整
 
 
 ローカルから本番環境へ
-cd /home/ifduktdo/public_html/training
+cd /home/pcntfsrg/public_html/training
 git fetch --all
 git reset --hard origin/master
