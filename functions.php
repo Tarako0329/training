@@ -96,7 +96,7 @@ function max_r($wt, $rep){
   	} else {
 	   	//自動ログイン失敗
    		//Cookie のトークンを削除
-   		setCookie("token", '', -1, "/", null, 0, 0);
+   		setCookie("token", '', -1, "/", "", true, true);
  
 	    //古くなったトークンを削除
    		delete_old_token($token);

@@ -4,7 +4,7 @@
   $id = !empty($_POST['id'])?$_POST['id']:0;
   $pass = passEx(!empty($_POST['pass'])?$_POST['pass']:0,$id);
   $auto = !empty($_POST['auto'])?$_POST['id']:0;
-  $cookie_token = $_COOKIE['token'];
+  $cookie_token = !empty($_COOKIE['token'])?$_COOKIE['token']:"";
  
   //ログイン判定フラグ 0:ok 1:ng
   $normal_result = 1;
