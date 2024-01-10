@@ -27,20 +27,20 @@ if(trim($_POST["shu2"]) == ""){
 try{
 	if(empty($_POST["NO"])){
 		$sql = "select max(jun) as junban from tr_log where ymd = ? and id = ?;";
-		echo $sql."<BR>";
-		var_dump($_POST);
+		//echo $sql."<BR>";
+		//var_dump($_POST);
 		$result = $pdo_h->prepare($sql);
 		$result->bindValue(1, $_POST["ymd"], PDO::PARAM_STR);
 		$result->bindValue(2, $id, PDO::PARAM_STR);
 		$result->execute();
 		$row_cnt = $result->rowCount();
 		$row = $result->fetchAll(PDO::FETCH_ASSOC);
-		var_dump($row);
+		//var_dump($row);
 		$jun=1;
 		if($row_cnt!==0){
 			$jun=$row[0]["junban"]+1;
 		}
-		echo "No:".$row[0]["junban"];
+		//echo "No:".$row[0]["junban"];
 	
 		if($_POST["rep2"] == ""){
 			$rep2 = 0;
