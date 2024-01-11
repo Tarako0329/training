@@ -80,7 +80,7 @@ try{
 		$result->execute();
 		$row_cnt = $result->rowCount();
 		$row = $result->fetchAll(PDO::FETCH_ASSOC);
-		var_dump($row);
+		//var_dump($row);
 		if($_POST["motoYMD"] == $_POST["ymd"]){//日付の変更がない場合は元の順番で更新
 			$jun=$_POST["NO"];
 		}else{
