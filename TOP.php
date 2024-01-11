@@ -119,10 +119,9 @@
 					<div v-show='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div><!--日付-->
 
 					<div class='accordion-item'>
-						<!--<div v-show='index===0 || (index!==0 && list.shu !== log_edit[index-1].shu)' class='row shu accordion-header'>--><!--種目-->
 						<div v-show='list.setjun === 1' class='row shu accordion-header'>
 							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
-								aria-expanded='false' aria-controls='collapseOne' >
+								aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
 								{{list.shu}} 
 								<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
 							</button>
