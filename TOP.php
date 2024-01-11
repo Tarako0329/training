@@ -116,48 +116,47 @@
 			</header>
 			<main class='container-fluid'>
 				<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun'>
-					<div v-if='index==0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div>
+					<div v-show='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div><!--日付-->
+
 					<div class='accordion-item'>
-						<div v-if='index==0 || (index!==0 && list.shu !== log_edit[index-1].shu)' class='row shu accordion-header'>
+						<!--<div v-show='index===0 || (index!==0 && list.shu !== log_edit[index-1].shu)' class='row shu accordion-header'>--><!--種目-->
+						<div v-show='list.setjun === 1' class='row shu accordion-header'>
 							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
-							aria-expanded='false' aria-controls='collapseOne' >
+								aria-expanded='false' aria-controls='collapseOne' >
 								{{list.shu}} 
 								<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
 							</button>
 							<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style=''>
-							<i class='fa fa-line-chart' ></i></button>
+								<i class='fa fa-line-chart' ></i>
+							</button>
 						</div>
 						<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
-							<div class='row lst accordion-body'>
+							<div v-show="list.typ==='0'" class='row lst accordion-body'><!--ウェイト-->
 								<div class='col-4' style='padding:0  0 6px;display:flex;'>
 									<div style='width: 10%;'>{{list.setjun}}</div>
 									<div class='text-end' style='width: 40%;padding:0;'>{{list.weight}}kg</div>
 									<div class='text-end' style='width: 50%;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
 								</div>
-							
-								<template v-if="list.typ==='0'"><!--ウェイト-->
-									<!--<div class='col-2 text-end' style='padding:0;'>{{list.weight}}kg</div>-->
-									<!--<div class='col-2' style='padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>-->
-									<div class='col-2' style='padding-right:0;'>{{list.sets}}sets</div>
-									<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
-									<button type='button' class='icn-btn' style='' 
-									@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
-									data-bs-toggle='modal' data-bs-target='#edit_wt'>
-										<i class='fa fa-edit'></i>
-									</button>
-								</template>
-								<template v-if="list.typ==='1'"><!--有酸素-->
-									<div class='col-2　text-end' style='padding-right:0;'>{{list.rep}}分</div>	
-									<div class='col-2 text-end' style='padding:0;'>{{list.rep2}}ｍ</div>
-									
-									<div class='col-2' style='padding-right:0;'>{{list.cal}}kcal</div>
-									<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
-									<button type='button' class='icn-btn' style='' 
-									@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ)'
-									data-bs-toggle='modal' data-bs-target='#usanso'>
-										<i class='fa fa-edit'></i>
-									</button>
-								</template>
+								<div class='col-2' style='padding-right:0;'>{{list.sets}}sets</div>
+								<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+								<button type='button' class='icn-btn' style='' 
+								@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
+								data-bs-toggle='modal' data-bs-target='#edit_wt'>
+									<i class='fa fa-edit'></i>
+								</button>
+							</div>
+							<div v-show="list.typ==='1'" class='row lst accordion-body'><!--有酸素-->
+								<div class='col-1'>{{list.setjun}}</div>
+								<div class='col-2 text-end' style='padding-right:0;'>{{list.rep}}分</div>	
+								<div class='col-2 text-end' style='padding:0;'>{{list.rep2}}ｍ</div>
+								
+								<div class='col-2' style='padding-right:0;'>{{list.cal}}kcal</div>
+								<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+								<button type='button' class='icn-btn' style='' 
+								@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ)'
+								data-bs-toggle='modal' data-bs-target='#usanso'>
+									<i class='fa fa-edit'></i>
+								</button>
 							</div>
 						</div>
 					</div>
