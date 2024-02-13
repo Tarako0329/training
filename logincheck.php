@@ -1,5 +1,6 @@
 <?php
   require "config.php";
+  
   //パラメーター取得
   $id = !empty($_POST['id'])?$_POST['id']:0;
   $pass = passEx(!empty($_POST['pass'])?$_POST['pass']:0,$id);
@@ -10,19 +11,21 @@
   $normal_result = 1;
   $auto_result = 1;
   
+  log_writer("\$cookie_token",$cookie_token);
  
   //簡易ログイン
-  if (!isset($cookie_token)) {
+  if (empty($cookie_token)) {
    if (check_user($id, $pass) == 0) {
       $normal_result = 0;
+    }else{
+      $_SESSION["msg"]='ＩＤ 又はパスワードが間違っています。';
     }
-  }
- 
-  //自動ログイン
-  if (isset($cookie_token) ) {
+  }else {//自動ログイン
     if (check_auto_login($cookie_token) == 0) {
     	$auto_result = 0;
     	$id = $_SESSION['USER_ID'];
+    }else{
+      $_SESSION["msg"]='自動ログインの期限切れです。再ログインしてください。';
     }
   }
 
@@ -83,9 +86,7 @@ function check_user($id, $pass) {
 	$row_cnt = $stmt->rowCount();
 	//$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	if($row_cnt==0){
-		echo "<P>ＩＤ 又はパスワードが間違っています。</P>".$id.$pass;
-		?><a href="index.php"> 戻る</a><?php
-		exit();
+    return 1;
 	}
 	return 0;
  }

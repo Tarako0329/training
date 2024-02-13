@@ -25,6 +25,7 @@ $height = '30';
 			<IMG src="img/kanban.png" style="width:300px;">
 		</DIV>
 		<MAIN id='main'>
+			<div v-if='msg!==""'  class='alert alert-warning' role="alert">{{msg}}</div>
 			<FORM method="post" action="logincheck.php" style='margin-top:30px;'>
 				<DIV style='text-align: center;'>
 					<div style='display:flex; justify-content:center;'>
@@ -170,5 +171,19 @@ $height = '30';
 				}
 			}
 		</script>
+		<script>//Vus.js
+			const { createApp, ref, onMounted, computed, VueCookies,watch } = Vue;
+			createApp({
+				setup(){
+					const msg = ref('<?php echo $_SESSION["msg"];?>')
+					return{
+						msg
+					}
+				}
+			}).mount('#main');
+		</script>
 	</BODY>
 </HTML>
+<?php
+$_SESSION["msg"]=''
+?>
