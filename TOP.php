@@ -116,10 +116,10 @@
 			</header>
 			<main class='container-fluid'>
 				<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun'>
-					<div v-show='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div><!--日付-->
+					<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div><!--日付-->
 
 					<div class='accordion-item'>
-						<div v-show='list.setjun === 1' class='row shu accordion-header'>
+						<div v-if='list.setjun === 1' class='row shu accordion-header'>
 							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
 								aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
 								{{list.shu}} 
@@ -130,7 +130,7 @@
 							</button>
 						</div>
 						<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
-							<div v-show="list.typ==='0'" class='row lst accordion-body'><!--ウェイト-->
+							<div v-if="list.typ==='0'" class='row lst accordion-body'><!--ウェイト-->
 								<div class='col-4' style='padding:0  0 6px;display:flex;'>
 									<div style='width: 10%;'>{{list.setjun}}</div>
 									<div class='text-end' style='width: 40%;padding:0;'>{{list.weight}}kg</div>
@@ -144,7 +144,7 @@
 									<i class='fa fa-edit'></i>
 								</button>
 							</div>
-							<div v-show="list.typ==='1'" class='row lst accordion-body'><!--有酸素-->
+							<div v-if="list.typ==='1'" class='row lst accordion-body'><!--有酸素-->
 								<div class='col-1'>{{list.setjun}}</div>
 								<div class='col-2 text-end' style='padding-right:0;'>{{list.rep}}分</div>	
 								<div class='col-2 text-end' style='padding:0;'>{{list.rep2}}ｍ</div>
@@ -292,12 +292,12 @@
   	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class='modal-body container'>
-								<Transition>
+								<!--<Transition>-->
 									<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
 										<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
 										<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
 									</div>
-								</Transition>
+								<!--</Transition>-->
 								<div class='row' style='margin:1px 20px;'>
 									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
 									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
@@ -306,12 +306,12 @@
 										</template>
 									</select>
 								</div>
-								<Transition>
+								<!--<Transition>-->
 									<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
 										<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
 										<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力'>
 									</div>
-								</Transition>
+								<!--</Transition>-->
 								<div class='row' style='margin:1px 10px;'>
 									<label class="form-label" style='padding-left:0;margin-bottom:1px;'>重量</label>
 								</div>
@@ -328,7 +328,7 @@
 									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>内 有補助回数</label>
 									<input type='number' :class="input_select[3]" readonly style='width:50px;' id='rep2' @Click='setindex(3)' name='rep2' :value="kiroku[3]">
 								</div>
-								<Transition>
+								<!--<Transition>-->
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:15px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
@@ -336,8 +336,8 @@
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
 										</div>
 									</template>
-								</Transition>
-								<Transition>
+								<!--</Transition>-->
+								<!--<Transition>-->
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
@@ -345,8 +345,8 @@
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
 										</div>
 									</template>
-								</Transition>
-								<Transition>
+								<!--</Transition>-->
+								<!--<Transition>-->
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
@@ -354,8 +354,8 @@
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
 										</div>
 									</template>
-								</Transition>
-								<Transition>
+								<!--</Transition>-->
+								<!--<Transition>-->
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
@@ -363,15 +363,15 @@
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
 										</div>
 									</template>
-								</Transition>
-								<Transition>
+								<!--</Transition>-->
+								<!--<Transition>-->
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='-1'>≪</button>
 											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='1'>≫</button>
 										</div>
 									</template>
-								</Transition>
+								<!--</Transition>-->
 
 								<div class='row' style='margin:1px 20px;'>
 								</div>
