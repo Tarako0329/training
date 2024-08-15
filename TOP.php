@@ -6,6 +6,8 @@
 	//require "edit_usanso.php"; 	//有酸素系記録画面
 	//require "edit_taisosiki.php"; 	//体組織記録画面
 
+	$time=date("YmdHis");
+
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
 		decho ("session:".$id);
@@ -32,22 +34,7 @@
 	  '金', //5
 	  '土', //6
 	];
-	/*
-	if($_POST["btn"] == "ユーザー登録"){
-		$id = ($_POST["id2"]);
-		$pass = passEx($_POST["pass2"],$id);
-		$sql = "insert into users values (?,?,?,?);";
-		$stmt = $pdo_h->query("LOCK TABLES users WRITE");
-		$stmt = $pdo_h->prepare($sql);
-		$stmt->bindValue(1, $id, PDO::PARAM_STR);
-		$stmt->bindValue(2, $pass, PDO::PARAM_STR);
-		$stmt->bindValue(3, rot13encrypt($fname), PDO::PARAM_STR);
-		$stmt->bindValue(4, $sex, PDO::PARAM_STR);
-		$stmt->execute();
-		$stmt = $pdo_h->query("UNLOCK TABLES");
-		$user_name = $fname;
-	}else{*/
-		//ユーザー確認
+
 		unset($sql);
 
 		$sql = "select * from users where ((id)=?)";
@@ -112,13 +99,26 @@
 	<BODY>
 		<div id='logger'>
 			<header class='headerArea'>
-			ようこそ <?php echo $user_name;?> さん
+				<div class='container d-flex hf_color'>
+					<div class='pt-1' style='width:80%;'>ようこそ <?php echo $user_name;?> さん</div>
+					<div class="nav-item dropdown text-end pt-1"  style='width:20%;'>
+        	  <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        	    <i class="bi bi-list fs-1"></i>
+        	  </a>
+        	  <ul class="dropdown-menu">
+							<li><a class="dropdown-item" href="#">種目別 ＭＡＸ一覧</a></li>
+        	    <li><a class="dropdown-item" href="#">MAX更新時期のメニュー</a></li>
+        	    <!--<li><hr class="dropdown-divider"></li>
+        	    <li><a class="dropdown-item" href="#">Something else here</a></li>-->
+        	  </ul>
+        	</div>
+				</div>
 			</header>
-			<main class='container-fluid'>
+			<main class='container'>
 				<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun'>
 					<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div><!--日付-->
 
-					<div class='accordion-item'>
+					<div class='accordion-item' style='position:relative;'>
 						<div v-if='list.setjun === 1' class='row shu accordion-header'>
 							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
 								aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
@@ -162,11 +162,13 @@
 				</template>
 			</main>
 			<footer class="footerArea">
-			<ul id="menu">
-			  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki'>体組織</a></li>
-			  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'>有酸素系</a></li>
-			  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'>ウェイト</a></li>
-			</ul>
+				<div class='container d-flex hf_color p-0'>
+					<ul id="menu">
+					  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki'>体組織</a></li>
+					  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'>有酸素系</a></li>
+					  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'>ウェイト</a></li>
+					</ul>
+				</div>
 			</footer>
 			<!--↑footerArea -->
 			<!--↓体組織系記録モーダル-->
