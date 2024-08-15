@@ -5,7 +5,7 @@ require "config.php";
 $now = date('Y-m-d');
 //トレーニング種別
 $shu = ($_POST["shu"]);
-//グラフ種類（MAX0 or トレーニング量1)
+//グラフ種類（MAX:0 or トレーニング量:1 or MAX更新時:2)
 $hyoji = ($_POST["hyoji"]);
 
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
@@ -22,10 +22,10 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 
 //履歴取得
 if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
-	$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select * from tr_log where id = ? and shu = ? ";
+	$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select *,0 as max_weight from tr_log where id = ? and shu = ? ";
 	$sql .= "UNION ALL select * from  tr_log_max_record where id = ? and shu = ?) as T ";
 	$sql .= "order by T.ymd desc,T.jun ";
-}else{//total表示
+}else if($hyoji == "1"){//total表示
 	$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select id,shu,0 as jun,sum(weight*rep*sets) as weight,0 as rep,0 as tani,0 as rep2,0 as sets,0 as cal,ymd,'' as memo,typ,0 as insdatetime ";
 	$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu UNION ALL select * from  tr_log where id = ? and shu = ?) as T ";
 	$sql .= "order by T.ymd desc,T.jun ";
@@ -43,7 +43,7 @@ $i=0;
 foreach($dataset_work as $row){
 	if($hyoji == "0"){//MAX表示
 		$weight = " - MAX：".number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
-	}else{//total表示
+	}else if($hyoji == "1"){//total表示
 		$weight = " - total：".number_format($row["weight"],0);
 	}
 	$dataset[$i] = array_merge($row,array('head_wt'=> $weight));
@@ -59,7 +59,7 @@ if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなした�
 	$graph_title = "『".$shu."のＭＡＸ推移』";
 	$btn_name = "ﾄﾚｰﾆﾝｸﾞ量グラフへ";
 	$typ=1;
-}else{//total表示
+}else if($hyoji == "1"){//total表示
 	$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,sum(weight*rep*sets) as weight ";
 	$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu,id ";
 	$sql .= "order by ymd";
@@ -82,7 +82,7 @@ $graph_data2="";
 foreach($dataset_work as $row){
 	if($hyoji == "0"){//MAX表示
 		$weight = number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
-	}else{
+	}else if($hyoji == "1"){
 		$weight = ($row["weight"]);
 	}
 
@@ -135,15 +135,15 @@ if($_POST["gtype"]==="year"){//直近1年
 		<p class="graph-title"><?php echo $graph_title ?></p>
 		<div id="graph" style='margin-bottom:5px;'></div>
 		<div class='row' style='text-align: center;'>
-			<FORM method="post" action="graph01.php" style='width:200px;margin-left:50px;;'>
-				<button class='btn btn-primary' type="submit"> <?php echo $btn_name;?> </button>
+			<FORM method="post" action="graph01.php" style='width:200px;margin-left:50px;'>
+				<button class='btn btn-primary' type="button" @click='get_data("gtype")'> <?php echo $btn_name;?> </button>
 				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
 				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
 				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
 				<INPUT type="hidden" name="gtype" value="<?php echo $_POST["gtype"];?>">
 			</FORM>
 			<FORM method="post" action="graph01.php" style='width:130px;'>
-				<button class='btn btn-primary' type="submit"> <?php echo $btn_name2;?> </button>
+				<button class='btn btn-primary' type="button" @click='get_data("kikan")'> <?php echo $btn_name2;?> </button>
 				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
 				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
 				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
@@ -213,12 +213,69 @@ if($_POST["gtype"]==="year"){//直近1年
 		const { createApp, ref, onMounted, computed, VueCookies,watch } = Vue;
 		createApp({
 			setup(){
-				const kintore_log = ref(<?php echo $kintore_log;?>)
+				const kintore_log = ref(<?php //echo $kintore_log;?>)
+				const rtn_data = ref({})
+				//label
+				const btn_name = ref('MAX記録グラフへ')		 //max -> 量 -> 成長期
+				const btn_name2 = ref('直近1年')							//1年 -> 全期間
+				const gtype = computed(()=>{
+					if(btn_name.value==="直近1年"){
+						return 'year'
+					}else if(btn_name.value==="全期間"){
+						return 'all'
+					}else{
+						return ''
+					}
+				})
+				const hyoji = ref('')
+				const shu = ref('<?php echo $_POST["shu"];?>')	//トレーニング種目
+				//const gtype = ref('')
+				
+				const get_data = () =>{
+					if(btn_name.value==="MAX記録グラフへ"){
+						get_max_data()
+						btn_name.value="ﾄﾚｰﾆﾝｸﾞ量グラフへ"
+					}else if(btn_name.value==="ﾄﾚｰﾆﾝｸﾞ量グラフへ"){
+						get_volume_data()
+						btn_name.value="成長期グラフへ"
+					}else if(btn_name.value==="成長期グラフへ"){
+						get_growth_data()
+						btn_name.value="MAX記録グラフへ"
+					}
+				}
+				
+				const get_max_data = (e) =>{
+					const form_data = new FormData()
+					form_data.append(`shu`, shu.value)
+					form_data.append(`gtype`, gtype.value)
+					axios
+						.post("ajax_get_max_log.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
+						.then((response) => {})
+				}
+				const get_volume_data = (e) =>{
+					const form_data = new FormData()
+					form_data.append(`shu`, shu.value)
+					form_data.append(`gtype`, gtype.value)
+					axios
+						.post("graph01.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
+						.then((response) => {})
+				}
+				const get_growth_data = (e) =>{
+					const form_data = new FormData()
+					form_data.append(`shu`, shu.value)
+					axios
+						.post("graph01.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
+						.then((response) => {})
+				}
+
 				onMounted(() => {
 					console_log('onMounted')
+					get_data()
 				})
 				return{
 					kintore_log,
+					rtn_data,
+					get_data
 				}
 			}
 		}).mount('#app');
