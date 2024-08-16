@@ -119,7 +119,7 @@
 					<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div><!--日付-->
 
 					<div class='accordion-item' style='position:relative;'>
-						<div v-if='list.setjun === 1' class='row shu accordion-header'>
+						<div v-if='list.setjun === 1 || list.shu !== log_edit[index-1].shu' class='row shu accordion-header'>
 							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
 								aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
 								{{list.shu}} 
