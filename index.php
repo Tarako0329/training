@@ -9,7 +9,7 @@ require "config.php";
 //require "functions.php";
 $height = '30';
 ?>
-
+<!DOCTYPE html>
 <HTML>
 	<HEAD>
 		<?php

@@ -1,7 +1,7 @@
 <?php
 // 設定ファイルインクルード
 require "config.php";
-
+log_writer2("\$_POST",$_POST,"lv3");
 $now = date('Y-m-d');
 //トレーニング種別
 $shu = ($_POST["shu"]);
@@ -21,6 +21,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }	
 
 //履歴取得
+/*
 if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
 	$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select *,0 as max_weight from tr_log where id = ? and shu = ? ";
 	$sql .= "UNION ALL select * from  tr_log_max_record where id = ? and shu = ?) as T ";
@@ -118,11 +119,12 @@ if($_POST["gtype"]==="year"){//直近1年
 	$glabel1="全期間";
 	$glabel2="";
 }
-
+*/
 //$graph_data = json_encode($dataset, JSON_UNESCAPED_UNICODE);
 //var_dump($shu);
 //exit();
 ?>
+<!DOCTYPE html>
 <HTML>
 <HEAD>
 	<?php
@@ -131,27 +133,30 @@ if($_POST["gtype"]==="year"){//直近1年
 	<TITLE>肉体改造ネットワーク</TITLE>
 </HEAD>
 <BODY class = "graphe">
+	<div id='app'>
 	<div id="headerArea2">
-		<p class="graph-title"><?php echo $graph_title ?></p>
+		<p class="graph-title">{{graph_title}}</p>
 		<div id="graph" style='margin-bottom:5px;'></div>
-		<div class='row' style='text-align: center;'>
-			<FORM method="post" action="graph01.php" style='width:200px;margin-left:50px;'>
-				<button class='btn btn-primary' type="button" @click='get_data("gtype")'> <?php echo $btn_name;?> </button>
-				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
-				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
-				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
-				<INPUT type="hidden" name="gtype" value="<?php echo $_POST["gtype"];?>">
+		<div class='d-flex align-items-center justify-content-center' style='width: 100%;'>
+			<div><button class='btn btn-primary' style='width:150px;' type="button" @click='get_data("gtype")'>{{btn_name}}</button></div>
+			<div><button class='btn btn-primary' style='width:150px;' type="button" @click='get_data("kikan")'>{{btn_name2}}</button></div>
+			<!--<FORM method="post" action="graph01.php" style='width:200px;margin-left:50px;'>
+				<button class='btn btn-primary' type="button" @click='get_data("gtype")'>{{btn_name}}</button>
+				<INPUT type="hidden" name="hyoji" value=<?php //echo $typ;?>>
+				<INPUT type="hidden" name="id" value="<?php //echo $id;?>">
+				<INPUT type="hidden" name="shu" value="<?php //echo $shu;?>">
+				<INPUT type="hidden" name="gtype" value="<?php //echo $_POST["gtype"];?>">
 			</FORM>
 			<FORM method="post" action="graph01.php" style='width:130px;'>
-				<button class='btn btn-primary' type="button" @click='get_data("kikan")'> <?php echo $btn_name2;?> </button>
-				<INPUT type="hidden" name="hyoji" value=<?php echo $typ;?>>
-				<INPUT type="hidden" name="id" value="<?php echo $id;?>">
-				<INPUT type="hidden" name="shu" value="<?php echo $shu;?>">
-				<INPUT type="hidden" name="gtype" value="<?php echo $kikan;?>">
+				<button class='btn btn-primary' type="button" @click='get_data("kikan")'>{{btn_name2}}</button>
+				<INPUT type="hidden" name="hyoji" value=<?php //echo $typ;?>>
+				<INPUT type="hidden" name="id" value="<?php //echo $id;?>">
+				<INPUT type="hidden" name="shu" value="<?php //echo $shu;?>">
+				<INPUT type="hidden" name="gtype" value="<?php //echo $kikan;?>">-->
 			</FORM>
 		</div>
 	</div>
-	<main class='container-fluid' id='app'>
+	<main class='container-fluid pb-5'>
 		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
 			<div class='accordion-item'>
 				<div v-if='String(list.jun)==="0"' class='row shu accordion-header'>
@@ -176,18 +181,20 @@ if($_POST["gtype"]==="year"){//直近1年
 	</main>
 	<div id="footerArea2" style='text-align: center;'>
 		<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
+</div>
 	</div>
 	<script>
+		/*
 		(function basic(container) {
-		  var d1 = [<?php echo $graph_data;?>],
-			d2 = [<?php echo $graph_data2;?>],
+		  var d1 = [<?php //echo $graph_data;?>],
+			d2 = [<?php //echo $graph_data2;?>],
 		  data = [
 				{
 		      data: d1,
-		      label: "<?php echo $glabel1;?>"
+		      label: "<?php //echo $glabel1;?>"
 				},{
 		      data: d2,
-					label: "<?php echo $glabel2;?>"
+					label: "<?php //echo $glabel2;?>"
 		      
 				}
 		  ];
@@ -196,8 +203,8 @@ if($_POST["gtype"]==="year"){//直近1年
 		  }
 		  graph = Flotr.draw(container, data, {
 				yaxis:{
-					min:<?php echo $minline; ?>,        //y軸の最小値を設定
-					max:<?php echo $maxline; ?>,        //y軸の最大値を設定
+					min:<?php //echo $minline; ?>,        //y軸の最小値を設定
+					max:<?php //echo $maxline; ?>,        //y軸の最大値を設定
 					title:'(kg)'
 				}, //y軸にタイトルを表示
 		  	legend: {
@@ -208,74 +215,176 @@ if($_POST["gtype"]==="year"){//直近1年
 		    HtmlText: false
 		  });
 		})(document.getElementById("graph"));
+		*/
+		
+
+		
+		//drow_chart(document.getElementById("graph"));
 	</script>
 	<script>//Vus.js
 		const { createApp, ref, onMounted, computed, VueCookies,watch } = Vue;
 		createApp({
 			setup(){
 				const kintore_log = ref(<?php //echo $kintore_log;?>)
-				const rtn_data = ref({})
 				//label
 				const btn_name = ref('MAX記録グラフへ')		 //max -> 量 -> 成長期
 				const btn_name2 = ref('直近1年')							//1年 -> 全期間
 				const gtype = computed(()=>{
-					if(btn_name.value==="直近1年"){
+					if(btn_name2.value==="直近1年"){
 						return 'year'
-					}else if(btn_name.value==="全期間"){
+					}else if(btn_name2.value==="全期間"){
 						return 'all'
 					}else{
 						return ''
 					}
 				})
-				const hyoji = ref('')
 				const shu = ref('<?php echo $_POST["shu"];?>')	//トレーニング種目
-				//const gtype = ref('')
-				
-				const get_data = () =>{
-					if(btn_name.value==="MAX記録グラフへ"){
-						get_max_data()
-						btn_name.value="ﾄﾚｰﾆﾝｸﾞ量グラフへ"
-					}else if(btn_name.value==="ﾄﾚｰﾆﾝｸﾞ量グラフへ"){
-						get_volume_data()
-						btn_name.value="成長期グラフへ"
-					}else if(btn_name.value==="成長期グラフへ"){
-						get_growth_data()
-						btn_name.value="MAX記録グラフへ"
+				const graph_title = ref('')
+
+				const drow_chart =(container,data1,data2,lb1,lb2,maxl,minl)=> {
+				  let d1 = data1,
+					d2 = data2,
+				  data = [
+						{
+				      data: d1,
+				      label: lb1
+						},{
+				      data: d2,
+							label: lb2
+						}
+				  ];
+				  function labelFn(label) {
+				      return label;
+				  }
+					
+				  graph = Flotr.draw(container, data, {
+						yaxis:{
+							min:minl,        //y軸の最小値を設定
+							max:maxl,        //y軸の最大値を設定
+							title:'(kg)'
+						}, //y軸にタイトルを表示
+				  	legend: {
+				      position: 'se',
+				      labelFormatter: labelFn,
+				      backgroundColor: "#D2E8FF"
+				  	},
+				    HtmlText: false
+				  });
+				}
+				const get_data = (p) =>{
+					kintore_log.value = []
+					if(p==="kikan"){
+						if(btn_name2.value==="直近1年"){
+							btn_name2.value="全期間"
+						}else if(btn_name2.value==="全期間"){
+							btn_name2.value="直近1年"
+						}
+						if(btn_name.value==="MAX記録グラフへ"){
+							get_growth_data()
+						}else if(btn_name.value==="ﾄﾚｰﾆﾝｸﾞ量グラフへ"){
+							get_max_data()
+						}else if(btn_name.value==="成長期グラフへ"){
+							get_volume_data()
+						}
+					}else if(p==="gtype"){
+						if(btn_name.value==="MAX記録グラフへ"){
+							get_max_data()
+							btn_name.value="ﾄﾚｰﾆﾝｸﾞ量グラフへ"
+						}else if(btn_name.value==="ﾄﾚｰﾆﾝｸﾞ量グラフへ"){
+							get_volume_data()
+							btn_name.value="成長期グラフへ"
+						}else if(btn_name.value==="成長期グラフへ"){
+							get_growth_data()
+							btn_name.value="MAX記録グラフへ"
+						}
 					}
 				}
 				
-				const get_max_data = (e) =>{
+				const get_max_data = () =>{
+					console_log("start get_max_data")
 					const form_data = new FormData()
 					form_data.append(`shu`, shu.value)
 					form_data.append(`gtype`, gtype.value)
 					axios
 						.post("ajax_get_max_log.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
-						.then((response) => {})
+						.then((response) => {
+							console_log(response.data)
+							kintore_log.value = response.data.kintore_log
+							drow_chart(document.getElementById("graph"),
+								response.data.graph_data1,
+								response.data.graph_data2,
+								response.data.glabel1,
+								response.data.glabel2,
+								response.data.maxline,
+								response.data.minline)
+							graph_title.value = response.data.graph_title
+						})
+						.catch((error) => {
+							console_log(`get_max_data ERROR:${error}`)
+						})
+						.finally(()=>{
+						})
 				}
-				const get_volume_data = (e) =>{
+				const get_volume_data = () =>{
+					console_log("start get_volume_data")
 					const form_data = new FormData()
 					form_data.append(`shu`, shu.value)
 					form_data.append(`gtype`, gtype.value)
 					axios
-						.post("graph01.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
-						.then((response) => {})
+						.post("ajax_get_volume_log.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
+						.then((response) => {
+							console_log(response.data)
+							kintore_log.value = response.data.kintore_log
+							drow_chart(document.getElementById("graph"),
+								response.data.graph_data1,
+								response.data.graph_data2,
+								response.data.glabel1,
+								response.data.glabel2,
+								response.data.maxline,
+								response.data.minline)
+							graph_title.value = response.data.graph_title
+						})
+						.catch((error) => {
+							console_log(`get_volume_data ERROR:${error}`)
+						})
+						.finally(()=>{
+						})
 				}
-				const get_growth_data = (e) =>{
+				const get_growth_data = () =>{
+					console_log("start get_growth_data")
 					const form_data = new FormData()
 					form_data.append(`shu`, shu.value)
 					axios
-						.post("graph01.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
-						.then((response) => {})
+						.post("ajax_get_growth_log.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
+						.then((response) => {
+							console_log(response.data)
+							kintore_log.value = response.data.kintore_log
+							drow_chart(document.getElementById("graph"),
+								response.data.graph_data1,
+								response.data.graph_data2,
+								response.data.glabel1,
+								response.data.glabel2,
+								response.data.maxline,
+								response.data.minline)
+							graph_title.value = response.data.graph_title
+						})
+						.catch((error) => {
+							console_log(`get_growth_data ERROR:${error}`)
+						})
+						.finally(()=>{
+						})
 				}
 
 				onMounted(() => {
 					console_log('onMounted')
-					get_data()
+					get_data('gtype')
 				})
 				return{
 					kintore_log,
-					rtn_data,
-					get_data
+					get_data,
+					btn_name,
+					btn_name2,
+					graph_title,
 				}
 			}
 		}).mount('#app');

@@ -15,9 +15,28 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	exit();
 }	
 
+//max値を検索
+$sql = "SELECT id,shu,max(max_weight) as max_w FROM `tr_log_max_record` where id=? and shu=? group by id,shu";
+$result = $pdo_h->prepare( $sql );
+$result->bindValue(1, $id, PDO::PARAM_STR);
+$result->bindValue(2, $shu, PDO::PARAM_STR);
+$result->execute();
+$tmp = $result->fetchAll(PDO::FETCH_ASSOC);
+
+//max値を記録した最初の日を検索
+$sql = "SELECT id,shu,min(ymd) as first_day FROM `tr_log_max_record` where id=? and shu=? and max_weight=? group by id,shu";
+$result = $pdo_h->prepare( $sql );
+$result->bindValue(1, $id, PDO::PARAM_STR);
+$result->bindValue(2, $shu, PDO::PARAM_STR);
+$result->bindValue(3, $tmp[0]["max_w"], PDO::PARAM_INT);
+$result->execute();
+$tmp = $result->fetchAll(PDO::FETCH_ASSOC);
+
 //履歴取得
-$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select *,0 as max_weight from tr_log where id = ? and shu = ? ";
-$sql .= "UNION ALL select * from  tr_log_max_record where id = ? and shu = ?) as T ";
+$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* 
+from (select id,shu,0 as jun,sum(weight*rep*sets) as weight,0 as rep,0 as tani,0 as rep2,0 as sets,0 as cal,ymd,'' as memo,typ,0 as insdatetime ";
+$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu UNION ALL select * from  tr_log where id = ? and shu = ?) as T ";
+$sql .= "having T.ymd between DATE_SUB(?,INTERVAL 4 MONTH) and ? ";
 $sql .= "order by T.ymd desc,T.jun ";
 
 $result = $pdo_h->prepare( $sql );
@@ -25,13 +44,15 @@ $result->bindValue(1, $id, PDO::PARAM_STR);
 $result->bindValue(2, $shu, PDO::PARAM_STR);
 $result->bindValue(3, $id, PDO::PARAM_STR);
 $result->bindValue(4, $shu, PDO::PARAM_STR);
+$result->bindValue(5, $tmp[0]["first_day"], PDO::PARAM_STR);
+$result->bindValue(6, $tmp[0]["first_day"], PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 //log_writer2("\$dataset_work",$dataset_work,"lv3");
 $dataset = [];
 $i=0;
 foreach($dataset_work as $row){
-  $weight = " - MAX：".number_format($row["max_weight"],2);
+  $weight = " - total：".number_format($row["weight"],0);
 	$dataset[$i] = array_merge($row,array('head_wt'=> $weight));
 	$i++;
 }
@@ -40,15 +61,18 @@ $kintore_log = $dataset;
 $dataset_work=[];
 
 //ぐらふでーた取得
-$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2,max_weight from tr_log_max_record where id = ? and shu = ? ";
+$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,sum(weight*rep*sets) as weight ";
+$sql .= "from tr_log where id = ? and shu = ? and ymd between DATE_SUB(?,INTERVAL 4 MONTH) and ? group by ymd,shu,id ";
 $sql .= "order by ymd";
-$graph_title = "『".$shu."のＭＡＸ推移』";
-$btn_name = "ﾄﾚｰﾆﾝｸﾞ量グラフへ";
-$typ=1;
+$graph_title = "『".$shu."MAX更新直前のﾄﾚｰﾆﾝｸﾞ量推移』";
+$btn_name = "MAX記録グラフへ";
+$typ=0;
 
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
 $result->bindValue(2, $shu, PDO::PARAM_STR);
+$result->bindValue(3, $tmp[0]["first_day"], PDO::PARAM_STR);
+$result->bindValue(4, $tmp[0]["first_day"], PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 $dataset = [];
@@ -59,30 +83,13 @@ $graph_data=[];
 $graph_data2=[];
 foreach($dataset_work as $row){
   //$weight = number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
-	$weight = number_format($row["max_weight"],2);
+	$weight = ($row["weight"]);
 
-	if($_POST["gtype"]==="year"){//直近1年
-		if($row["beforedate"]<=365){
-			if($maxline<$weight){$maxline=$weight+10;}
-			if($minline>$weight){$minline=$weight-10;}
-			//$graph_data .= "[".(356-$row["beforedate"]).",".$weight."],";	
-			$graph_data[] = [(356-$row["beforedate"]),$weight];	
-		}else if($row["beforedate"]<=730){
-			if($maxline<$weight){$maxline=$weight+10;}
-			if($minline>$weight){$minline=$weight-10;}
-			//$graph_data2 .= "[".(730-$row["beforedate"]).",".$weight."],";
-			$graph_data2[] = [(730-$row["beforedate"]),$weight];	
-		}
-	}else if($_POST["gtype"]==="all"){//全期間
-		if($maxline<$weight){$maxline=$weight+10;}
-		if($minline>$weight){$minline=$weight-10;}
-		
-		//$graph_data .= "[".$i.",".$weight."],";
-		$graph_data[] = [$i,$weight];
-	}else{
-		exit();
-	}
+
+	if($maxline<$weight){$maxline=$weight+10;}
+	if($minline>$weight){$minline=$weight-500;}
 	
+	$graph_data[] = [$i,$weight];
 	$i++;
 }
 

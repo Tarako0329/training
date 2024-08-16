@@ -124,6 +124,7 @@ if($gtype==="year"){//直近1年
 //var_dump($graph_data);
 //exit();
 ?>
+<!DOCTYPE html>
 <HTML>
 <HEAD>
 	<?php

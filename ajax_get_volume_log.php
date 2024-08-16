@@ -16,8 +16,8 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }	
 
 //履歴取得
-$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select *,0 as max_weight from tr_log where id = ? and shu = ? ";
-$sql .= "UNION ALL select * from  tr_log_max_record where id = ? and shu = ?) as T ";
+$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select id,shu,0 as jun,sum(weight*rep*sets) as weight,0 as rep,0 as tani,0 as rep2,0 as sets,0 as cal,ymd,'' as memo,typ,0 as insdatetime ";
+$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu UNION ALL select * from  tr_log where id = ? and shu = ?) as T ";
 $sql .= "order by T.ymd desc,T.jun ";
 
 $result = $pdo_h->prepare( $sql );
@@ -31,7 +31,7 @@ $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 $dataset = [];
 $i=0;
 foreach($dataset_work as $row){
-  $weight = " - MAX：".number_format($row["max_weight"],2);
+  $weight = " - total：".number_format($row["weight"],0);
 	$dataset[$i] = array_merge($row,array('head_wt'=> $weight));
 	$i++;
 }
@@ -40,11 +40,12 @@ $kintore_log = $dataset;
 $dataset_work=[];
 
 //ぐらふでーた取得
-$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2,max_weight from tr_log_max_record where id = ? and shu = ? ";
+$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,sum(weight*rep*sets) as weight ";
+$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu,id ";
 $sql .= "order by ymd";
-$graph_title = "『".$shu."のＭＡＸ推移』";
-$btn_name = "ﾄﾚｰﾆﾝｸﾞ量グラフへ";
-$typ=1;
+$graph_title = "『".$shu."のﾄﾚｰﾆﾝｸﾞ量推移』";
+$btn_name = "MAX記録グラフへ";
+$typ=0;
 
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
@@ -59,7 +60,7 @@ $graph_data=[];
 $graph_data2=[];
 foreach($dataset_work as $row){
   //$weight = number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
-	$weight = number_format($row["max_weight"],2);
+	$weight = ($row["weight"]);
 
 	if($_POST["gtype"]==="year"){//直近1年
 		if($row["beforedate"]<=365){

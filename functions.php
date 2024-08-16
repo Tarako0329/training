@@ -18,7 +18,7 @@ function log_writer2($pgname,$msg,$kankyo){
 			log_writer($pgname,$msg);
 	}else if($kankyo==="lv2" && EXEC_MODE!=="Product"){
 			log_writer($pgname,$msg);
-	}else if($kankyo==="lv3" && (EXEC_MODE==="Test" || EXEC_MODE==="Local")){
+	}else if($kankyo==="lv3" && (EXEC_MODE==="Test" || EXEC_MODE==="local")){
 			log_writer($pgname,$msg);
 	}else{
 			return;

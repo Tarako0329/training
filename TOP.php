@@ -87,7 +87,7 @@
 	$dataset = null;
 
 ?>
-
+<!DOCTYPE html>
 <HTML>
 	<HEAD>
 		<?php

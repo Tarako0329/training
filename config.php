@@ -12,8 +12,13 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 define("MAIN_DOMAIN",$_ENV["MAIN_DOMAIN"]);
-define("ROOT_URL","http://".MAIN_DOMAIN."/");
 define("EXEC_MODE",$_ENV["KANKYO"]);
+if(EXEC_MODE==="local"){
+  define("ROOT_URL","http://".MAIN_DOMAIN."/");
+}else{
+  define("ROOT_URL","https://".MAIN_DOMAIN."/");
+}
+
 $time=date('Ymd-His');
 
 //DB接続関連

@@ -7,6 +7,7 @@ $now = date('Y-m-d');
 $id = ($_GET["id"]);
 $pass = ($_GET["pass"]);
 ?>
+<!DOCTYPE html>
 <HTML>
 <HEAD>
 <?php
