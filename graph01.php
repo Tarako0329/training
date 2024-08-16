@@ -138,8 +138,8 @@ if($_POST["gtype"]==="year"){//直近1年
 		<p class="graph-title">{{graph_title}}</p>
 		<div id="graph" style='margin-bottom:5px;'></div>
 		<div class='d-flex align-items-center justify-content-center' style='width: 100%;'>
-			<div><button class='btn btn-primary' style='width:150px;' type="button" @click='get_data("gtype")'>{{btn_name}}</button></div>
-			<div><button class='btn btn-primary' style='width:150px;' type="button" @click='get_data("kikan")'>{{btn_name2}}</button></div>
+			<div><button class='btn btn-primary' style='width:170px;' type="button" @click='get_data("gtype")'>{{btn_name}}</button></div>
+			<div><button class='btn btn-primary' style='width:130px;' type="button" @click='get_data("kikan")'>{{btn_name2}}</button></div>
 			<!--<FORM method="post" action="graph01.php" style='width:200px;margin-left:50px;'>
 				<button class='btn btn-primary' type="button" @click='get_data("gtype")'>{{btn_name}}</button>
 				<INPUT type="hidden" name="hyoji" value=<?php //echo $typ;?>>
