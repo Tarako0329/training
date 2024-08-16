@@ -107,7 +107,7 @@
         	  </a>
         	  <ul class="dropdown-menu">
 							<li><a class="dropdown-item" href="#">種目別 ＭＡＸ一覧</a></li>
-        	    <li><a class="dropdown-item" href="#">MAX更新時期のメニュー</a></li>
+        	    <li><a class="dropdown-item" href="index.php?logoff=out">ログオフ</a></li>
         	    <!--<li><hr class="dropdown-divider"></li>
         	    <li><a class="dropdown-item" href="#">Something else here</a></li>-->
         	  </ul>

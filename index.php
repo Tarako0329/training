@@ -1,11 +1,16 @@
 <?php
-if (isset($_COOKIE['token'])) {
+require "config.php";
+if($_GET["logoff"]==="out"){
+	delete_old_token($_COOKIE['token']);
+	$_SESSION = [];
+	setCookie("token", '', -1, "/", "", true, true);
+	$_SESSION["msg"]='ログオフしました';
+}else if (isset($_COOKIE['token'])) {
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: logincheck.php");
 	//exit();
 }
 
-require "config.php";
 //require "functions.php";
 $height = '30';
 ?>
@@ -118,46 +123,6 @@ $height = '30';
 					</div><!--パスリセット-->
 				</div>
 			</div>
-
-			<!--
-			<div class='accordion' id="passreset">
-				<div style='padding-top:5px;font-size:1.0rem;font-weight:700;top: 156px;height:75px;'>
-					<div class='accordion-item'>
-						<h2 class='accordion-header'>
-							<button type='button' class='accordion-button collapsed' style='font-size:1.0rem;' data-bs-toggle='collapse' data-bs-target='#collapseTwo' aria-expanded='false' aria-controls='collapseTwo'>
-								パスワード忘れちゃった
-							</button>
-						</h2>
-						<div id='collapseTwo' class='accordion-collapse collapse' data-bs-parent='#passreset'>
-							<div class='accordion-body'>
-								<div class='row'>
-									<div class='col-1 col-md-0' ></div>
-									<div class='col-10 col-md-7' >
-										<FORM method="post" action="passreset.php">
-											<DIV>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="10" style='ime-mode:disabled;'></DIV>
-											<DIV>新パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="10" style=''></DIV>
-											<DIV>登録時の名前：<INPUT required='required' type="text" class='form-control' name="fname" maxlength="10" style=''></DIV>
-											<DIV>生年月日：<INPUT type="date" class='form-control' name="birthday" maxlength="10" style=''></DIV>
-											<DIV>登録時の性別：
-												<SELECT size="1" name="sex" class='form-select' style=''>
-												<OPTION value="1">男</OPTION>
-												<OPTION value="0">女</OPTION>
-												</SELECT>
-											</DIV>
-											<div class='text-center' style='margin-top:5px;margin-top:20px;'>
-												<button class='btn btn-primary' type='submit' name="btn" value="ユーザー登録">パスワード更新</button>
-											</div>
-										</FORM>
-									</div>
-									<div class='col-1' ></div>
-								</div>
-    					</div>
-    				</div>
-					</div>
-				</div>
-			</div>
-			-->	
-
 		</MAIN>
 		<script>
 			document.getElementById('main').onkeypress = (e) => {
