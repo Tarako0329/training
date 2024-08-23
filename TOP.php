@@ -67,6 +67,7 @@
 	$dataset = null;
 
 	//種目の取得
+	//ウェイトトレーニング
 	//$sql = "select max(ymd) as ymd,jun,shu from tr_log where id in (?,'list') and typ = '0' group by shu order by max(ymd) desc,jun desc ";
 	$sql = "select shu,max(insdatetime) as sort from tr_log where id in (?,'list') and typ = '0' group by shu order by sort desc";
 	$result = $pdo_h->prepare( $sql );
@@ -77,6 +78,7 @@
 	$result = null;
 	$dataset = null;
 
+	//有酸素
 	$sql = "select shu,max(insdatetime) as sort from tr_log where id in (?,'list') and typ = '1' group by shu order by sort desc";
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue(1, $id, PDO::PARAM_STR);
@@ -86,6 +88,73 @@
 	$result = null;
 	$dataset = null;
 
+	//マックス
+	$sql = "SELECT shu
+		,max(IF(DATE_SUB(CURDATE(),INTERVAL 1 MONTH) <= ymd , max_weight , 0)) as near_1M_max
+		,max(IF(DATE_SUB(CURDATE(),INTERVAL 3 MONTH) <= ymd , max_weight , 0)) as near_3M_max
+		,max(max_weight) as full_max 
+		FROM `tr_log_max_record` where id = ? group by shu order by max(ymd) desc";
+	$result = $pdo_h->prepare( $sql );
+	$result->bindValue(1, $id, PDO::PARAM_STR);
+	$result->execute();
+	$dataset = $result->fetchAll(PDO::FETCH_ASSOC);
+	$max_list = json_encode($dataset, JSON_UNESCAPED_UNICODE);
+	$result = null;
+	$dataset = null;
+
+	//直近メインセット
+	$sql = "select
+						max_log.id
+						,max_log.shu
+						,max(log1.ymd) as near_ymd
+						,max(log1.ymd) OVER(PARTITION BY id, shu) as ymd2
+						,log1.weight
+						,log1.rep
+						,log1.rep2
+						,log1.sets
+						,log1.tani
+					from
+						(
+								SELECT
+										id
+										,shu
+										,max(IF(DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <= ymd,weight,0)) as near_1M_max
+										,max(IF(DATE_SUB(CURDATE(), INTERVAL 3 MONTH) <= ymd,weight,0)) as near_3M_max
+								FROM
+										`tr_log_max_record`
+								where
+										id = 'tarako'
+								group by
+										id
+										,shu
+						) max_log
+						inner join
+								tr_log_max_record log1
+						on  max_log.id = log1.id
+						and max_log.shu = log1.shu
+						and (max_log.near_1M_max = log1.weight
+								or  max_log.near_3M_max = log1.weight)
+						and DATE_SUB(CURDATE(), INTERVAL 3 MONTH) <= log1.ymd
+					group by
+						max_log.id
+						,max_log.shu
+						,log1.weight
+						,log1.rep
+						,log1.rep2
+						,log1.sets
+						,log1.tani
+					order by
+						ymd2 desc
+						,log1.shu
+						,log1.ymd desc";
+	$result = $pdo_h->prepare( $sql );
+	$result->bindValue(1, $id, PDO::PARAM_STR);
+	$result->execute();
+	$dataset = $result->fetchAll(PDO::FETCH_ASSOC);
+	$main_sets = json_encode($dataset, JSON_UNESCAPED_UNICODE);
+	$result = null;
+	$dataset = null;
+	
 ?>
 <!DOCTYPE html>
 <HTML>
@@ -99,9 +168,9 @@
 	<BODY>
 		<div id='logger'>
 			<header class='headerArea'>
-				<div class='container d-flex hf_color'>
+				<div class='container d-flex hf_color position-relative'>
 					<div class='pt-1' style='width:80%;'>ようこそ <?php echo $user_name;?> さん</div>
-					<div class="nav-item dropdown text-end pt-1"  style='width:20%;'>
+					<div class="nav-item dropdown position-absolute end-0 top-0"  style='width:40px;'>
         	  <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         	    <i class="bi bi-list fs-1"></i>
         	  </a>
