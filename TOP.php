@@ -68,7 +68,7 @@
 
 	//種目の取得
 	//ウェイトトレーニング
-	//$sql = "select max(ymd) as ymd,jun,shu from tr_log where id in (?,'list') and typ = '0' group by shu order by max(ymd) desc,jun desc ";
+	/*
 	$sql = "select shu,max(insdatetime) as sort from tr_log where id in (?,'list') and typ = '0' group by shu order by sort desc";
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue(1, $id, PDO::PARAM_STR);
@@ -87,6 +87,16 @@
 	$shumoku_us_list = json_encode($dataset, JSON_UNESCAPED_UNICODE);
 	$result = null;
 	$dataset = null;
+	*/
+	//全種目
+	$sql = "select typ,shu,max(insdatetime) as sort from tr_log where id in (?,'list') group by shu ,typ order by sort desc, typ";
+	$result = $pdo_h->prepare( $sql );
+	$result->bindValue(1, $id, PDO::PARAM_STR);
+	$result->execute();
+	$dataset = $result->fetchAll(PDO::FETCH_ASSOC);
+	$shumoku_list = json_encode($dataset, JSON_UNESCAPED_UNICODE);
+	$result = null;
+	$dataset = null;
 
 	//マックス
 	$sql = "SELECT shu
@@ -102,58 +112,7 @@
 	$result = null;
 	$dataset = null;
 
-	//直近メインセット
-	$sql = "select
-						max_log.id
-						,max_log.shu
-						,max(log1.ymd) as near_ymd
-						,max(log1.ymd) OVER(PARTITION BY id, shu) as ymd2
-						,log1.weight
-						,log1.rep
-						,log1.rep2
-						,log1.sets
-						,log1.tani
-					from
-						(
-								SELECT
-										id
-										,shu
-										,max(IF(DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <= ymd,weight,0)) as near_1M_max
-										,max(IF(DATE_SUB(CURDATE(), INTERVAL 3 MONTH) <= ymd,weight,0)) as near_3M_max
-								FROM
-										`tr_log_max_record`
-								where
-										id = 'tarako'
-								group by
-										id
-										,shu
-						) max_log
-						inner join
-								tr_log_max_record log1
-						on  max_log.id = log1.id
-						and max_log.shu = log1.shu
-						and (max_log.near_1M_max = log1.weight
-								or  max_log.near_3M_max = log1.weight)
-						and DATE_SUB(CURDATE(), INTERVAL 3 MONTH) <= log1.ymd
-					group by
-						max_log.id
-						,max_log.shu
-						,log1.weight
-						,log1.rep
-						,log1.rep2
-						,log1.sets
-						,log1.tani
-					order by
-						ymd2 desc
-						,log1.shu
-						,log1.ymd desc";
-	$result = $pdo_h->prepare( $sql );
-	$result->bindValue(1, $id, PDO::PARAM_STR);
-	$result->execute();
-	$dataset = $result->fetchAll(PDO::FETCH_ASSOC);
-	$main_sets = json_encode($dataset, JSON_UNESCAPED_UNICODE);
-	$result = null;
-	$dataset = null;
+
 	
 ?>
 <!DOCTYPE html>
@@ -181,10 +140,22 @@
         	    <li><a class="dropdown-item" href="#">Something else here</a></li>-->
         	  </ul>
         	</div>
+					<div class="nav-item dropdown position-absolute start-50 top-50 translate-middle"  style=''>
+						
+						<div class="input-group">
+							<span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-left"></i></span>
+							<select  class="form-select form-select-sm" v-model='filter'>
+							<option value='%'>フィルターオフ</option>
+								<template v-for='(list,index) in shumoku' :key='list.sort'>
+									<option :value='`${list.shu}`'>{{list.shu}}</option>
+								</template>
+							</select>
+						</div>
+					</div>
 				</div>
 			</header>
 			<main class='container'>
-				<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun'>
+				<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun+list.shu'>
 					<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div><!--日付-->
 
 					<div class='accordion-item' style='position:relative;'>
@@ -195,7 +166,8 @@
 								<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
 							</button>
 							<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style=''>
-								<i class='fa fa-line-chart' ></i>
+								<!--<i class='fa fa-line-chart' ></i>-->
+								<i class='bi bi-graph-up-arrow' ></i>
 							</button>
 						</div>
 						<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
@@ -210,7 +182,8 @@
 								<button type='button' class='icn-btn' style='' 
 								@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
 								data-bs-toggle='modal' data-bs-target='#edit_wt'>
-									<i class='fa fa-edit'></i>
+									<!--<i class='fa fa-edit'></i>-->
+									<i class='bi bi-pencil'></i>
 								</button>
 							</div>
 							<div v-if="list.typ==='1'" class='row lst accordion-body'><!--有酸素-->
@@ -473,7 +446,7 @@
 		</div>
 		
 		<script>//Vus.js
-			const { createApp, ref, onMounted, computed, VueCookies,watch } = Vue;
+			const { createApp, ref, onMounted, onBeforeMount, computed, VueCookies,watch } = Vue;
 			createApp({
 				setup(){
 					const kintore_log = (<?php echo $kintore_log;?>)
@@ -486,14 +459,32 @@
 						//console_log("指定の日は、" + WeekChars[wDay] + "です。");
 						return WeekChars[wDay]
 					}
+					const filter = ref('%')
 					const log_edit = computed(()=>{
-						kintore_log.forEach((row)=>{
+						/*kintore_log.forEach((row)=>{
 							row.ymd = row.ymd + ' ' + week(row.ymd)
-						})
-						return kintore_log
+						})*/
+						if(filter.value==="%"){
+							return kintore_log
+						}else{
+							return kintore_log.filter((row)=>{
+								if(row.shu===filter.value){return true}
+							})
+						}
 					})
-					const shumoku_wt = ref(<?php echo $shumoku_wt_list;?>)
-					const shumoku_us = ref(<?php echo $shumoku_us_list;?>)
+					const shumoku = ref(<?php echo $shumoku_list;?>)
+					//const shumoku_wt = ref(<?php echo $shumoku_wt_list;?>)
+					const shumoku_wt = computed(()=>{
+						return shumoku.value.filter((list)=>{
+							if(list.typ==0){return true}
+						})
+					})
+					//const shumoku_us = ref(<?php echo $shumoku_us_list;?>)
+					const shumoku_us = computed(()=>{
+						return shumoku.value.filter((list)=>{
+							if(list.typ==1){return true}
+						})
+					})
 					const kiroku = ref(['','','',0])
 					const kiroku_index = ref('')
 					const keybord_show = ref(false)
@@ -679,7 +670,14 @@
 						}
 						e.target.submit()
 					}
-						
+					
+					onBeforeMount(()=>{
+						console_log('onBeforeMount')
+						kintore_log.forEach((row)=>{
+							row.ymd = row.ymd + ' ' + week(row.ymd)
+						})
+					})
+
 					onMounted(() => {
 						console_log('onMounted')
 					})
@@ -687,6 +685,7 @@
 						//kintore_log,
 						week,
 						log_edit,
+						shumoku,
 						shumoku_wt,
 						shumoku_us,
 						keydown,
@@ -710,6 +709,7 @@
 						//shu2,
 						add_shumoku_wt,
 						OnSubmit,
+						filter,
 					}
 				}
 			}).mount('#logger');
