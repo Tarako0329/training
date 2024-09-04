@@ -20,9 +20,11 @@
 		exit();
 	}
 	$msg="";
+	$shu="";
 	if(isset($_GET["msg"])==="error"){
 		$msg=$_GET["msg"];
 	}
+	$shu=!empty($_GET["shu"])?$_GET["shu"]:"%";
 
 	$now = date('Y-m-d');
 	$week = [
@@ -67,27 +69,6 @@
 	$dataset = null;
 
 	//種目の取得
-	//ウェイトトレーニング
-	/*
-	$sql = "select shu,max(insdatetime) as sort from tr_log where id in (?,'list') and typ = '0' group by shu order by sort desc";
-	$result = $pdo_h->prepare( $sql );
-	$result->bindValue(1, $id, PDO::PARAM_STR);
-	$result->execute();
-	$dataset = $result->fetchAll(PDO::FETCH_ASSOC);
-	$shumoku_wt_list = json_encode($dataset, JSON_UNESCAPED_UNICODE);
-	$result = null;
-	$dataset = null;
-
-	//有酸素
-	$sql = "select shu,max(insdatetime) as sort from tr_log where id in (?,'list') and typ = '1' group by shu order by sort desc";
-	$result = $pdo_h->prepare( $sql );
-	$result->bindValue(1, $id, PDO::PARAM_STR);
-	$result->execute();
-	$dataset = $result->fetchAll(PDO::FETCH_ASSOC);
-	$shumoku_us_list = json_encode($dataset, JSON_UNESCAPED_UNICODE);
-	$result = null;
-	$dataset = null;
-	*/
 	//全種目
 	$sql = "select typ,shu,max(insdatetime) as sort from tr_log where id in (?,'list') group by shu ,typ order by sort desc, typ";
 	$result = $pdo_h->prepare( $sql );
@@ -459,7 +440,7 @@
 						//console_log("指定の日は、" + WeekChars[wDay] + "です。");
 						return WeekChars[wDay]
 					}
-					const filter = ref('%')
+					const filter = ref('<?php echo $shu;?>')
 					const log_edit = computed(()=>{
 						/*kintore_log.forEach((row)=>{
 							row.ymd = row.ymd + ' ' + week(row.ymd)

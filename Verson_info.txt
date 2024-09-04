@@ -30,10 +30,11 @@ ver1.11.0:メニュー追加・レイアウト調整
 ver1.12.0:メニュー追加・グラフ機能改修
 ver1.12.1:bugfix
 ver1.12.2:ログオフ機能追加・bugfix
-ver1.13.0:ログフィルター機能追加
+ver1.13.0:ログフィルター機能追加-commited
   ALTER TABLE `tr_log` CHANGE `weight` `weight` DECIMAL(6,2) NOT NULL;
   ALTER TABLE `tr_log` CHANGE `rep` `rep` DECIMAL(3) NOT NULL;
   tr_log_max_record のリクリエイト
+ver1.13.1:ログフィルター機能追加
 
 【Issues】
 

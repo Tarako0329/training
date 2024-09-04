@@ -153,7 +153,7 @@ try{
 	$pdo_h->commit();
 
 	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: TOP.php?msg=success");
+	header("Location: TOP.php?msg=success&shu=".$shu);
 	exit();
 
 }catch(Exception $e){
