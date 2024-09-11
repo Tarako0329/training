@@ -1,10 +1,6 @@
 <?php
 	// 設定ファイルインクルード【開発中】
 	require "config.php";
-	//require "functions.php";
-	//require "edit_wt.php"; 		//ウェイト記録画面
-	//require "edit_usanso.php"; 	//有酸素系記録画面
-	//require "edit_taisosiki.php"; 	//体組織記録画面
 
 	$time=date("YmdHis");
 
@@ -57,6 +53,7 @@
 	//}
 
 	//履歴取得
+	/*
 	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd) as total,RANK() OVER(PARTITION BY log.id,log.ymd,shu order by jun ) as setjun 
 	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = ? and log.ymd >= ? order by log.ymd desc,jun ";
 	$result = $pdo_h->prepare( $sql );
@@ -92,7 +89,7 @@
 	$max_list = json_encode($dataset, JSON_UNESCAPED_UNICODE);
 	$result = null;
 	$dataset = null;
-
+	*/
 
 	
 ?>
@@ -124,7 +121,8 @@
 					<div class="nav-item dropdown position-absolute start-50 top-50 translate-middle"  style=''>
 						
 						<div class="input-group">
-							<span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-left"></i></span>
+							<template v-if='filter==="%"'><span class="input-group-text" ><i class="bi bi-funnel"></i></span></template>
+							<template v-else><button class="btn btn-primary" @click='()=>{filter="%"}'><i class="bi bi-funnel-fill"></i></button></template>
 							<select  class="form-select form-select-sm" v-model='filter'>
 							<option value='%'>フィルターオフ</option>
 								<template v-for='(list,index) in shumoku' :key='list.sort'>
@@ -145,14 +143,14 @@
 								aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
 								{{list.shu}} 
 								<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
+								<template v-if="list.typ==='2'">-Non Weight:{{Number(list.total).toLocaleString()}}回</template>
 							</button>
 							<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style=''>
-								<!--<i class='fa fa-line-chart' ></i>-->
 								<i class='bi bi-graph-up-arrow' ></i>
 							</button>
 						</div>
 						<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
-							<div v-if="list.typ==='0'" class='row lst accordion-body'><!--ウェイト-->
+						<div v-if="list.typ==='0'" class='row lst accordion-body'><!--ウェイト-->
 								<div class='col-4' style='padding:0  0 6px;display:flex;'>
 									<div style='width: 10%;'>{{list.setjun}}</div>
 									<div class='text-end' style='width: 40%;padding:0;'>{{list.weight}}kg</div>
@@ -163,7 +161,20 @@
 								<button type='button' class='icn-btn' style='' 
 								@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
 								data-bs-toggle='modal' data-bs-target='#edit_wt'>
-									<!--<i class='fa fa-edit'></i>-->
+									<i class='bi bi-pencil'></i>
+								</button>
+							</div>
+							<div v-if="list.typ==='2'" class='row lst accordion-body'><!--ノンウェイト-->
+								<div class='col-4' style='padding:0  0 6px;display:flex;'>
+									<div style='width: 10%;'>{{list.setjun}}</div>
+									<div class='text-end' style='width: 40%;padding:0;'>自重</div>
+									<div class='text-end' style='width: 50%;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+								</div>
+								<div class='col-2' style='padding-right:0;'>{{list.sets}}sets</div>
+								<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+								<button type='button' class='icn-btn' style='' 
+								@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
+								data-bs-toggle='modal' data-bs-target='#edit_wt'>
 									<i class='bi bi-pencil'></i>
 								</button>
 							</div>
@@ -177,7 +188,7 @@
 								<button type='button' class='icn-btn' style='' 
 								@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ)'
 								data-bs-toggle='modal' data-bs-target='#usanso'>
-									<i class='fa fa-edit'></i>
+									<i class='bi bi-pencil'></i>
 								</button>
 							</div>
 						</div>
@@ -234,6 +245,8 @@
 								<!--<button type='submit' style='width:90px;' name='btn' value='w_rireki' class="btn btn-primary mbtn" data-bs-dismiss="modal" >履歴</button>-->
 								<a href='graph02.php' style='width:90px;' class="btn btn-primary mbtn" >履歴</a>
 								<button type='submit' style='width:90px;' name='btn' value='w_ins_bt' class="btn btn-primary mbtn" data-bs-dismiss="modal" >登録</button>
+
+								<button type='button' style="display:none;" class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='ts_modal_close' ></button><!--キャンセル-->
 							</div>
 							<input type='hidden' name='hyoji' value='1'>
 							<input type='hidden' name='gtype' value='all'>
@@ -246,7 +259,7 @@
 			<div class='modal fade' id='usanso' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
-						<form method = 'post' action='logInsUpd_sql.php'>
+						<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit'>
 							<div class='modal-header'>
 	        			<h5 class="modal-title">有酸素トレーニング</h5>
   	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -295,6 +308,8 @@
 								</template>
 								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel'>{{mBtnName[1]}}</button><!--キャンセル-->
 								<input type='submit'  class="btn btn-primary mbtn" :value='mBtnName[0]'>{{}}<!--登録・更新-->
+
+								<button type='button' style="display:none;" class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='us_modal_close' ></button><!--キャンセル-->
 							</div>
 							<INPUT type="hidden" name="typ" value="1">
 							<INPUT type="hidden" name="NO" :value="Num">
@@ -311,7 +326,7 @@
 			<div class='modal fade' id='edit_wt' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
-						<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit' id='wt'>
+						<form method = 'post' @submit.prevent='OnSubmit' id='wt'>
 							<div class='modal-header'>
 	        			<h5 class="modal-title">トレーニング記録</h5>
   	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -337,11 +352,20 @@
 										<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力'>
 									</div>
 								<!--</Transition>-->
-								<div class='row' style='margin:1px 10px;'>
-									<label class="form-label" style='padding-left:0;margin-bottom:1px;'>重量</label>
+								<div class='row pt-1' style='margin:1px 20px;'>
+									<div class="col-3 p-0">
+										<label class="form-label" style='padding-left:0;margin-bottom:1px;'>重量</label>
+									</div>
+									<div class="col-4 p-0">
+										（
+										<input type="checkbox" class="form-check-input" id="jiju" v-model='jiju' name='jiju'>
+										<label class="form-check-label" for="jiju">自重</label>
+										）
+									</div>
 								</div>
 								<div class='row' style='margin:1px 0px 1px 20px;display:flexbox;'>
-									<input type='number' :class="input_select[0]" readonly style='width:70px;padding:6 6;' @Click='setindex(0)' name='weight' :value="kiroku[0]" required='required'><span style='padding:8px 0 0 5px;width:40px;'>kg x</span>
+									<input type='number' :class="input_select[0]" readonly style='width:70px;padding:6 6;' @Click='setindex(0)' name='weight' :value="kiroku[0]" required='required'>
+									<span style='padding:8px 0 0 5px;width:40px;'>kg x</span>
 									<input type='number' :class="input_select[1]" readonly style='width:50px;padding:6 6;' @Click='setindex(1)' name='rep' :value="kiroku[1]" required='required'>
 									<select class="form-select form-select-sm" style='width:50px;padding-left:5px;padding-right:15px;margin-left:5px;' name='tani' required='required'>
 										<option value='0' selected>回</option>
@@ -353,7 +377,7 @@
 									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>内 有補助回数</label>
 									<input type='number' :class="input_select[3]" readonly style='width:50px;' id='rep2' @Click='setindex(3)' name='rep2' :value="kiroku[3]">
 								</div>
-								<!--<Transition>-->
+								
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:15px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
@@ -361,8 +385,6 @@
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
 										</div>
 									</template>
-								<!--</Transition>-->
-								<!--<Transition>-->
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
@@ -370,8 +392,6 @@
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
 										</div>
 									</template>
-								<!--</Transition>-->
-								<!--<Transition>-->
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
@@ -379,8 +399,6 @@
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
 										</div>
 									</template>
-								<!--</Transition>-->
-								<!--<Transition>-->
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
@@ -388,16 +406,13 @@
 											<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
 										</div>
 									</template>
-								<!--</Transition>-->
-								<!--<Transition>-->
 									<template v-if='keybord_show'>
 										<div class='row' style='margin:1px 20px 1px 20px;'>
 											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='-1'>≪</button>
 											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='1'>≫</button>
 										</div>
 									</template>
-								<!--</Transition>-->
-
+								
 								<div class='row' style='margin:1px 20px;'>
 								</div>
 
@@ -414,8 +429,10 @@
 								<template v-if='mBtnName[0]==="更新"'>
 									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(Num,motoymd)'>削除</button>
 								</template>
-								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel'>{{mBtnName[1]}}</button><!--キャンセル-->
-								<input type='submit'  class="btn btn-primary mbtn" :value='mBtnName[0]'>{{}}<!--登録・更新-->
+								<button type='button' class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel' >{{mBtnName[1]}}</button><!--キャンセル-->
+								<input type='submit' class="btn btn-primary mbtn" :value='mBtnName[0]'>{{}}<!--登録・更新-->
+								
+								<button type='button' style="display:none;" class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='wt_modal_close' ></button><!--キャンセル-->
 							</div>
 							<INPUT type="hidden" name="typ" value="0">
 							<INPUT type="hidden" name="NO" :value="Num">
@@ -430,9 +447,12 @@
 			const { createApp, ref, onMounted, onBeforeMount, computed, VueCookies,watch } = Vue;
 			createApp({
 				setup(){
-					const kintore_log = (<?php echo $kintore_log;?>)
+					const kintore_log = ref([])
+					const shumoku = ref([])
+					
 					const id = ref('<?php echo $id;?>')
-					//const pass = ref('<?php //echo $pass;?>')
+					const filter = ref('%')
+
 					const week = (date) =>{
 						const WeekChars = [ "(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)" ];
 						let dObj = new Date( date );
@@ -440,37 +460,60 @@
 						//console_log("指定の日は、" + WeekChars[wDay] + "です。");
 						return WeekChars[wDay]
 					}
-					const filter = ref('<?php echo $shu;?>')
 					const log_edit = computed(()=>{
-						/*kintore_log.forEach((row)=>{
-							row.ymd = row.ymd + ' ' + week(row.ymd)
-						})*/
 						if(filter.value==="%"){
-							return kintore_log
+							return kintore_log.value
 						}else{
-							return kintore_log.filter((row)=>{
+							return kintore_log.value.filter((row)=>{
 								if(row.shu===filter.value){return true}
 							})
 						}
 					})
-					const shumoku = ref(<?php echo $shumoku_list;?>)
-					//const shumoku_wt = ref(<?php echo $shumoku_wt_list;?>)
+
 					const shumoku_wt = computed(()=>{
 						return shumoku.value.filter((list)=>{
-							if(list.typ==0){return true}
+							if(list.typ!==1){return true}
 						})
 					})
-					//const shumoku_us = ref(<?php echo $shumoku_us_list;?>)
+
 					const shumoku_us = computed(()=>{
 						return shumoku.value.filter((list)=>{
 							if(list.typ==1){return true}
 						})
 					})
+
+					const get_trlog = () =>{
+						console_log('start get_trlog')
+						axios
+						.post("ajax_get_trlog.php")
+						.then((response) => {
+							console_log(response.data)
+							shumoku.value = response.data.shumoku_list
+							kintore_log.value = response.data.kintore_log
+							shu.value = shumoku_wt.value[0]["shu"]
+
+							kintore_log.value.forEach((row)=>{
+								row.ymd = row.ymd + ' ' + week(row.ymd)
+							})
+
+						})
+						.catch((error) => {
+							console_log(`get_max_data ERROR:${error}`)
+							console_log(error)
+						})
+						.finally(()=>{
+						})
+					}
+
 					const kiroku = ref(['','','',0])
 					const kiroku_index = ref('')
 					const keybord_show = ref(false)
 					const setindex = (i) =>{
 						console_log(`setindex:${i}`)
+						if(i===0 && jiju.value===true){
+							console_log(`自重種目は重量入れない: index=${i} , jiju.value=${jiju.value}`)
+							return 0 //自重種目は重量入れない
+						}
 						kiroku_index.value = Number(i)
 						keybord_show.value=true
 					}
@@ -537,7 +580,8 @@
 					const Num = ref('')
 					const ymd = ref('<?php echo $now?>')
 					const motoymd = ref('')
-					const shu = ref(shumoku_wt.value[0]["shu"])
+					const shu = ref()
+					const jiju = ref(false)	//自重種目ONOFF
 					//const shu2 = ref('')
 					const memo = ref('')
 					const setUpdate = (NO,YMD,SHU,wt,rep,set,rep2,MEMO,typ) =>{
@@ -553,6 +597,7 @@
 						memo.value=MEMO
 						mBtnName.value[0] = '更新'
 						mBtnName.value[1] = 'キャンセル'
+						jiju.value = (typ==="2")?true:false
 					}
 					const setCancel = () =>{
 						console_log('setCancel start')
@@ -629,8 +674,16 @@
 						shumoku_wt.value.unshift({shu:e.target.value,sort:''})
 						shu.value = e.target.value
 					}
+					watch([jiju],()=>{
+						if(jiju.value===true){
+							kiroku.value[0] = "1"
+						}else{
+							kiroku.value[0] = ""
+						}
+					})
 					const OnSubmit = (e) =>{
-						console_log(`OnSubmit e:${e.target.id}`)
+						console_log(`OnSubmit e:${e.target}`)
+						console_log(e.currentTarget)
 						if(e.target.id==='wt'){
 							keybord_show.value=false
 							if(!ymd.value){
@@ -649,21 +702,56 @@
 								kiroku.value[0]=0
 							}
 						}
-						e.target.submit()
+						//e.target.submit()
+						const formData = new FormData(e.target);
+						axios
+						.post("ajax_trlog_Ins.php",formData, {headers: {'Content-Type': 'multipart/form-data'}})
+						.then((response) => {
+							console_log(response.data)
+							if(response.data.status==="success"){
+								filter.value = response.data.filter
+								get_trlog()
+								document.getElementById("wt_modal_close").click()
+								document.getElementById("us_modal_close").click()
+								document.getElementById("ts_modal_close").click()
+								Num.value = 0
+								ymd.value = '<?php echo $now?>'
+								
+								kiroku.value[0]=0
+								kiroku.value[1]=0
+								kiroku.value[2]=0
+								kiroku.value[3]=0
+								memo.value=''
+								mBtnName.value[0] = '登録'
+								mBtnName.value[1] = '閉じる'
+								keybord_show.value=false
+								kiroku_index.value=''
+							}else{
+								alert("処理が失敗しました")
+								alert(response.data.MSG)
+							}
+						})
+						.catch((error) => {
+							console_log(`get_max_data ERROR:${error}`)
+							console_log(error)
+							alert("処理が失敗しました")
+							//alert(error)
+							filter.value = "%"
+						})
+						.finally(()=>{
+						})
 					}
 					
 					onBeforeMount(()=>{
 						console_log('onBeforeMount')
-						kintore_log.forEach((row)=>{
-							row.ymd = row.ymd + ' ' + week(row.ymd)
-						})
+						get_trlog()
 					})
 
 					onMounted(() => {
 						console_log('onMounted')
 					})
 					return{
-						//kintore_log,
+						kintore_log,
 						week,
 						log_edit,
 						shumoku,
@@ -691,6 +779,7 @@
 						add_shumoku_wt,
 						OnSubmit,
 						filter,
+						jiju,
 					}
 				}
 			}).mount('#logger');

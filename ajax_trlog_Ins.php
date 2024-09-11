@@ -1,6 +1,5 @@
 <?php
 require "config.php";
-//require "functions.php";
 //トランザクション処理
 log_writer2("\$POST",$_POST,"lv3");
 
@@ -12,11 +11,16 @@ if(isset($_SESSION['USER_ID'])){
 	$id = $_SESSION['USER_ID'];
 	decho ("クッキー:".$id);
 }else{
-	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: index.php");
+	$return_sts = array(
+		"MSG" => "UserIDが取得できませんでした"
+		,"status" => "error"
+		//,"filter" => $shu
+	);
+	header('Content-type: application/json');
+	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
 	exit();
 }
-
+/*
 if(trim($_POST["shu2"]) == ""){
 	//種目追加欄が空白の場合はリストの種目
 	$shu = $_POST["shu1"];
@@ -24,36 +28,43 @@ if(trim($_POST["shu2"]) == ""){
 	//種目追加欄が記入されてる場合は種目追加欄の種目
 	$shu = $_POST["shu2"];
 }
+*/
+//種目追加欄が空白の場合はリストの種目,種目追加欄が記入されてる場合は種目追加欄の種目
+$shu = ($_POST["shu2"] == "")? $_POST["shu1"]:$_POST["shu2"];
+$rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
+$cal = ($_POST["cal"] == "")?0:$_POST["cal"];
+$type = (!empty($_POST["jiju"]))?"2":$_POST["typ"];
 
 try{
 	if(empty($_POST["NO"])){
 		$sql = "select max(jun) as junban from tr_log where ymd = ? and id = ?;";
-		//echo $sql."<BR>";
-		//var_dump($_POST);
+
 		$result = $pdo_h->prepare($sql);
 		$result->bindValue(1, $_POST["ymd"], PDO::PARAM_STR);
 		$result->bindValue(2, $id, PDO::PARAM_STR);
 		$result->execute();
 		$row_cnt = $result->rowCount();
 		$row = $result->fetchAll(PDO::FETCH_ASSOC);
-		//var_dump($row);
+		
 		$jun=1;
 		if($row_cnt!==0){
 			$jun=$row[0]["junban"]+1;
 		}
-		//echo "No:".$row[0]["junban"];
-	
-		if($_POST["rep2"] == ""){
-			$rep2 = 0;
-		}else{
-			$rep2 = $_POST["rep2"];
-		}
-		if($_POST["cal"] == ""){
-			$cal = 0;
-		}else{
-			$cal = $_POST["cal"];
-		}
-			
+		/*
+			if($_POST["rep2"] == ""){
+				$rep2 = 0;
+			}else{
+				$rep2 = $_POST["rep2"];
+			}
+			if($_POST["cal"] == ""){
+				$cal = 0;
+			}else{
+				$cal = $_POST["cal"];
+			}
+		*/
+		//$rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
+		//$cal = ($_POST["cal"] == "")?0:$_POST["cal"];
+
 		$sql = "insert into tr_log(id,shu,jun,weight,rep,tani,rep2,sets,cal,ymd,memo,typ) values(?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 		$pdo_h->beginTransaction();
@@ -69,68 +80,75 @@ try{
 		$stmt->bindValue(9, $cal, PDO::PARAM_INT);
 		$stmt->bindValue(10, $_POST["ymd"], PDO::PARAM_STR);
 		$stmt->bindValue(11, $_POST["memo"], PDO::PARAM_STR);
-		$stmt->bindValue(12, $_POST["typ"], PDO::PARAM_STR);
+		//$stmt->bindValue(12, $_POST["typ"], PDO::PARAM_STR);
+		$stmt->bindValue(12, $type, PDO::PARAM_STR);
 		$stmt->execute();
 	}else{
 		$sql = "select max(jun) as junban from tr_log where  ymd = ? and id = ?;";
 	
-		//echo $sql;
 		$result = $pdo_h->prepare($sql);
 		$result->bindValue(1, $_POST["ymd"], PDO::PARAM_STR);
 		$result->bindValue(2, $id, PDO::PARAM_STR);
 		$result->execute();
 		$row_cnt = $result->rowCount();
 		$row = $result->fetchAll(PDO::FETCH_ASSOC);
-		//var_dump($row);
+		
 		if($_POST["motoYMD"] == $_POST["ymd"]){//日付の変更がない場合は元の順番で更新
 			$jun=$_POST["NO"];
 		}else{
-			if($row_cnt==0){
-				$jun=1;
+			/*
+				if($row_cnt==0){
+					$jun=1;
+				}else{
+					$jun=$row["junban"]+1;
+				}
+			*/
+			$jun=($row_cnt==0)?1:$jun=$row["junban"]+1;
+		}
+		/*
+			if($_POST["rep2"] == ""){
+				$rep2 = 0;
 			}else{
-				$jun=$row["junban"]+1;
-				//echo $row["junban"];
+				$rep2 = $_POST["rep2"];
 			}
-		}
-		if($_POST["rep2"] == ""){
-			$rep2 = 0;
-		}else{
-			$rep2 = $_POST["rep2"];
-		}
-		if($_POST["cal"] == ""){
-			$cal = 0;
-		}else{
-			$cal = $_POST["cal"];
-		}
+			if($_POST["cal"] == ""){
+				$cal = 0;
+			}else{
+				$cal = $_POST["cal"];
+			}
+		*/
+		//$rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
+		//$cal = ($_POST["cal"] == "")?0:$_POST["cal"];
+		
 	
 		$sql = "update tr_log set ";
-		$sql = $sql."shu = ?,";
-		$sql = $sql."jun = ?,";
-		$sql = $sql."weight = ?,";
-		$sql = $sql."rep = ?,";
-		$sql = $sql."rep2 = ?,";
-		$sql = $sql."sets = ?,";
-		$sql = $sql."cal = ?,";
-		$sql = $sql."ymd = ?,";
-		$sql = $sql."memo = ? ";
-		$sql = $sql."where id =? and ymd = ? and jun = ?";
-	
-		//echo $sql;
+		$sql = $sql."shu = :shu,";
+		$sql = $sql."jun = :jun,";
+		$sql = $sql."weight = :weight,";
+		$sql = $sql."rep = :rep,";
+		$sql = $sql."rep2 = :rep2,";
+		$sql = $sql."sets = :sets,";
+		$sql = $sql."cal = :cal,";
+		$sql = $sql."ymd = :ymd,";
+		$sql = $sql."typ = :typ,";
+		$sql = $sql."memo = :memo ";
+		$sql = $sql."where id =:id and ymd = :motoYMD and jun = :NO";
 	
 		$pdo_h->beginTransaction();
 		$stmt = $pdo_h->prepare($sql);
-		$stmt->bindValue(1, $shu, PDO::PARAM_STR);
-		$stmt->bindValue(2, $jun, PDO::PARAM_INT);
-		$stmt->bindValue(3, $_POST["weight"], PDO::PARAM_INT);
-		$stmt->bindValue(4, $_POST["rep"], PDO::PARAM_INT);
-		$stmt->bindValue(5, $rep2, PDO::PARAM_INT);
-		$stmt->bindValue(6, $_POST["sets"], PDO::PARAM_INT);
-		$stmt->bindValue(7, $cal, PDO::PARAM_INT);
-		$stmt->bindValue(8, $_POST["ymd"], PDO::PARAM_STR);
-		$stmt->bindValue(9, $_POST["memo"], PDO::PARAM_STR);
-		$stmt->bindValue(10, $id, PDO::PARAM_STR);
-		$stmt->bindValue(11, $_POST["motoYMD"], PDO::PARAM_STR);
-		$stmt->bindValue(12, $jun, PDO::PARAM_INT);
+		$stmt->bindValue("shu", $shu, PDO::PARAM_STR);
+		$stmt->bindValue("jun", $jun, PDO::PARAM_INT);
+		$stmt->bindValue("weight", $_POST["weight"], PDO::PARAM_INT);
+		$stmt->bindValue("rep", $_POST["rep"], PDO::PARAM_INT);
+		$stmt->bindValue("rep2", $rep2, PDO::PARAM_INT);
+		$stmt->bindValue("sets", $_POST["sets"], PDO::PARAM_INT);
+		$stmt->bindValue("cal", $cal, PDO::PARAM_INT);
+		$stmt->bindValue("ymd", $_POST["ymd"], PDO::PARAM_STR);
+		$stmt->bindValue("typ", $type, PDO::PARAM_INT);
+		$stmt->bindValue("memo", $_POST["memo"], PDO::PARAM_STR);
+		$stmt->bindValue("id", $id, PDO::PARAM_STR);
+		$stmt->bindValue("motoYMD", $_POST["motoYMD"], PDO::PARAM_STR);
+		$stmt->bindValue("NO", $_POST["NO"], PDO::PARAM_INT);
 		$stmt->execute();
 
 	}
@@ -153,20 +171,27 @@ try{
 
 	$pdo_h->commit();
 
-	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: TOP.php?msg=success&shu=".$shu);
+	$return_sts = array(
+		"MSG" => "success"
+		,"status" => "success"
+		,"filter" => $shu
+	);
+	header('Content-type: application/json');
+	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
+
 	exit();
 
 }catch(Exception $e){
-	echo "catch(Exception \$e)<br>";
-	echo $sql."<br><br>";
-	echo $e."<br>";
+	$msg = "catch Exception \$e：".$e." [SQL = ".$sql." ]";
   $pdo_h->rollBack();
-	//header("HTTP/1.1 301 Moved Permanently");
-	//header("Location: TOP.php?msg=error:".$e);
+	$return_sts = array(
+		"MSG" => $msg
+		,"status" => "error"
+		//,"filter" => $shu
+	);
+	header('Content-type: application/json');
+	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
+
 	exit();
 }
-    //ログイン失敗
-    //リダイレクト
-
 ?>

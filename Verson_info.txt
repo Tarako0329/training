@@ -34,7 +34,10 @@ ver1.13.0:ログフィルター機能追加-commited
   ALTER TABLE `tr_log` CHANGE `weight` `weight` DECIMAL(6,2) NOT NULL;
   ALTER TABLE `tr_log` CHANGE `rep` `rep` DECIMAL(3) NOT NULL;
   tr_log_max_record のリクリエイト
-ver1.13.1:ログフィルター機能追加
+ver1.13.1:ログフィルター機能追加-commited
+ver1.13.2:ログフィルター機能改良・ノンウェイト追加・ajax更新
+  ALTER TABLE `tr_log` CHANGE `typ` `typ` CHAR(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '0:weight 1:run 2:Non-we';
+  ALTER TABLE `tr_log` CHANGE `rep` `rep` DECIMAL(3,0) NOT NULL COMMENT '有酸素は分数', CHANGE `rep2` `rep2` CHAR(5) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '有酸素は距離';
 
 【Issues】
 
