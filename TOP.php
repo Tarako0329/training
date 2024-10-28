@@ -441,38 +441,62 @@
 						})
 					})
 
-					const get_trlog = (p) =>{
+					const get_trlog = async(p) =>{
 						console_log('start get_trlog')
-						axios
-						.post("ajax_get_trlog.php")
-						.then((response) => {
-							console_log(response.data)
-							shumoku.value = response.data.shumoku_list
-							kintore_log.value = response.data.kintore_log
-							shu.value = shumoku_wt.value[0]["shu"]
+						/*
+							axios
+							.post("ajax_get_trlog.php")
+							.then((response) => {
+								console_log(response.data)
+								shumoku.value = response.data.shumoku_list
+								kintore_log.value = response.data.kintore_log
+								shu.value = shumoku_wt.value[0]["shu"]
 
-							kintore_log.value.forEach((row,index)=>{
-								row.ymd = row.ymd + ' ' + week(row.ymd)
-								if((index + Number(1)) == kintore_log.value.length){
-									if(p==='open'){
-										//console_log("アコーディオン開く")
-										//document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
-										setTimeout(()=>{
-											console_log("アコーディオン開く")
-											document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
-										}, 1000)
+								kintore_log.value.forEach((row,index)=>{
+									row.ymd = row.ymd + ' ' + week(row.ymd)
+									if((index + Number(1)) == kintore_log.value.length){
+										if(p==='open'){
+											setTimeout(()=>{
+												console_log("アコーディオン開く")
+												document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
+											}, 1000)
+										}
 									}
-								}
+								})
 							})
+							.catch((error) => {
+								console_log(`get_max_data ERROR:${error}`)
+								console_log(error)
+							})
+							.finally(()=>{
+								console_log('おわり get_trlog')
+							})
+						*/
+						const response = await axios.post("ajax_get_trlog.php")
+							.catch((error) => {
+								console_log(`get_max_data ERROR:${error}`)
+								console_log(error)
+							})
+							.finally(()=>{
+								console_log('おわり get_trlog')
+							})
+						
+						console_log(response.data)
+						shumoku.value = response.data.shumoku_list
+						kintore_log.value = response.data.kintore_log
+						shu.value = shumoku_wt.value[0]["shu"]
+						kintore_log.value.forEach((row,index)=>{
+							row.ymd = row.ymd + ' ' + week(row.ymd)
+							if((index + Number(1)) == kintore_log.value.length){
+								if(p==='open'){
+									setTimeout(()=>{
+										console_log("アコーディオン開く")
+										document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
+									}, 1000)
+								}
+							}
+						})
 
-						})
-						.catch((error) => {
-							console_log(`get_max_data ERROR:${error}`)
-							console_log(error)
-						})
-						.finally(()=>{
-							console_log('おわり get_trlog')
-						})
 					}
 
 					const kiroku = ref(['','','',0])
@@ -680,7 +704,10 @@
 							console_log(response.data)
 							if(response.data.status==="success"){
 								filter.value = response.data.filter
-								if(document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).getAttribute( 'aria-expanded' )==='true'){
+								const accordion_elm = document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`)
+								const door = accordion_elm ? accordion_elm.getAttribute( 'aria-expanded' ) : undefined
+								//if(document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).getAttribute( 'aria-expanded' )==='true'){
+								if(door==='true'){
 									console_log("アコーディオン閉じる")
 									document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
 									get_trlog('open')
