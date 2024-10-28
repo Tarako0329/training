@@ -51,47 +51,6 @@
 		$user_name = ($row[0]["name"]);
 		//echo "ログインＯＫ<BR>";
 	//}
-
-	//履歴取得
-	/*
-	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd) as total,RANK() OVER(PARTITION BY log.id,log.ymd,shu order by jun ) as setjun 
-	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = ? and log.ymd >= ? order by log.ymd desc,jun ";
-	$result = $pdo_h->prepare( $sql );
-	$result->bindValue(1, $id, PDO::PARAM_STR);
-	$result->bindValue(2, date("Y-m-d",strtotime("-13 month")), PDO::PARAM_STR);
-	$result->execute();
-	$dataset = $result->fetchAll(PDO::FETCH_ASSOC);
-	$kintore_log = json_encode($dataset, JSON_UNESCAPED_UNICODE);
-	$result = null;
-	$dataset = null;
-
-	//種目の取得
-	//全種目
-	$sql = "select typ,shu,max(insdatetime) as sort from tr_log where id in (?,'list') group by shu ,typ order by sort desc, typ";
-	$result = $pdo_h->prepare( $sql );
-	$result->bindValue(1, $id, PDO::PARAM_STR);
-	$result->execute();
-	$dataset = $result->fetchAll(PDO::FETCH_ASSOC);
-	$shumoku_list = json_encode($dataset, JSON_UNESCAPED_UNICODE);
-	$result = null;
-	$dataset = null;
-
-	//マックス
-	$sql = "SELECT shu
-		,max(IF(DATE_SUB(CURDATE(),INTERVAL 1 MONTH) <= ymd , max_weight , 0)) as near_1M_max
-		,max(IF(DATE_SUB(CURDATE(),INTERVAL 3 MONTH) <= ymd , max_weight , 0)) as near_3M_max
-		,max(max_weight) as full_max 
-		FROM `tr_log_max_record` where id = ? group by shu order by max(ymd) desc";
-	$result = $pdo_h->prepare( $sql );
-	$result->bindValue(1, $id, PDO::PARAM_STR);
-	$result->execute();
-	$dataset = $result->fetchAll(PDO::FETCH_ASSOC);
-	$max_list = json_encode($dataset, JSON_UNESCAPED_UNICODE);
-	$result = null;
-	$dataset = null;
-	*/
-
-	
 ?>
 <!DOCTYPE html>
 <HTML>
@@ -139,7 +98,7 @@
 
 					<div class='accordion-item' style='position:relative;'>
 						<div v-if='list.setjun === 1 || list.shu !== log_edit[index-1].shu' class='row shu accordion-header'>
-							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' 
+							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' :id='`btn_collapseOne${list.ymd3}${list.shu}`'
 								aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
 								{{list.shu}} 
 								<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
@@ -150,7 +109,7 @@
 							</button>
 						</div>
 						<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
-						<div v-if="list.typ==='0'" class='row lst accordion-body'><!--ウェイト-->
+							<div v-if="list.typ==='0'" class='row lst accordion-body'><!--ウェイト-->
 								<div class='col-4' style='padding:0  0 6px;display:flex;'>
 									<div style='width: 10%;'>{{list.setjun}}</div>
 									<div class='text-end' style='width: 40%;padding:0;'>{{list.weight}}kg</div>
@@ -444,7 +403,7 @@
 		</div>
 		
 		<script>//Vus.js
-			const { createApp, ref, onMounted, onBeforeMount, computed, VueCookies,watch } = Vue;
+			const { createApp, ref, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
 			createApp({
 				setup(){
 					const kintore_log = ref([])
@@ -482,7 +441,7 @@
 						})
 					})
 
-					const get_trlog = () =>{
+					const get_trlog = (p) =>{
 						console_log('start get_trlog')
 						axios
 						.post("ajax_get_trlog.php")
@@ -492,8 +451,18 @@
 							kintore_log.value = response.data.kintore_log
 							shu.value = shumoku_wt.value[0]["shu"]
 
-							kintore_log.value.forEach((row)=>{
+							kintore_log.value.forEach((row,index)=>{
 								row.ymd = row.ymd + ' ' + week(row.ymd)
+								if((index + Number(1)) == kintore_log.value.length){
+									if(p==='open'){
+										//console_log("アコーディオン開く")
+										//document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
+										setTimeout(()=>{
+											console_log("アコーディオン開く")
+											document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
+										}, 1000)
+									}
+								}
 							})
 
 						})
@@ -502,6 +471,7 @@
 							console_log(error)
 						})
 						.finally(()=>{
+							console_log('おわり get_trlog')
 						})
 					}
 
@@ -706,11 +676,18 @@
 						const formData = new FormData(e.target);
 						axios
 						.post("ajax_trlog_Ins.php",formData, {headers: {'Content-Type': 'multipart/form-data'}})
-						.then((response) => {
+						.then(async(response) => {
 							console_log(response.data)
 							if(response.data.status==="success"){
 								filter.value = response.data.filter
-								get_trlog()
+								if(document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).getAttribute( 'aria-expanded' )==='true'){
+									console_log("アコーディオン閉じる")
+									document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
+									get_trlog('open')
+								}else{
+									get_trlog()
+								}
+								
 								document.getElementById("wt_modal_close").click()
 								document.getElementById("us_modal_close").click()
 								document.getElementById("ts_modal_close").click()
