@@ -16,7 +16,9 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }	
 
 	//履歴取得
-	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd,log.typ) as total,RANK() OVER(PARTITION BY log.id,log.ymd,shu,log.typ order by jun ) as setjun 
+	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3
+	,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd,log.typ) as total
+	,RANK() OVER(PARTITION BY log.id,log.ymd,shu,log.typ order by jun ) as setjun 
 	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = ? and log.ymd >= ? order by log.ymd desc,jun LIMIT ?";
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue(1, $id, PDO::PARAM_STR);
