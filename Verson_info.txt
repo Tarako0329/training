@@ -37,6 +37,7 @@ ver1.13.0:ログフィルター機能追加-commited
 ver1.13.1:ログフィルター機能追加-commited
 ver1.13.2:ログフィルター機能改良・ノンウェイト追加・ajax更新-commited
 ver1.13.3:ログフィルター機能改良・bugfix-commited
+ver1.13.4:ノンウェイト/ウェイトの混合対応-commited
 
 【Issues】
 
