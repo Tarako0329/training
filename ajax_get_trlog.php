@@ -41,10 +41,10 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 
 	//マックス
 	$sql = "SELECT shu
-		,max(IF(DATE_SUB(CURDATE(),INTERVAL 1 MONTH) <= ymd , max_weight , 0)) as near_1M_max
 		,max(IF(DATE_SUB(CURDATE(),INTERVAL 3 MONTH) <= ymd , max_weight , 0)) as near_3M_max
+		,max(IF(DATE_SUB(CURDATE(),INTERVAL 12 MONTH) <= ymd , max_weight , 0)) as near_1Y_max
 		,max(max_weight) as full_max 
-		FROM `tr_log_max_record` where id = ? group by shu order by max(ymd) desc";
+		FROM `tr_log_max_record` where id = ? and typ = '0' group by shu order by max(ymd) desc";
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue(1, $id, PDO::PARAM_STR);
 	$result->execute();
@@ -58,7 +58,7 @@ $return_sts = array(
 	,"status" => $alert_status
 	,"kintore_log" => $kintore_log
 	,"shumoku_list" => $shumoku_list
-	,"max_list" => $max_list
+	,"max_log" => $max_list
 );
 header('Content-type: application/json');
 echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);

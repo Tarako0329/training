@@ -92,7 +92,7 @@
 					</div>
 				</div>
 			</header>
-			<main class='container ' style='height:100vh;'>
+			<main class='container p-0' style='height:100vh;'>
 				<div class='row position-relative' style='height:100vh;'>
 					<div class='col-12 col-md-7 col-lg-6 col-xl-5 ' style='height:100vh;'>
 						<div style='overflow-y: scroll;height:100vh;width:100%;padding-bottom:170px;'>
@@ -160,7 +160,29 @@
 					</div>
 					<div class='d-none d-sm-block col-md-5 col-lg-6 col-xl-7 ' >
 						<div style='overflow-y: scroll;height:100vh;padding-bottom:170px;'>
-						<p>開発中エリア</p>
+							<p>開発中エリア</p>
+							<div>
+								<table class='table'>
+									<thead>
+										<tr>
+											<th>種目</th>
+											<th>3M</th>
+											<th>1Y</th>
+											<th>ALL</th>
+										</tr>
+									</thead>
+									<tbody>
+										<template v-for='(list,index) in max_log'>
+											<tr>
+												<td>{{list.shu}}</td>
+												<td>{{list.near_3M_max}}</td>
+												<td>{{list.near_1Y_max}}</td>
+												<td>{{list.full_max}}</td>
+											</tr>
+										</template>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -421,6 +443,7 @@
 				setup(){
 					const kintore_log = ref([])
 					const shumoku = ref([])
+					const max_log = ref([])
 					
 					const id = ref('<?php echo $id;?>')
 					const filter = ref('%')
@@ -456,35 +479,6 @@
 
 					const get_trlog = async(p) =>{
 						console_log('start get_trlog')
-						/*
-							axios
-							.post("ajax_get_trlog.php")
-							.then((response) => {
-								console_log(response.data)
-								shumoku.value = response.data.shumoku_list
-								kintore_log.value = response.data.kintore_log
-								shu.value = shumoku_wt.value[0]["shu"]
-
-								kintore_log.value.forEach((row,index)=>{
-									row.ymd = row.ymd + ' ' + week(row.ymd)
-									if((index + Number(1)) == kintore_log.value.length){
-										if(p==='open'){
-											setTimeout(()=>{
-												console_log("アコーディオン開く")
-												document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
-											}, 1000)
-										}
-									}
-								})
-							})
-							.catch((error) => {
-								console_log(`get_max_data ERROR:${error}`)
-								console_log(error)
-							})
-							.finally(()=>{
-								console_log('おわり get_trlog')
-							})
-						*/
 						const response = await axios.post("ajax_get_trlog.php")
 							.catch((error) => {
 								console_log(`get_max_data ERROR:${error}`)
@@ -497,6 +491,7 @@
 						console_log(response.data)
 						shumoku.value = response.data.shumoku_list
 						kintore_log.value = response.data.kintore_log
+						max_log.value = response.data.max_log
 						shu.value = shumoku_wt.value[0]["shu"]
 						kintore_log.value.forEach((row,index)=>{
 							row.ymd = row.ymd + ' ' + week(row.ymd)
@@ -769,6 +764,7 @@
 					})
 					return{
 						kintore_log,
+						max_log,
 						week,
 						log_edit,
 						shumoku,
