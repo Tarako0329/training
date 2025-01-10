@@ -38,9 +38,13 @@ ver1.13.1:ログフィルター機能追加-commited
 ver1.13.2:ログフィルター機能改良・ノンウェイト追加・ajax更新-commited
 ver1.13.3:ログフィルター機能改良・bugfix-commited
 ver1.13.4:ノンウェイト/ウェイトの混合対応-commited
+ver1.14.0:PC・タブレット画面対応
 
 【Issues】
-
+目標設定機能
+体組織・平均で推移表示
+BIG3マックス表示
+PC・タブレット画面対応
 
 ローカルから本番環境へ
 cd /home/pcntfsrg/public_html/training

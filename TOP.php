@@ -61,7 +61,7 @@
 		<TITLE>肉体改造ネットワーク</TITLE>
 	</HEAD>
 	
-	<BODY>
+	<BODY >
 		<div id='logger'>
 			<header class='headerArea'>
 				<div class='container d-flex hf_color position-relative'>
@@ -92,75 +92,88 @@
 					</div>
 				</div>
 			</header>
-			<main class='container'>
-				<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun+list.shu'>
-					<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row ymd'>{{list.ymd}} {{list.condition}}</div><!--日付-->
-
-					<div class='accordion-item' style='position:relative;'>
-						<div v-if='list.setjun === 1 || (list.shu+list.typ) !== (log_edit[index-1].shu+log_edit[index-1].typ)' class='row shu accordion-header'>
-							<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' :id='`btn_collapseOne${list.ymd3}${list.shu}`'
-								aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
-								{{list.shu}} 
-								<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
-								<template v-if="list.typ==='2'">-Non Weight:{{Number(list.total).toLocaleString()}}回</template>
-							</button>
-							<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style=''>
-								<i class='bi bi-graph-up-arrow' ></i>
-							</button>
-						</div>
-						<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
-							<div v-if="list.typ==='0'" class='row lst accordion-body'><!--ウェイト-->
-								<div class='col-4' style='padding:0  0 6px;display:flex;'>
-									<div style='width: 10%;'>{{list.setjun}}</div>
-									<div class='text-end' style='width: 40%;padding:0;'>{{list.weight}}kg</div>
-									<div class='text-end' style='width: 50%;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+			<main class='container ' style='height:100vh;'>
+				<div class='row position-relative' style='height:100vh;'>
+					<div class='col-12 col-md-7 col-lg-6 col-xl-5 ' style='height:100vh;'>
+						<div style='overflow-y: scroll;height:100vh;width:100%;padding-bottom:170px;'>
+							<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun+list.shu'>
+								<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row m-0' style='position:relative'><div class=' ymd'>{{list.ymd}} {{list.condition}}</div></div><!--日付-->
+		
+								<div class='accordion-item' style='position:relative;'>
+									<div v-if='list.setjun === 1 || (list.shu+list.typ) !== (log_edit[index-1].shu+log_edit[index-1].typ)' class='row m-0 shu accordion-header'>
+										<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' :id='`btn_collapseOne${list.ymd3}${list.shu}`'
+											aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
+											{{list.shu}} 
+											<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
+											<template v-if="list.typ==='2'">-Non Weight:{{Number(list.total).toLocaleString()}}回</template>
+										</button>
+										<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style=''>
+											<i class='bi bi-graph-up-arrow' ></i>
+										</button>
+									</div>
+									<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
+										<div class='row m-0 lst accordion-body'>
+											<div v-if="list.typ==='0'" class='col-12' style='padding:0  0 6px;display:flex;'><!--ウェイト-->
+												<div style='width: 20px;'>{{list.setjun}}</div>
+												<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
+												<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+												<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
+												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
+												<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+												<button type='button' class='icn-btn' style='' 
+													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
+													data-bs-toggle='modal' data-bs-target='#edit_wt'>
+													<i class='bi bi-pencil'></i>
+												</button>
+											</div>
+											<div v-if="list.typ==='2'" class='col-12' style='padding:0  0 6px;display:flex;'><!--nonウェイト-->
+												<div style='width: 20px;'>{{list.setjun}}</div>
+												<div class='text-end' style='width: 70px;padding:0;'>自重</div>
+												<div v-if="list.tani==='0'"       class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+												<div v-else-if="list.tani==='1'"  class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
+												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
+												<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+												<button type='button' class='icn-btn' style='' 
+													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
+													data-bs-toggle='modal' data-bs-target='#edit_wt'>
+													<i class='bi bi-pencil'></i>
+												</button>
+											</div>
+											<div v-if="list.typ==='1'" class='col-12' style='padding:0  0 6px;display:flex;'><!--有酸素-->
+												<div style='width: 20px;'>{{list.setjun}}</div>
+												<div class='text-end' style='width: 50px;padding-right:0;'>{{list.rep}}分</div>	
+												<div class='text-end' style='width: 70px;padding:0;'>{{list.rep2}}ｍ</div>
+		
+												<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
+												<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+												<button type='button' class='icn-btn' style='' 
+													@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ)'
+													data-bs-toggle='modal' data-bs-target='#usanso'>
+													<i class='bi bi-pencil'></i>
+												</button>
+											</div>
+										</div>
+									</div>
 								</div>
-								<div class='col-2' style='padding-right:0;'>{{list.sets}}sets</div>
-								<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
-								<button type='button' class='icn-btn' style='' 
-								@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
-								data-bs-toggle='modal' data-bs-target='#edit_wt'>
-									<i class='bi bi-pencil'></i>
-								</button>
-							</div>
-							<div v-if="list.typ==='2'" class='row lst accordion-body'><!--ノンウェイト-->
-								<div class='col-4' style='padding:0  0 6px;display:flex;'>
-									<div style='width: 10%;'>{{list.setjun}}</div>
-									<div class='text-end' style='width: 40%;padding:0;'>自重</div>
-									<div class='text-end' style='width: 50%;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
-								</div>
-								<div class='col-2' style='padding-right:0;'>{{list.sets}}sets</div>
-								<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
-								<button type='button' class='icn-btn' style='' 
-								@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
-								data-bs-toggle='modal' data-bs-target='#edit_wt'>
-									<i class='bi bi-pencil'></i>
-								</button>
-							</div>
-							<div v-if="list.typ==='1'" class='row lst accordion-body'><!--有酸素-->
-								<div class='col-1'>{{list.setjun}}</div>
-								<div class='col-2 text-end' style='padding-right:0;'>{{list.rep}}分</div>	
-								<div class='col-2 text-end' style='padding:0;'>{{list.rep2}}ｍ</div>
-								
-								<div class='col-2' style='padding-right:0;'>{{list.cal}}kcal</div>
-								<div class='col-5' style='padding:0 0 0 10px;'>{{list.memo}}</div>
-								<button type='button' class='icn-btn' style='' 
-								@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ)'
-								data-bs-toggle='modal' data-bs-target='#usanso'>
-									<i class='bi bi-pencil'></i>
-								</button>
-							</div>
+							</template>
 						</div>
 					</div>
-				</template>
+					<div class='d-none d-sm-block col-md-5 col-lg-6 col-xl-7 ' >
+						<div style='overflow-y: scroll;height:100vh;padding-bottom:170px;'>
+						<p>開発中エリア</p>
+						</div>
+					</div>
+				</div>
 			</main>
 			<footer class="footerArea">
 				<div class='container d-flex hf_color p-0'>
-					<ul id="menu">
-					  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki'>体組織</a></li>
-					  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'>有酸素系</a></li>
-					  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'>ウェイト</a></li>
-					</ul>
+					<div class='row m-0' style='width:100%;'><div class='p-0 col-12 col-md-7 col-lg-6 col-xl-5'>
+						<ul id="menu">
+						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki'>体組織</a></li>
+						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'>有酸素系</a></li>
+						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'>ウェイト</a></li>
+						</ul>
+					</div></div>
 				</div>
 			</footer>
 			<!--↑footerArea -->
