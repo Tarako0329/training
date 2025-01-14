@@ -168,26 +168,34 @@
 					<div class='d-none d-sm-block col-md-5 col-lg-6 col-xl-7 ' id='migi_area'>
 						<div style='overflow-y: scroll;height:100vh;padding-bottom:170px;'>
 							<p>開発中エリア</p>
-							<div>
-								<table class='table table-sm'>
+							<div class='p-3 position-relative'>
+								<button class='btn btn-secondary p-1 position-absolute pt-0 pb-0' style='right:16px;' @click='setting1()'><i class="bi bi-gear-wide"></i></button>
+								<table class='table table-sm caption-top'>
+									<caption>Max記録と記録時のセット</caption>
 									<thead>
 										<tr>
 											<th rowspan="3">種目</th>
 											<th colspan="1">3M</th>
 											<th colspan="1">1Y</th>
 											<th colspan="1">Best</th>
+											<th v-if='setting_switch1' colspan="1">隠す</th>
 										</tr>
 										<tr>
 											<th colspan="3">date weight x times</th>
+											<th v-if='setting_switch1' colspan="1"></th>
 										</tr>
 									</thead>
 									<tbody>
-										<template v-for='(list,index) in max_log' :key='list.shu'>
-											<tr>
-												<td rowspan="3">{{list.shu}}</td>
+										<template v-for='(list,index) in max_log_sort' :key='list.shu'>
+											<tr role='button' draggable="true" 
+												@dragstart='move_recorde($event,index)' @dragenter='moving_in($event,index)' @dragleave='moving_out' @dragover='$event.preventDefault()' @drop='dorpping($event,list.sort,index)'>
+												<td rowspan="3" >
+													{{list.shu}}
+												</td>
 												<td colspan="1">{{list.M3_max}}</td>
 												<td colspan="1">{{list.Y1_max}}</td>
 												<td colspan="1">{{list.mybest}}</td>
+												<td v-if='setting_switch1' rowspan="3" class='text-center'><input type='checkbox' class='form-check-input'></td>
 											</tr>
 											<tr>
 												<td>{{list.M3_date}}</td>
@@ -464,6 +472,11 @@
 					const kintore_log = ref([])
 					const shumoku = ref([])
 					const max_log = ref([])
+					const max_log_sort = computed(()=>{
+						return max_log.value.sort((a,b)=>{
+							return a.sort-b.sort
+						})
+					})
 					
 					const id = ref('<?php echo $id;?>')
 					const filter = ref('%')
@@ -794,9 +807,59 @@
 					onMounted(() => {
 						console_log('onMounted')
 					})
+
+					const move_recorde = (e,index) =>{
+						//console_log(e.currentTarget)
+						//console_log(index)
+						// 出力テスト
+						if(setting_switch1.value===false){return}
+						e.dataTransfer.setData( "index" , index);
+						console_log(`${max_log_sort.value[index].shu} をドラッグ`)
+					}
+					const moving_in = (e,p_index) =>{
+						console_log(`moving_in ${max_log_sort.value[p_index].shu}`)
+						//console_log(e.currentTarget)
+						e.currentTarget.classList.toggle("dragging")
+					}
+					const moving_out = (e) =>{
+						console_log("moving_out")
+						//console_log(e.currentTarget)
+						e.currentTarget.classList.toggle("dragging")
+					}
+					const dorpping = (e,p_sort,p_index) =>{
+						if(setting_switch1.value===false){return}
+						console_log("dorpping")
+						let index = e.dataTransfer.getData("index")
+						//console_log(max_log_sort.value[index])
+						console_log(`${max_log_sort.value[p_index].shu} にドロップ`)
+						if(max_log_sort.value[index].sort == Number(p_sort)){
+							console_log(`なにもしない`)
+						}else if(max_log_sort.value[index].sort > Number(p_sort)){
+							max_log_sort.value[index].sort = Number(p_sort) - 1
+						}else{
+							max_log_sort.value[index].sort = Number(p_sort) + 1
+						}
+						max_log_sort.value.forEach((list,index)=>{
+							list.sort = Number(index) * 10
+						})
+						console_log(max_log_sort.value)
+						e.currentTarget.classList.remove("dragging")
+						e.dataTransfer.clearData()
+					}
+
+					const setting_switch1 = ref(false)
+					const setting1 = () =>{
+						if(setting_switch1.value===false){
+							setting_switch1.value=true
+						}else{
+							setting_switch1.value=false
+						}
+					}
+
 					return{
 						kintore_log,
 						max_log,
+						max_log_sort,
 						week,
 						log_edit,
 						shumoku,
@@ -826,6 +889,12 @@
 						filter,
 						jiju,
 						disp_area,
+						move_recorde,
+						moving_in,
+						moving_out,
+						dorpping,
+						setting_switch1,
+						setting1,
 					}
 				}
 			}).mount('#logger');

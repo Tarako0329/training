@@ -38,9 +38,12 @@ ver1.13.1:ログフィルター機能追加-commited
 ver1.13.2:ログフィルター機能改良・ノンウェイト追加・ajax更新-commited
 ver1.13.3:ログフィルター機能改良・bugfix-commited
 ver1.13.4:ノンウェイト/ウェイトの混合対応-commited
-ver1.14.0:PC・タブレット画面対応
+ver1.14.0:PC・タブレット画面対応-commited
   ALTER TABLE `tr_log` DROP PRIMARY KEY;ALTER TABLE `tr_log` ADD `SEQ` INT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`SEQ`);
+ver1.14.1:分析画面作成
+  INSERT INTO ms_training (id,shu,sort) SELECT id, shu, 10 * DENSE_RANK() OVER (PARTITION BY id ORDER BY shu) AS rank FROM (select id,shu from `tr_log` group by id,shu) as tmp;
 
+  
 【Issues】
 目標設定機能
 体組織・平均で推移表示
