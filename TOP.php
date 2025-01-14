@@ -65,7 +65,16 @@
 		<div id='logger'>
 			<header class='headerArea'>
 				<div class='container d-flex hf_color position-relative'>
-					<div class='pt-1' style='width:80%;'>ようこそ <?php echo $user_name;?> さん</div>
+					<div class='pt-1 ' style='width:80%;'>
+						<div>
+							<p class='mb-1'>ようこそ 
+							<?php echo $user_name;?> さん</p>
+						</div>
+						<div class="toggle_button">
+						  <input id="toggle" class="toggle_input" type='checkbox' v-model='disp_area' @click=''/>
+						  <label for="toggle" class="toggle_label">
+						</div>
+					</div>
 					<div class="nav-item dropdown position-absolute end-0 top-0"  style='width:40px;'>
         	  <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         	    <i class="bi bi-list fs-1"></i>
@@ -73,11 +82,9 @@
         	  <ul class="dropdown-menu">
 							<li><a class="dropdown-item" href="#">種目別 ＭＡＸ一覧</a></li>
         	    <li><a class="dropdown-item" href="index.php?logoff=out">ログオフ</a></li>
-        	    <!--<li><hr class="dropdown-divider"></li>
-        	    <li><a class="dropdown-item" href="#">Something else here</a></li>-->
         	  </ul>
         	</div>
-					<div class="nav-item dropdown position-absolute start-50 top-50 translate-middle"  style=''>
+					<div class="nav-item dropdown position-absolute start-50 top-50 translate-middle" style=''>
 						
 						<div class="input-group">
 							<template v-if='filter==="%"'><span class="input-group-text" ><i class="bi bi-funnel"></i></span></template>
@@ -94,7 +101,7 @@
 			</header>
 			<main class='container p-0' style='height:100vh;'>
 				<div class='row position-relative' style='height:100vh;'>
-					<div class='col-12 col-md-7 col-lg-6 col-xl-5 ' style='height:100vh;'>
+					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 ' style='height:100vh;'>
 						<div style='overflow-y: scroll;height:100vh;width:100%;padding-bottom:170px;'>
 							<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun+list.shu'>
 								<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row m-0' style='position:relative'><div class=' ymd'>{{list.ymd}} {{list.condition}}</div></div><!--日付-->
@@ -158,26 +165,39 @@
 							</template>
 						</div>
 					</div>
-					<div class='d-none d-sm-block col-md-5 col-lg-6 col-xl-7 ' >
+					<div class='d-none d-sm-block col-md-5 col-lg-6 col-xl-7 ' id='migi_area'>
 						<div style='overflow-y: scroll;height:100vh;padding-bottom:170px;'>
 							<p>開発中エリア</p>
 							<div>
-								<table class='table'>
+								<table class='table table-sm'>
 									<thead>
 										<tr>
-											<th>種目</th>
-											<th>3M</th>
-											<th>1Y</th>
-											<th>ALL</th>
+											<th rowspan="3">種目</th>
+											<th colspan="1">3M</th>
+											<th colspan="1">1Y</th>
+											<th colspan="1">Best</th>
+										</tr>
+										<tr>
+											<th colspan="3">date weight x times</th>
 										</tr>
 									</thead>
 									<tbody>
-										<template v-for='(list,index) in max_log'>
+										<template v-for='(list,index) in max_log' :key='list.shu'>
 											<tr>
-												<td>{{list.shu}}</td>
-												<td>{{list.near_3M_max}}</td>
-												<td>{{list.near_1Y_max}}</td>
-												<td>{{list.full_max}}</td>
+												<td rowspan="3">{{list.shu}}</td>
+												<td colspan="1">{{list.M3_max}}</td>
+												<td colspan="1">{{list.Y1_max}}</td>
+												<td colspan="1">{{list.mybest}}</td>
+											</tr>
+											<tr>
+												<td>{{list.M3_date}}</td>
+												<td>{{list.Y1_date}}</td>
+												<td>'{{list.MB_date}}</td>
+											</tr>
+											<tr>
+												<td>{{list.M3_set}}</td>
+												<td>{{list.Y1_set}}</td>
+												<td>{{list.MB_set}}</td>
 											</tr>
 										</template>
 									</tbody>
@@ -464,6 +484,12 @@
 							})
 						}
 					})
+					const disp_area = ref(false)
+					watch(disp_area,()=>{
+						document.getElementById('migi_area').classList.toggle('col-12')
+						document.getElementById('migi_area').classList.toggle('d-none')
+						document.getElementById('migi_area').classList.toggle('d-sm-block')
+					})
 
 					const shumoku_wt = computed(()=>{
 						return shumoku.value.filter((list)=>{
@@ -493,6 +519,12 @@
 						kintore_log.value = response.data.kintore_log
 						max_log.value = response.data.max_log
 						shu.value = shumoku_wt.value[0]["shu"]
+
+						max_log.value.forEach((list,index)=>{
+							if(list.M3_max === list.Y1_max && list.M3_max === list.mybest){list.mybest = '〃' }
+							if(list.M3_max === list.Y1_max){list.Y1_max = '〃' }
+						})
+
 						kintore_log.value.forEach((row,index)=>{
 							row.ymd = row.ymd + ' ' + week(row.ymd)
 							if((index + Number(1)) == kintore_log.value.length){
@@ -793,6 +825,7 @@
 						OnSubmit,
 						filter,
 						jiju,
+						disp_area,
 					}
 				}
 			}).mount('#logger');

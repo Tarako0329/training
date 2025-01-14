@@ -39,6 +39,7 @@ ver1.13.2:ログフィルター機能改良・ノンウェイト追加・ajax更
 ver1.13.3:ログフィルター機能改良・bugfix-commited
 ver1.13.4:ノンウェイト/ウェイトの混合対応-commited
 ver1.14.0:PC・タブレット画面対応
+  ALTER TABLE `tr_log` DROP PRIMARY KEY;ALTER TABLE `tr_log` ADD `SEQ` INT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`SEQ`);
 
 【Issues】
 目標設定機能

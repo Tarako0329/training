@@ -40,13 +40,46 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$dataset = null;
 
 	//マックス
-	$sql = "SELECT shu
-		,max(IF(DATE_SUB(CURDATE(),INTERVAL 3 MONTH) <= ymd , max_weight , 0)) as near_3M_max
-		,max(IF(DATE_SUB(CURDATE(),INTERVAL 12 MONTH) <= ymd , max_weight , 0)) as near_1Y_max
-		,max(max_weight) as full_max 
-		FROM `tr_log_max_record` where id = ? and typ = '0' group by shu order by max(ymd) desc";
+	$sql = "SELECT 
+						id,shu
+					    ,MAX(IF(sort_3M = 1,near_3M_max,0)) as M3_max,MAX(IF(sort_3M = 1 and near_3M_max > 0,concat(weight,' x ',rep,'(',rep2,')'),'-')) as M3_set,MAX(IF(sort_3M = 1 and near_3M_max > 0,near_3M,'-')) as M3_date
+					    ,MAX(IF(sort_1Y = 1,near_1Y_max,0)) as Y1_max,MAX(IF(sort_1Y = 1 and near_1Y_max > 0,concat(weight,' x ',rep,'(',rep2,')'),'-')) as Y1_set,MAX(IF(sort_1Y = 1 and near_1Y_max > 0,near_1Y,'-')) as Y1_date
+					    ,MAX(IF(sort_MB = 1,max_weight,0)) as mybest, MAX(IF(sort_MB = 1,concat(weight,' x ',rep,'(',rep2,')'),'-')) as MB_set,                    MAX(IF(sort_MB = 1,ymd_MB,'-')) as MB_date
+					FROM (
+					SELECT SEQ,id,shu,max_weight,weight,rep,rep2
+					,ymd
+					,IF(DATE_SUB(CURDATE(),INTERVAL 3 MONTH) <= ymd , DATE_FORMAT(ymd,'%m/%d') , 0) as near_3M
+					,IF(DATE_SUB(CURDATE(),INTERVAL 3 MONTH) <= ymd , max_weight , 0) as near_3M_max
+					,row_number() over (
+					  partition by `id`,`shu`
+					  order by
+					    IF(DATE_SUB(CURDATE(),INTERVAL 3 MONTH) <= ymd , max_weight , 0) desc,
+					    IF(DATE_SUB(CURDATE(),INTERVAL 3 MONTH) <= ymd , ymd , 0) desc
+					) AS `sort_3M`
+					
+					,IF(DATE_SUB(CURDATE(),INTERVAL 12 MONTH) <= ymd , DATE_FORMAT(ymd,'%m月') , 0) as near_1Y
+					,IF(DATE_SUB(CURDATE(),INTERVAL 12 MONTH) <= ymd , max_weight , 0) as near_1Y_max
+					,row_number() over (
+					  partition by `id`,`shu`
+					  order by
+					    IF(DATE_SUB(CURDATE(),INTERVAL 12 MONTH) <= ymd , max_weight , 0) desc,
+					    IF(DATE_SUB(CURDATE(),INTERVAL 12 MONTH) <= ymd , ymd , 0) desc
+					) AS `sort_1Y`
+					
+					,DATE_FORMAT(ymd,'%y-%m') as ymd_MB
+					,row_number() over (
+					  partition by `id`,`shu`
+					  order by
+					    max_weight desc,
+					    ymd desc
+					) AS `sort_MB`
+					FROM `tr_log_max_record` 
+					where id = :id
+					) tmp
+					WHERE sort_MB = 1 or sort_1Y = 1 or sort_3M = 1
+					GROUP BY id,shu;";
 	$result = $pdo_h->prepare( $sql );
-	$result->bindValue(1, $id, PDO::PARAM_STR);
+	$result->bindValue("id", $id, PDO::PARAM_STR);
 	$result->execute();
 	$max_list = $result->fetchAll(PDO::FETCH_ASSOC);
 	$result = null;

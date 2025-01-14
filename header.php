@@ -21,7 +21,7 @@
 <!-- Bootstrap Javascript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <!-- fontawesome -->
-<link href="css/FontAwesome/6.1.1-web/css/all.css" rel="stylesheet">
+<!--<link href="css/FontAwesome/6.1.1-web/css/all.css" rel="stylesheet">-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <!-- オリジナル CSS -->
 <link rel="stylesheet" type="text/css" href="css/st_sheet.css?<?php echo $time; ?>">
