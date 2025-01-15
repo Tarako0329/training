@@ -177,6 +177,7 @@
 								<table class='table table-sm caption-top' style='table-layout: fixed;'>
 									<thead class='table-dark sticky-top'>
 										<tr>
+											<th v-show='setting_switch1' rowspan="3" style='width:30px;'></th>
 											<th rowspan="3" style='max-width:100px;'>種目</th>
 											<th colspan="1">3M</th>
 											<th colspan="1">1Y</th>
@@ -190,9 +191,11 @@
 									</thead>
 									<tbody>
 										<template v-for='(list,index) in max_log_sort' :key='list.shu'>
-											<tr role='button' draggable="true" 
-												@dragstart='move_recorde($event,index)' @dragenter='moving_in($event,index)' @dragleave='moving_out' @dragover='$event.preventDefault()' @drop='dorpping($event,list.sort,index)'
-												@touchstart='move_recorde($event,index)' @touchend='dorpping($event,list.sort,index)'>
+											<tr>
+												<td v-show='setting_switch1' rowspan="3" class='table-info align-middle text-center' style='width:40px;' role='button' @click='move_recorde(index)' :id='`sort_${list.shu}`'>
+													<i v-show='dragIndex===null' class="bi bi-arrow-down-up"></i>
+													<i v-show='dragIndex!==null' class="bi bi-box-arrow-in-down-right"></i>
+												</td>
 												<td rowspan="3" style='max-width:100px;'>
 													{{list.shu}}
 												</td>
@@ -826,49 +829,48 @@
 						console_log('onMounted')
 					})
 
-					const move_recorde = (e,index) =>{
-						//console_log(e.currentTarget)
-						//console_log(index)
+					const draggingItem = ref(null);
+					const dragIndex = ref(null);
+
+					const move_recorde = (p_index) =>{//マウス
 						// 出力テスト
 						if(setting_switch1.value===false){return}
-						e.dataTransfer.setData( "index" , index);
-						console_log(`${max_log_sort.value[index].shu} をドラッグ`)
-					}
-					const moving_in = (e,p_index) =>{
-						console_log(`moving_in ${max_log_sort.value[p_index].shu}`)
-						//console_log(e.currentTarget)
-						e.currentTarget.classList.toggle("dragging")
-					}
-					const moving_out = (e) =>{
-						console_log("moving_out")
-						//console_log(e.currentTarget)
-						e.currentTarget.classList.toggle("dragging")
-					}
-					const dorpping = (e,p_sort,p_index) =>{
-						if(setting_switch1.value===false){return}
-						console_log("dorpping")
-						let index = e.dataTransfer.getData("index")
-						//console_log(max_log_sort.value[index])
-						console_log(`${max_log_sort.value[p_index].shu} にドロップ`)
-						if(max_log_sort.value[index].sort == Number(p_sort)){
-							console_log(`なにもしない`)
-						}else if(max_log_sort.value[index].sort > Number(p_sort)){
-							max_log_sort.value[index].sort = Number(p_sort) - 1
+						//e.preventDefault()
+						if(draggingItem.value){
+							if(max_log_sort.value[dragIndex.value].sort == max_log_sort.value[p_index].sort){
+								console_log(`なにもしない`)
+								
+							}else{
+								console_log(`${max_log_sort.value[dragIndex.value].shu} を ${max_log_sort.value[p_index].shu} の位置に移動`)
+								if(max_log_sort.value[dragIndex.value].sort > max_log_sort.value[p_index].sort){
+									max_log_sort.value[dragIndex.value].sort = Number(max_log_sort.value[p_index].sort) - 1
+								}else{
+									max_log_sort.value[dragIndex.value].sort = Number(max_log_sort.value[p_index].sort) + 1
+								}
+								max_log_sort.value.forEach((list,index)=>{
+									list.sort = Number(index) * 10
+								})
+							}
+							draggingItem.value.classList.remove('table-primary');
+							draggingItem.value.classList.add('table-info');
+							draggingItem.value = null
+							dragIndex.value = null
 						}else{
-							max_log_sort.value[index].sort = Number(p_sort) + 1
+							//draggingItem.value = e.target
+							draggingItem.value = document.getElementById(`sort_${max_log_sort.value[p_index].shu}`)
+							draggingItem.value.classList.remove('table-info');// 
+							draggingItem.value.classList.add('table-primary');
+							
+							console_log(document.getElementById(`sort_${max_log_sort.value[p_index].shu}`))
+							dragIndex.value = p_index
+							console_log(`${max_log_sort.value[p_index].shu} を選択`)
 						}
-						max_log_sort.value.forEach((list,index)=>{
-							list.sort = Number(index) * 10
-						})
-						console_log(max_log_sort.value)
-						e.currentTarget.classList.remove("dragging")
-						e.dataTransfer.clearData()
 					}
 
 					const setting_switch1 = ref(false)
 					const setting1 = () =>{
 						if(setting_switch1.value===false){
-							alert('項目の表示非表示、ドラッグアンドドロップによる並べ替えを行います')
+							//alert('項目の表示非表示、ドラッグアンドドロップによる並べ替えを行います')
 							setting_switch1.value=true
 							document.getElementById('ms_training').style.height='100%'
 						}else{
@@ -926,10 +928,9 @@
 						filter,
 						jiju,
 						disp_area,
+						dragIndex,
+						draggingItem,
 						move_recorde,
-						moving_in,
-						moving_out,
-						dorpping,
 						setting_switch1,
 						setting1,
 					}
