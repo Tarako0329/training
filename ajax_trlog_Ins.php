@@ -20,15 +20,7 @@ if(isset($_SESSION['USER_ID'])){
 	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
 	exit();
 }
-/*
-if(trim($_POST["shu2"]) == ""){
-	//種目追加欄が空白の場合はリストの種目
-	$shu = $_POST["shu1"];
-}else{
-	//種目追加欄が記入されてる場合は種目追加欄の種目
-	$shu = $_POST["shu2"];
-}
-*/
+
 //種目追加欄が空白の場合はリストの種目,種目追加欄が記入されてる場合は種目追加欄の種目
 $shu = ($_POST["shu2"] == "")? $_POST["shu1"]:$_POST["shu2"];
 $rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
@@ -50,20 +42,6 @@ try{
 		if($row_cnt!==0){
 			$jun=$row[0]["junban"]+1;
 		}
-		/*
-			if($_POST["rep2"] == ""){
-				$rep2 = 0;
-			}else{
-				$rep2 = $_POST["rep2"];
-			}
-			if($_POST["cal"] == ""){
-				$cal = 0;
-			}else{
-				$cal = $_POST["cal"];
-			}
-		*/
-		//$rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
-		//$cal = ($_POST["cal"] == "")?0:$_POST["cal"];
 
 		$sql = "insert into tr_log(id,shu,jun,weight,rep,tani,rep2,sets,cal,ymd,memo,typ) values(?,?,?,?,?,?,?,?,?,?,?,?)";
 	
@@ -80,7 +58,6 @@ try{
 		$stmt->bindValue(9, $cal, PDO::PARAM_INT);
 		$stmt->bindValue(10, $_POST["ymd"], PDO::PARAM_STR);
 		$stmt->bindValue(11, $_POST["memo"], PDO::PARAM_STR);
-		//$stmt->bindValue(12, $_POST["typ"], PDO::PARAM_STR);
 		$stmt->bindValue(12, $type, PDO::PARAM_STR);
 		$stmt->execute();
 	}else{
@@ -96,30 +73,8 @@ try{
 		if($_POST["motoYMD"] == $_POST["ymd"]){//日付の変更がない場合は元の順番で更新
 			$jun=$_POST["NO"];
 		}else{
-			/*
-				if($row_cnt==0){
-					$jun=1;
-				}else{
-					$jun=$row["junban"]+1;
-				}
-			*/
 			$jun=($row_cnt==0)?1:$jun=$row["junban"]+1;
 		}
-		/*
-			if($_POST["rep2"] == ""){
-				$rep2 = 0;
-			}else{
-				$rep2 = $_POST["rep2"];
-			}
-			if($_POST["cal"] == ""){
-				$cal = 0;
-			}else{
-				$cal = $_POST["cal"];
-			}
-		*/
-		//$rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
-		//$cal = ($_POST["cal"] == "")?0:$_POST["cal"];
-		
 	
 		$sql = "update tr_log set ";
 		$sql = $sql."shu = :shu,";

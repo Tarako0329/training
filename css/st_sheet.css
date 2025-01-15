@@ -133,7 +133,7 @@ body{    /*トップページ用*/
 	/*background-color: #4E9ABE;*/
 	color: #fff;
 	font-size:10px;
-	z-index:99;
+	z-index:1399;
 }
 .footerArea {  /*トップページ用*/
 	position: fixed !important;

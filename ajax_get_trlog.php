@@ -47,7 +47,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 					  ,MAX(IF(sort_1Y = 1,near_1Y_max,0)) as Y1_max,MAX(IF(sort_1Y = 1 and near_1Y_max > 0,concat(weight,' x ',rep,'(',rep2,')'),'-')) as Y1_set,MAX(IF(sort_1Y = 1 and near_1Y_max > 0,near_1Y,'-')) as Y1_date
 					  ,MAX(IF(sort_MB = 1,max_weight,0)) as mybest, MAX(IF(sort_MB = 1,concat(weight,' x ',rep,'(',rep2,')'),'-')) as MB_set,                    MAX(IF(sort_MB = 1,ymd_MB,'-')) as MB_date
 						,ms.sort
-						,ms.display1
+						,ms.display_hide1
 					FROM (
 						SELECT 
 							SEQ,id,shu,max_weight,weight,rep,rep2

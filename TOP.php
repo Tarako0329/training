@@ -167,35 +167,41 @@
 					</div>
 					<div class='d-none d-sm-block col-md-5 col-lg-6 col-xl-7 ' id='migi_area'>
 						<div style='overflow-y: scroll;height:100vh;padding-bottom:170px;'>
-							<p>開発中エリア</p>
-							<div class='p-3 position-relative'>
-								<button class='btn btn-secondary p-1 position-absolute pt-0 pb-0' style='right:16px;' @click='setting1()'><i class="bi bi-gear-wide"></i></button>
-								<table class='table table-sm caption-top'>
-									<caption>Max記録と記録時のセット</caption>
-									<thead>
+							<div class='row m-0 mb-1 mt-1'>
+								<div class='col-12 ps-3 position-relative'>
+									Max記録と記録時のセット
+									<button class='btn btn-secondary p-1 position-absolute pt-0 pb-0' style='right:16px;' @click='setting1()'><i class="bi bi-gear-wide"></i></button>
+								</div>
+							</div>
+							<div class='p-3 pt-0 ' style='overflow-y: scroll;height:470px;' id='ms_training'>
+								<table class='table table-sm caption-top' style='table-layout: fixed;'>
+									<thead class='table-dark sticky-top'>
 										<tr>
-											<th rowspan="3">種目</th>
+											<th rowspan="3" style='max-width:100px;'>種目</th>
 											<th colspan="1">3M</th>
 											<th colspan="1">1Y</th>
 											<th colspan="1">Best</th>
-											<th v-if='setting_switch1' colspan="1">隠す</th>
+											<th v-show='setting_switch1' colspan="1" style='width:30px;'>隠</th>
 										</tr>
 										<tr>
 											<th colspan="3">date weight x times</th>
-											<th v-if='setting_switch1' colspan="1"></th>
+											<th v-show='setting_switch1' colspan="1" style='width:30px;'></th>
 										</tr>
 									</thead>
 									<tbody>
 										<template v-for='(list,index) in max_log_sort' :key='list.shu'>
 											<tr role='button' draggable="true" 
-												@dragstart='move_recorde($event,index)' @dragenter='moving_in($event,index)' @dragleave='moving_out' @dragover='$event.preventDefault()' @drop='dorpping($event,list.sort,index)'>
-												<td rowspan="3" >
+												@dragstart='move_recorde($event,index)' @dragenter='moving_in($event,index)' @dragleave='moving_out' @dragover='$event.preventDefault()' @drop='dorpping($event,list.sort,index)'
+												@touchstart='move_recorde($event,index)' @touchend='dorpping($event,list.sort,index)'>
+												<td rowspan="3" style='max-width:100px;'>
 													{{list.shu}}
 												</td>
 												<td colspan="1">{{list.M3_max}}</td>
 												<td colspan="1">{{list.Y1_max}}</td>
 												<td colspan="1">{{list.mybest}}</td>
-												<td v-if='setting_switch1' rowspan="3" class='text-center'><input type='checkbox' class='form-check-input'></td>
+												<td v-show='setting_switch1' rowspan="3" class='text-center' style='width:30px;'>
+													<input type='checkbox' class='form-check-input' v-model='list.display_hide1'>
+												</td>
 											</tr>
 											<tr>
 												<td>{{list.M3_date}}</td>
@@ -473,8 +479,20 @@
 					const shumoku = ref([])
 					const max_log = ref([])
 					const max_log_sort = computed(()=>{
-						return max_log.value.sort((a,b)=>{
+						let temp = max_log.value.sort((a,b)=>{
 							return a.sort-b.sort
+						})
+
+						return temp.filter((list)=>{
+							if(setting_switch1.value===true){
+								return true
+							}else{
+								if(list.display_hide1===true || list.display_hide1==='true'){
+									//return false
+								}else{
+									return true
+								}
+							}
 						})
 					})
 					
@@ -850,9 +868,28 @@
 					const setting_switch1 = ref(false)
 					const setting1 = () =>{
 						if(setting_switch1.value===false){
+							alert('項目の表示非表示、ドラッグアンドドロップによる並べ替えを行います')
 							setting_switch1.value=true
+							document.getElementById('ms_training').style.height='100%'
 						}else{
+							if(confirm('編集を終了します。変更内容を保存しますか？')){
+								const form = new FormData()
+								form.append('data',JSON.stringify(max_log.value))
+								axios.post('ajax_mstraining_delin.php',form, {headers: {'Content-Type': 'multipart/form-data'}})
+								.then((response)=>{
+									console_log(response)
+								})
+								.catch((error)=>{
+									alert(error)
+								})
+								.finally(()=>{
+									
+								})
+							}else{
+								alert('')
+							}
 							setting_switch1.value=false
+							document.getElementById('ms_training').style.height='500px'
 						}
 					}
 
