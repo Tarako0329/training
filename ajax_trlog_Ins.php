@@ -83,6 +83,7 @@ try{
 		$sql = $sql."rep = :rep,";
 		$sql = $sql."rep2 = :rep2,";
 		$sql = $sql."sets = :sets,";
+		$sql = $sql."tani = :tani,";
 		$sql = $sql."cal = :cal,";
 		$sql = $sql."ymd = :ymd,";
 		$sql = $sql."typ = :typ,";
@@ -97,6 +98,7 @@ try{
 		$stmt->bindValue("rep", $_POST["rep"], PDO::PARAM_INT);
 		$stmt->bindValue("rep2", $rep2, PDO::PARAM_INT);
 		$stmt->bindValue("sets", $_POST["sets"], PDO::PARAM_INT);
+		$stmt->bindValue("tani", $_POST["tani"], PDO::PARAM_INT);
 		$stmt->bindValue("cal", $cal, PDO::PARAM_INT);
 		$stmt->bindValue("ymd", $_POST["ymd"], PDO::PARAM_STR);
 		$stmt->bindValue("typ", $type, PDO::PARAM_INT);
@@ -124,8 +126,16 @@ try{
 		$stmt->execute();
 	}
 
+
 	$pdo_h->commit();
 
+	//種目マスタ追加
+	$sql = 'INSERT IGNORE INTO ms_training(id,shu,sort) VALUES(:id,:shu,0)';
+	$stmt = $pdo_h->prepare($sql);
+	$stmt->bindValue(1, $id, PDO::PARAM_STR);
+	$stmt->bindValue(2, $shu, PDO::PARAM_STR);
+	$stmt->execute();
+	
 	$return_sts = array(
 		"MSG" => "success"
 		,"status" => "success"

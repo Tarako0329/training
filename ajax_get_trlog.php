@@ -84,7 +84,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 					ON tmp.id = ms.id
 					AND tmp.shu = ms.shu
 					WHERE sort_MB = 1 or sort_1Y = 1 or sort_3M = 1
-					GROUP BY id,shu,ms.sort;";
+					GROUP BY id,ms.display_hide1,ms.sort,shu;";
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue("id", $id, PDO::PARAM_STR);
 	$result->execute();

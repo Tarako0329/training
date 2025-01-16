@@ -484,6 +484,7 @@
 					const max_log_sort = computed(()=>{
 						let temp = max_log.value.sort((a,b)=>{
 							return a.sort-b.sort
+							//return String(a.display_hide1) + a.sort > String(b.display_hide1) + b.sort
 						})
 
 						return temp.filter((list)=>{
@@ -737,10 +738,12 @@
 						
     				form.submit();						
 					}
+					let new_shu
 					const add_shumoku_wt = (e) =>{
 						console_log(`add_shumoku_wt e:${e.target.value}`)
 						shumoku_wt.value.unshift({shu:e.target.value,sort:''})
 						shu.value = e.target.value
+						new_shu = e.target
 					}
 					watch([jiju],()=>{
 						if(jiju.value===true){
@@ -804,15 +807,16 @@
 								mBtnName.value[1] = '閉じる'
 								keybord_show.value=false
 								kiroku_index.value=''
+								if(new_shu){new_shu.value = ''}
 							}else{
 								alert("処理が失敗しました")
-								alert(response.data.MSG)
+								alert(response.data)
 							}
 						})
 						.catch((error) => {
-							console_log(`get_max_data ERROR:${error}`)
+							console_log(`OnSubmit ERROR:${error}`)
 							console_log(error)
-							alert("処理が失敗しました")
+							alert("ERROR:処理が失敗しました")
 							//alert(error)
 							filter.value = "%"
 						})
