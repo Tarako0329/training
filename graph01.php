@@ -200,7 +200,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									,borderColor: color
 									,fill:true
 									,borderWidth: 4
-									, pointRadius:2
+									,pointRadius:2
 								})
 								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 0.3)'
 								datasets.push({
@@ -210,7 +210,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									,borderColor: color
 									,fill:true
 									,borderWidth: 2
-									, pointRadius:1
+									,pointRadius:1
 								})
 							}else if(gtype.value==='all'){
 								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
@@ -247,45 +247,56 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 							datasets = []
 							let color
 							if(gtype.value==='year'){
-								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 0.3)'
-								datasets.push({
+								color1 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
+								color3 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
+								color2 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
+								color4 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
+								opacity1 = ', 1)'
+								opacity2 = ', 0.6)'
+								datasets.push({//去年のトレ量マックス
 									'label':response.data.glabel2 + 'Mx'
 									,'data':response.data.graph_data_max2
-									,'backgroundColor': color
-									,borderColor: color
-									//,fill:true
-									,borderWidth: 4
-									, pointRadius:2
+									,'backgroundColor':  color1 + opacity2
+									,borderColor: color1 + opacity2
+									,fill:true
+									//,stepped: 'middle'
+									,borderWidth: 2
+									, pointRadius:1
+									//,type:'bar'
 								})
-								datasets.push({
+								datasets.push({//去年のトレ量
 									'label':response.data.glabel2 + 'TTL'
 									,'data':response.data.graph_data_total2
-									,'backgroundColor': color
-									,borderColor: color
-									//,fill:true
-									,borderWidth: 4
-									//, pointRadius:2
-									,type:'bar'
+									,'backgroundColor':  color2 + opacity2
+									,borderColor:  color2 + opacity2
+									,fill:true
+									,stepped: 'middle'
+									,borderWidth: 2
+									, pointRadius:1
+									//,type:'bar'
 								})
 								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
 								datasets.push({
 									'label':response.data.glabel1 + 'Mx'
 									,'data':response.data.graph_data_max1
-									,'backgroundColor': color
-									,borderColor: color
-									//,fill:true
-									,borderWidth: 2
-									, pointRadius:1
+									,'backgroundColor':  color3 + opacity1
+									,borderColor:  color3 + opacity1
+									,fill:true
+									//,stepped: 'middle'
+									,borderWidth: 4
+									, pointRadius:2
+									//,type:'bar'
 								})
 								datasets.push({
 									'label':response.data.glabel1 + 'TTL'
 									,'data':response.data.graph_data_total1
-									,'backgroundColor': color
-									,borderColor: color
-									//,fill:true
-									,borderWidth: 2
-									//, pointRadius:1
-									,type:'bar'
+									,'backgroundColor':  color4 + opacity1
+									,borderColor:  color4 + opacity1
+									,fill:true
+									,stepped: 'middle'
+									,borderWidth: 4
+									, pointRadius:2
+									//,type:'bar'
 								})
 
 
