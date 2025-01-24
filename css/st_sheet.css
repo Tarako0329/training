@@ -167,11 +167,11 @@ div#headerArea2 {  /*グラフページ用*/
 		z-index: 99;
 		text-align:center;
 }
-div#footerArea2 {    /*グラフページ用*/
+.footerArea2 {    /*グラフページ用*/
 		position: fixed !important;
 		/*position: absolute;*/
 		bottom: 0;
-		/*left: 0;*/
+		left: 0;
 		width: 100%;
 		height: 65px;
 		background-color: #4E9ABE;

@@ -103,8 +103,8 @@ $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 $dataset = [];
 $i=1;
-$maxline=0;
-$minline=999999;
+//$maxline=0;
+//$minline=999999;
 $graph_data=[];
 $graph_data2=[];
 $labels = [];
@@ -115,18 +115,18 @@ foreach($dataset_work as $row){
 	}
 	if($_POST["gtype"]==="year"){//直近1年
 		if($row["beforedate"]<=365){
-			if($maxline<$weight){$maxline=$weight+10;}
-			if($minline>$weight){$minline=$weight-10;}
+			//if($maxline<$weight){$maxline=$weight+10;}
+			//if($minline>$weight){$minline=$weight-10;}
 			$graph_data[] = $weight;
 			$labels[] = substr($row["ym"],-2);
 		}else if($row["beforedate"]<=730){
-			if($maxline<$weight){$maxline=$weight+10;}
-			if($minline>$weight){$minline=$weight-10;}
+			//if($maxline<$weight){$maxline=$weight+10;}
+			//if($minline>$weight){$minline=$weight-10;}
 			$graph_data2[] = $weight;	
 		}
 	}else if($_POST["gtype"]==="all"){//全期間
-		if($maxline<$weight){$maxline=$weight+10;}
-		if($minline>$weight){$minline=$weight-10;}
+		//if($maxline<$weight){$maxline=$weight+10;}
+		//if($minline>$weight){$minline=$weight-10;}
 		
 		$labels[] = $row["ym"];
 		$graph_data[] = $weight;
@@ -137,7 +137,7 @@ foreach($dataset_work as $row){
 	$i++;
 }
 
-if($minline<0){$minline=0;}
+//if($minline<0){$minline=0;}
 
 //ラベル設定
 if($_POST["gtype"]==="year"){//直近1年
@@ -145,11 +145,13 @@ if($_POST["gtype"]==="year"){//直近1年
 	//$kikan="all";
 	$glabel1="今年";
 	$glabel2="去年";
+	$subtitle="";
 }else if($_POST["gtype"]==="all"){//全期間
 	//$btn_name2="直近1年";
 	//$kikan="year";
 	$glabel1="全期間";
 	$glabel2="";
+	$subtitle="";
 }
 
 $return_sts = array(
@@ -166,6 +168,7 @@ $return_sts = array(
 	//,"maxline" => $maxline
 	//,"minline" => $minline
 	,"graph_title" => $graph_title
+	,"subtitle" => $subtitle
 	//,"btn_name" => $btn_name
 );
 header('Content-type: application/json');

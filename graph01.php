@@ -36,7 +36,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 		<div class='row' style='height:100%;'>
 			<div class='col-12' style='justify-content: center;height: auto;max-height:60px;'>
 				<p class="graph-title">{{graph_title}}</p>
-				<p style='color:darkgrey;font-size:12px;'>{{graph_subtitle}}</p>
+				<p v-show='graph_subtitle!==""' style='color:darkgrey;font-size:12px;'>{{graph_subtitle}}</p>
 			</div>
 		
 			<div class='col-12' id="graph" style='height:250px;margin-bottom:5px;position:relative;max-width:900px;'>
@@ -60,21 +60,38 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 				</div>
 				<div v-if='String(list.jun)!=="0"'  :id='`collapseOne${list.ymd}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 					<div class='row lst accordion-body'>
-						<div class='col-1' style='padding:0 0 0 6px;'>
+						<div class='col-12' style='padding:0  0 6px;display:flex;'>
+						<div style='width: 20px;'>{{list.No - 1}}</div>
+						<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
+						<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+						<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
+						<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
+						<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+
+
+
+						<!--<div class='col-1' style='padding:0 0 0 6px;'>
 							{{list.No - 1}}
 						</div>
 						<div class='col-2 text-end' style='padding:0;'>{{list.weight}}kg</div>
 						<div class='col-2' style='padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
 						<div class='col-2' style='padding-right:0;'>{{list.sets}}sets</div>
-						<div class='col-5' style='padding:0;'>{{list.memo}}</div>
+						<div class='col-5' style='padding:0;'>{{list.memo}}</div>-->
+						</div>
 					</div>
 				</div>
 			</div>
 		</template>
 	</main>
-	<div id="footerArea2"  class='container' style='text-align: center;'>
-		<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
-	</div>
+	<footer id=""  class='footerArea' >
+		<div class='container hf_color'>
+		<div class='row'>
+			<div class='col-12 text-center'>
+				<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
+			</div>
+		</div>
+		</div>
+	</footer>
 	</div>
 	<script>
 	</script>
@@ -206,8 +223,9 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									,borderWidth: 2
 								})
 							}
-							create_graph(document.getElementById('myChart'))
 							graph_title.value = response.data.graph_title
+							graph_subtitle.value = response.data.subtitle
+							create_graph(document.getElementById('myChart'))
 						})
 						.catch((error) => {
 							console_log(`get_max_data ERROR:${error}`)
@@ -293,9 +311,9 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 								})
 
 							}
-							create_graph(document.getElementById('myChart'))
 							graph_title.value = response.data.graph_title
 							graph_subtitle.value = response.data.subtitle
+							create_graph(document.getElementById('myChart'))
 						})
 						.catch((error) => {
 							console_log(`get_volume_data ERROR:${error}`)
@@ -312,14 +330,21 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 						.then((response) => {
 							console_log(response.data)
 							kintore_log.value = response.data.kintore_log
-							drow_chart(document.getElementById("graph"),
-								response.data.graph_data1,
-								response.data.graph_data2,
-								response.data.glabel1,
-								response.data.glabel2,
-								response.data.maxline,
-								response.data.minline)
+							labels = response.data.labels
+							datasets = []
+							color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+								datasets.push({
+									'label':response.data.glabel1
+									,'data':response.data.graph_data1
+									, pointRadius:1
+									,'backgroundColor': color
+									,borderColor: color
+									,borderWidth: 2
+									,type:'bar'
+								})
 							graph_title.value = response.data.graph_title
+							graph_subtitle.value = response.data.subtitle
+							create_graph(document.getElementById('myChart'))
 						})
 						.catch((error) => {
 							console_log(`get_growth_data ERROR:${error}`)
