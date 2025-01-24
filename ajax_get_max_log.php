@@ -40,15 +40,65 @@ $kintore_log = $dataset;
 $dataset_work=[];
 
 //ぐらふでーた取得
-$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2,max_weight from tr_log_max_record where id = ? and shu = ? ";
-$sql .= "order by ymd";
+//$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2,max_weight from tr_log_max_record where id = ? and shu = ? ";
+if($_POST["gtype"]==="year"){//直近1年
+	$timestamp = strtotime('-23 months first day of this month');
+	// タイムスタンプを日付形式に変換
+	$date = date('Y-m-d', $timestamp);
+}else if($_POST["gtype"]==="all"){//全期間
+	$date = '2017-05-01';
+}else{
+	exit();
+}
+$sql = "WITH RECURSIVE cal AS (
+	  SELECT
+	    A.min_ymd AS date
+	  from
+	    (
+	      select min(ymd) as min_ymd from tr_log
+	      where
+	        id = :id1
+	        and shu = :shumoku1
+					and ymd >= '$date'
+	      group by id, shu
+	    ) as A
+	  UNION ALL
+	  SELECT DATE_ADD(cal.date, INTERVAL 1 Month) FROM cal WHERE cal.date <= CURDATE()
+	)
+	select
+	  left(cal.date, 7) as ym,
+		DATEDIFF(now(),cal.date) as beforedate,
+	  :shumoku2 as shu,
+	  TEMP.max_weight as max_weight
+	from
+	  cal
+	  left join (
+	    SELECT
+	      shu,
+	      left(ymd, 7) as ym,
+				MIN(ymd) as min_ymd,
+	      max(max_weight) as max_weight
+	    FROM
+	      `tr_log_max_record`
+	    where
+	      id = :id2
+	      and shu = :shumoku3
+	    group by
+	      shu,
+	      left(ymd, 7)
+	  ) as TEMP ON left(cal.date, 7) = TEMP.ym
+		ORDER BY left(cal.date,7)";
+
 $graph_title = "『".$shu."のＭＡＸ推移』";
 $btn_name = "ﾄﾚｰﾆﾝｸﾞ量グラフへ";
 $typ=1;
 
 $result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
+$result->bindValue('id1', $id, PDO::PARAM_STR);
+$result->bindValue('id2', $id, PDO::PARAM_STR);
+$result->bindValue('shumoku1', $shu, PDO::PARAM_STR);
+$result->bindValue('shumoku2', $shu, PDO::PARAM_STR);
+$result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 $dataset = [];
@@ -57,28 +107,29 @@ $maxline=0;
 $minline=999999;
 $graph_data=[];
 $graph_data2=[];
+$labels = [];
 foreach($dataset_work as $row){
-  //$weight = number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
 	$weight = number_format($row["max_weight"],2);
-
+	if($row["beforedate"]<0){
+		continue;
+	}
 	if($_POST["gtype"]==="year"){//直近1年
 		if($row["beforedate"]<=365){
 			if($maxline<$weight){$maxline=$weight+10;}
 			if($minline>$weight){$minline=$weight-10;}
-			//$graph_data .= "[".(356-$row["beforedate"]).",".$weight."],";	
-			$graph_data[] = [(356-$row["beforedate"]),$weight];	
+			$graph_data[] = $weight;
+			$labels[] = substr($row["ym"],-2);
 		}else if($row["beforedate"]<=730){
 			if($maxline<$weight){$maxline=$weight+10;}
 			if($minline>$weight){$minline=$weight-10;}
-			//$graph_data2 .= "[".(730-$row["beforedate"]).",".$weight."],";
-			$graph_data2[] = [(730-$row["beforedate"]),$weight];	
+			$graph_data2[] = $weight;	
 		}
 	}else if($_POST["gtype"]==="all"){//全期間
 		if($maxline<$weight){$maxline=$weight+10;}
 		if($minline>$weight){$minline=$weight-10;}
 		
-		//$graph_data .= "[".$i.",".$weight."],";
-		$graph_data[] = [$i,$weight];
+		$labels[] = $row["ym"];
+		$graph_data[] = $weight;
 	}else{
 		exit();
 	}
@@ -90,13 +141,13 @@ if($minline<0){$minline=0;}
 
 //ラベル設定
 if($_POST["gtype"]==="year"){//直近1年
-	$btn_name2="全期間";
-	$kikan="all";
-	$glabel1="直近1年";
-	$glabel2="１年前";
+	//$btn_name2="全期間";
+	//$kikan="all";
+	$glabel1="今年";
+	$glabel2="去年";
 }else if($_POST["gtype"]==="all"){//全期間
-	$btn_name2="直近1年";
-	$kikan="year";
+	//$btn_name2="直近1年";
+	//$kikan="year";
 	$glabel1="全期間";
 	$glabel2="";
 }
@@ -107,14 +158,15 @@ $return_sts = array(
 	,"kintore_log" => $kintore_log
 	,"graph_data1" => $graph_data
 	,"graph_data2" => $graph_data2
-	,"btn_name2" => $btn_name2
-	,"kikan" => $kikan
+	,"labels" => $labels
+	//,"btn_name2" => $btn_name2
+	//,"kikan" => $kikan
 	,"glabel1" => $glabel1
 	,"glabel2" => $glabel2
-	,"maxline" => $maxline
-	,"minline" => $minline
+	//,"maxline" => $maxline
+	//,"minline" => $minline
 	,"graph_title" => $graph_title
-	,"btn_name" => $btn_name
+	//,"btn_name" => $btn_name
 );
 header('Content-type: application/json');
 echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);

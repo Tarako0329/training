@@ -16,9 +16,13 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }	
 
 //履歴取得
-$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select id,shu,0 as jun,sum(weight*rep*sets) as weight,0 as rep,0 as tani,0 as rep2,0 as sets,0 as cal,ymd,'' as memo,typ,0 as insdatetime ";
-$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu UNION ALL select * from  tr_log where id = ? and shu = ?) as T ";
-$sql .= "order by T.ymd desc,T.jun ";
+$sql = "select 
+	ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* 
+	from (
+		select 0 as SEQ,id,shu,0 as jun,sum(weight*rep*sets) as weight,0 as rep,0 as tani,0 as rep2,0 as sets,0 as cal,ymd,'' as memo,typ,0 as insdatetime from tr_log where id = ? and shu = ? group by ymd,shu 
+		UNION ALL 
+		select * from  tr_log where id = ? and shu = ?) as T 
+	order by T.ymd desc,T.jun ";
 
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
@@ -40,82 +44,148 @@ $kintore_log = $dataset;
 $dataset_work=[];
 
 //ぐらふでーた取得
+if($_POST["gtype"]==="year"){//直近1年
+	$timestamp = strtotime('-23 months first day of this month');
+	// タイムスタンプを日付形式に変換
+	$date = date('Y-m-d', $timestamp);
+}else if($_POST["gtype"]==="all"){//全期間
+	$date = '2017-05-01';
+}else{
+	exit();
+}
+
 $sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,sum(weight*rep*sets) as weight ";
 $sql .= "from tr_log where id = ? and shu = ? group by ymd,shu,id ";
 $sql .= "order by ymd";
+
+$sql = "WITH RECURSIVE cal AS (
+	SELECT
+		A.min_ymd AS date
+	from
+		(
+			select min(ymd) as min_ymd from tr_log
+			where
+				id = :id1
+				and shu = :shumoku1
+				and ymd >= '$date'
+			group by id, shu
+		) as A
+	UNION ALL
+	SELECT DATE_ADD(cal.date, INTERVAL 1 Month) FROM cal WHERE cal.date <= CURDATE()
+)
+select
+	left(cal.date, 7) as ym
+	,DATEDIFF(now(),cal.date) as beforedate
+	,:shumoku2 as shu
+	,IFNULL(TEMP.max_volume,0) as max_volume
+	,IFNULL(TEMP.total_volume,0) as total_volume
+from
+	cal
+	left join (
+		SELECT shu, left(ymd, 7) as ym, max(total_weight) as max_volume, sum(total_weight) as total_volume FROM 
+		(SELECT shu, left(ymd, 7) as ym, ymd, sum(weight*rep*sets) as total_weight FROM `tr_log` where id = :id2 and shu = :shumoku3 group by shu, ymd) as tmp
+ 		group by shu, left(ymd, 7)
+ 	) as TEMP ON left(cal.date, 7) = TEMP.ym
+	ORDER BY left(cal.date,7)";
+
+
+
+
+
 $graph_title = "『".$shu."のﾄﾚｰﾆﾝｸﾞ量推移』";
-$btn_name = "MAX記録グラフへ";
-$typ=0;
+//$btn_name = "MAX記録グラフへ";
+//$typ=0;
 
 $result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
+$result->bindValue('id1', $id, PDO::PARAM_STR);
+$result->bindValue('id2', $id, PDO::PARAM_STR);
+$result->bindValue('shumoku1', $shu, PDO::PARAM_STR);
+$result->bindValue('shumoku2', $shu, PDO::PARAM_STR);
+$result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 $dataset = [];
 $i=1;
-$maxline=0;
-$minline=999999;
-$graph_data=[];
-$graph_data2=[];
+//$maxline=0;
+//$minline=999999;
+$graph_data_max=[];
+$graph_data_max2=[];
+$graph_data_total=[];
+$graph_data_total2=[];
+
 foreach($dataset_work as $row){
   //$weight = number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
-	$weight = ($row["weight"]);
+	$weight = ($row["total_volume"]);
+	if($row["beforedate"]<0){
+		continue;
+	}
 
 	if($_POST["gtype"]==="year"){//直近1年
 		if($row["beforedate"]<=365){
-			if($maxline<$weight){$maxline=$weight+10;}
-			if($minline>$weight){$minline=$weight-10;}
-			//$graph_data .= "[".(356-$row["beforedate"]).",".$weight."],";	
-			$graph_data[] = [(356-$row["beforedate"]),$weight];	
+			//if($maxline<$weight){$maxline=$weight+10;}
+			//if($minline>$weight){$minline=$weight-10;}
+
+			$labels[] = substr($row["ym"],-2);
+			$graph_data_max[] = $row["max_volume"];
+			$graph_data_total[] = $row["total_volume"];
 		}else if($row["beforedate"]<=730){
-			if($maxline<$weight){$maxline=$weight+10;}
-			if($minline>$weight){$minline=$weight-10;}
-			//$graph_data2 .= "[".(730-$row["beforedate"]).",".$weight."],";
-			$graph_data2[] = [(730-$row["beforedate"]),$weight];	
+			//if($maxline<$weight){$maxline=$weight+10;}
+			//if($minline>$weight){$minline=$weight-10;}
+
+			$graph_data_max2[] = $row["max_volume"];
+			$graph_data_total2[] = $row["total_volume"];
 		}
 	}else if($_POST["gtype"]==="all"){//全期間
-		if($maxline<$weight){$maxline=$weight+10;}
-		if($minline>$weight){$minline=$weight-10;}
+		//if($maxline<$weight){$maxline=$weight+10;}
+		//if($minline>$weight){$minline=$weight-10;}
 		
-		//$graph_data .= "[".$i.",".$weight."],";
-		$graph_data[] = [$i,$weight];
-	}else{
+		$labels[] = $row["ym"];
+		$graph_data_max[] = $row["max_volume"];
+		$graph_data_total[] = $row["total_volume"];
+}else{
 		exit();
 	}
 	
 	$i++;
 }
 
-if($minline<0){$minline=0;}
+//if($minline<0){$minline=0;}
 
 //ラベル設定
 if($_POST["gtype"]==="year"){//直近1年
-	$btn_name2="全期間";
-	$kikan="all";
-	$glabel1="直近1年";
-	$glabel2="１年前";
+	//$btn_name2="全期間";
+	//$kikan="all";
+	$glabel1="今";
+	$glabel2="前";
+	$subtitle = "各月の総Volume(棒グ)とDayﾄﾚのMaxVolume(線グ)";
+	$graph_title .= "（前年比較）";
 }else if($_POST["gtype"]==="all"){//全期間
-	$btn_name2="直近1年";
-	$kikan="year";
-	$glabel1="全期間";
+	//$btn_name2="直近1年";
+	//$kikan="year";
+	$glabel1="";
 	$glabel2="";
+	$subtitle = "全期間対象の月間総Volume推移";
+	$graph_title .= "（全期間）";
 }
 
 $return_sts = array(
 	"MSG" => $msg
 	,"status" => $alert_status
 	,"kintore_log" => $kintore_log
-	,"graph_data1" => $graph_data
-	,"graph_data2" => $graph_data2
-	,"btn_name2" => $btn_name2
-	,"kikan" => $kikan
+	,"graph_data_max1" => $graph_data_max
+	,"graph_data_total1" => $graph_data_total
+	,"graph_data_max2" => $graph_data_max2
+	,"graph_data_total2" => $graph_data_total2
+	,"labels" => $labels
+	//,"btn_name2" => $btn_name2
+	//,"kikan" => $kikan
 	,"glabel1" => $glabel1
 	,"glabel2" => $glabel2
-	,"maxline" => $maxline
-	,"minline" => $minline
+	//,"maxline" => $maxline
+	//,"minline" => $minline
 	,"graph_title" => $graph_title
-	,"btn_name" => $btn_name
+	,"subtitle" => $subtitle
+	//,"btn_name" => $btn_name
 );
 header('Content-type: application/json');
 echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);

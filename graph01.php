@@ -20,109 +20,6 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	exit();
 }	
 
-//履歴取得
-/*
-if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
-	$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select *,0 as max_weight from tr_log where id = ? and shu = ? ";
-	$sql .= "UNION ALL select * from  tr_log_max_record where id = ? and shu = ?) as T ";
-	$sql .= "order by T.ymd desc,T.jun ";
-}else if($hyoji == "1"){//total表示
-	$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select id,shu,0 as jun,sum(weight*rep*sets) as weight,0 as rep,0 as tani,0 as rep2,0 as sets,0 as cal,ymd,'' as memo,typ,0 as insdatetime ";
-	$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu UNION ALL select * from  tr_log where id = ? and shu = ?) as T ";
-	$sql .= "order by T.ymd desc,T.jun ";
-}
-
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
-$result->bindValue(3, $id, PDO::PARAM_STR);
-$result->bindValue(4, $shu, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-$dataset = [];
-$i=0;
-foreach($dataset_work as $row){
-	if($hyoji == "0"){//MAX表示
-		$weight = " - MAX：".number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
-	}else if($hyoji == "1"){//total表示
-		$weight = " - total：".number_format($row["weight"],0);
-	}
-	$dataset[$i] = array_merge($row,array('head_wt'=> $weight));
-	$i++;
-}
-$kintore_log = json_encode($dataset, JSON_UNESCAPED_UNICODE);
-$dataset_work=[];
-
-//ぐらふでーた取得
-if($hyoji == "0"){//MAX表示:最も重い重量で最も回数をこなしたセットを抽出
-	$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2 from  tr_log_max_record where id = ? and shu = ? ";
-	$sql .= "order by ymd";
-	$graph_title = "『".$shu."のＭＡＸ推移』";
-	$btn_name = "ﾄﾚｰﾆﾝｸﾞ量グラフへ";
-	$typ=1;
-}else if($hyoji == "1"){//total表示
-	$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,sum(weight*rep*sets) as weight ";
-	$sql .= "from tr_log where id = ? and shu = ? group by ymd,shu,id ";
-	$sql .= "order by ymd";
-	$graph_title = "『".$shu."ﾄﾚｰﾆﾝｸﾞ量推移』";
-	$btn_name = "MAX記録グラフへ";
-	$typ=0;
-}
-
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-$dataset = [];
-$i=1;
-$maxline=0;
-$minline=999999;
-$graph_data="";
-$graph_data2="";
-foreach($dataset_work as $row){
-	if($hyoji == "0"){//MAX表示
-		$weight = number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
-	}else if($hyoji == "1"){
-		$weight = ($row["weight"]);
-	}
-
-	if($_POST["gtype"]==="year"){//直近1年
-		if($row["beforedate"]<=365){
-			if($maxline<$weight){$maxline=$weight+10;}
-			if($minline>$weight){$minline=$weight-10;}
-			$graph_data .= "[".(356-$row["beforedate"]).",".$weight."],";	
-		}else if($row["beforedate"]<=730){
-			if($maxline<$weight){$maxline=$weight+10;}
-			if($minline>$weight){$minline=$weight-10;}
-			$graph_data2 .= "[".(730-$row["beforedate"]).",".$weight."],";	
-		}
-	}else if($_POST["gtype"]==="all"){//全期間
-		if($maxline<$weight){$maxline=$weight+10;}
-		if($minline>$weight){$minline=$weight-10;}
-		
-		$graph_data .= "[".$i.",".$weight."],";
-	}else{
-		exit();
-	}
-	
-	$i++;
-}
-if($_POST["gtype"]==="year"){//直近1年
-	$btn_name2="全期間";
-	$kikan="all";
-	$glabel1="直近1年";
-	$glabel2="１年前";
-}else if($_POST["gtype"]==="all"){//全期間
-	$btn_name2="直近1年";
-	$kikan="year";
-	$glabel1="全期間";
-	$glabel2="";
-}
-*/
-//$graph_data = json_encode($dataset, JSON_UNESCAPED_UNICODE);
-//var_dump($shu);
-//exit();
 ?>
 <!DOCTYPE html>
 <HTML>
@@ -130,33 +27,29 @@ if($_POST["gtype"]==="year"){//直近1年
 	<?php
 		require "header.php";
 	?>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 	<TITLE>肉体改造ネットワーク</TITLE>
 </HEAD>
-<BODY class = "graphe">
+<BODY class='graph'>
 	<div id='app'>
 	<div id="headerArea2">
-		<p class="graph-title">{{graph_title}}</p>
-		<div id="graph" style='margin-bottom:5px;'></div>
-		<div class='d-flex align-items-center justify-content-center' style='width: 100%;'>
-			<div><button class='btn btn-primary' style='width:170px;' type="button" @click='get_data("gtype")'>{{btn_name}}</button></div>
-			<div><button class='btn btn-primary' style='width:130px;' type="button" @click='get_data("kikan")'>{{btn_name2}}</button></div>
-			<!--<FORM method="post" action="graph01.php" style='width:200px;margin-left:50px;'>
-				<button class='btn btn-primary' type="button" @click='get_data("gtype")'>{{btn_name}}</button>
-				<INPUT type="hidden" name="hyoji" value=<?php //echo $typ;?>>
-				<INPUT type="hidden" name="id" value="<?php //echo $id;?>">
-				<INPUT type="hidden" name="shu" value="<?php //echo $shu;?>">
-				<INPUT type="hidden" name="gtype" value="<?php //echo $_POST["gtype"];?>">
-			</FORM>
-			<FORM method="post" action="graph01.php" style='width:130px;'>
-				<button class='btn btn-primary' type="button" @click='get_data("kikan")'>{{btn_name2}}</button>
-				<INPUT type="hidden" name="hyoji" value=<?php //echo $typ;?>>
-				<INPUT type="hidden" name="id" value="<?php //echo $id;?>">
-				<INPUT type="hidden" name="shu" value="<?php //echo $shu;?>">
-				<INPUT type="hidden" name="gtype" value="<?php //echo $kikan;?>">-->
-			</FORM>
+		<div class='row' style='height:100%;'>
+			<div class='col-12' style='justify-content: center;height: auto;max-height:60px;'>
+				<p class="graph-title">{{graph_title}}</p>
+				<p style='color:darkgrey;font-size:12px;'>{{graph_subtitle}}</p>
+			</div>
+		
+			<div class='col-12' id="graph" style='height:250px;margin-bottom:5px;position:relative;max-width:900px;'>
+				<canvas id="myChart"></canvas>
+			</div>
+			
+			<div class='d-flex align-items-center justify-content-center' style='width: 100%;height:40px;'>
+				<div class='text-end' style='width:50%;'><button class='btn btn-primary'   style='width:100%;max-width:200px;' type="button" @click='get_data("gtype")'>{{btn_name}}</button></div>
+				<div class='text-start' style='width:50%;'><button class='btn btn-primary' style='width:100%;max-width:200px;' type="button" @click='get_data("kikan")'>{{btn_name2}}</button></div>
+			</div>
 		</div>
 	</div>
-	<main class='container-fluid pb-5'>
+	<main class='container'>
 		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
 			<div class='accordion-item'>
 				<div v-if='String(list.jun)==="0"' class='row shu accordion-header'>
@@ -179,47 +72,11 @@ if($_POST["gtype"]==="year"){//直近1年
 			</div>
 		</template>
 	</main>
-	<div id="footerArea2" style='text-align: center;'>
+	<div id="footerArea2"  class='container' style='text-align: center;'>
 		<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
-</div>
+	</div>
 	</div>
 	<script>
-		/*
-		(function basic(container) {
-		  var d1 = [<?php //echo $graph_data;?>],
-			d2 = [<?php //echo $graph_data2;?>],
-		  data = [
-				{
-		      data: d1,
-		      label: "<?php //echo $glabel1;?>"
-				},{
-		      data: d2,
-					label: "<?php //echo $glabel2;?>"
-		      
-				}
-		  ];
-		  function labelFn(label) {
-		      return label;
-		  }
-		  graph = Flotr.draw(container, data, {
-				yaxis:{
-					min:<?php //echo $minline; ?>,        //y軸の最小値を設定
-					max:<?php //echo $maxline; ?>,        //y軸の最大値を設定
-					title:'(kg)'
-				}, //y軸にタイトルを表示
-		  	legend: {
-		      position: 'se',
-		      labelFormatter: labelFn,
-		      backgroundColor: "#D2E8FF"
-		  	},
-		    HtmlText: false
-		  });
-		})(document.getElementById("graph"));
-		*/
-		
-
-		
-		//drow_chart(document.getElementById("graph"));
 	</script>
 	<script>//Vus.js
 		const { createApp, ref, onMounted, computed, VueCookies,watch } = Vue;
@@ -227,12 +84,12 @@ if($_POST["gtype"]==="year"){//直近1年
 			setup(){
 				const kintore_log = ref(<?php //echo $kintore_log;?>)
 				//label
-				const btn_name = ref('MAX記録グラフへ')		 //max -> 量 -> 成長期
-				const btn_name2 = ref('直近1年')							//1年 -> 全期間
+				const btn_name = ref('MAX記録へ')		 //max -> 量 -> 成長期
+				const btn_name2 = ref('全期間へ')							//1年 -> 全期間へ
 				const gtype = computed(()=>{
-					if(btn_name2.value==="直近1年"){
+					if(btn_name2.value==="全期間へ"){
 						return 'year'
-					}else if(btn_name2.value==="全期間"){
+					}else if(btn_name2.value==="前年比較へ"){
 						return 'all'
 					}else{
 						return ''
@@ -240,8 +97,11 @@ if($_POST["gtype"]==="year"){//直近1年
 				})
 				const shu = ref('<?php echo $_POST["shu"];?>')	//トレーニング種目
 				const graph_title = ref('')
+				const graph_subtitle = ref('')
+				let datasets = []
+				let labels = []
 
-				const drow_chart =(container,data1,data2,lb1,lb2,maxl,minl)=> {
+				/*const drow_chart =(container,data1,data2,lb1,lb2,maxl,minl)=> {
 				  let d1 = data1,
 					d2 = data2,
 				  data = [
@@ -270,32 +130,33 @@ if($_POST["gtype"]==="year"){//直近1年
 				  	},
 				    HtmlText: false
 				  });
-				}
+				}*/
+
 				const get_data = (p) =>{
 					kintore_log.value = []
 					if(p==="kikan"){
-						if(btn_name2.value==="直近1年"){
-							btn_name2.value="全期間"
-						}else if(btn_name2.value==="全期間"){
-							btn_name2.value="直近1年"
+						if(btn_name2.value==="全期間へ"){
+							btn_name2.value="前年比較へ"
+						}else if(btn_name2.value==="前年比較へ"){
+							btn_name2.value="全期間へ"
 						}
-						if(btn_name.value==="MAX記録グラフへ"){
+						if(btn_name.value==="MAX記録へ"){
 							get_growth_data()
-						}else if(btn_name.value==="ﾄﾚｰﾆﾝｸﾞ量グラフへ"){
+						}else if(btn_name.value==="ﾄﾚｰﾆﾝｸﾞ量へ"){
 							get_max_data()
-						}else if(btn_name.value==="成長期グラフへ"){
+						}else if(btn_name.value==="成長期へ"){
 							get_volume_data()
 						}
 					}else if(p==="gtype"){
-						if(btn_name.value==="MAX記録グラフへ"){
+						if(btn_name.value==="MAX記録へ"){
 							get_max_data()
-							btn_name.value="ﾄﾚｰﾆﾝｸﾞ量グラフへ"
-						}else if(btn_name.value==="ﾄﾚｰﾆﾝｸﾞ量グラフへ"){
+							btn_name.value="ﾄﾚｰﾆﾝｸﾞ量へ"
+						}else if(btn_name.value==="ﾄﾚｰﾆﾝｸﾞ量へ"){
 							get_volume_data()
-							btn_name.value="成長期グラフへ"
-						}else if(btn_name.value==="成長期グラフへ"){
+							btn_name.value="成長期へ"
+						}else if(btn_name.value==="成長期へ"){
 							get_growth_data()
-							btn_name.value="MAX記録グラフへ"
+							btn_name.value="MAX記録へ"
 						}
 					}
 				}
@@ -310,13 +171,42 @@ if($_POST["gtype"]==="year"){//直近1年
 						.then((response) => {
 							console_log(response.data)
 							kintore_log.value = response.data.kintore_log
-							drow_chart(document.getElementById("graph"),
-								response.data.graph_data1,
-								response.data.graph_data2,
-								response.data.glabel1,
-								response.data.glabel2,
-								response.data.maxline,
-								response.data.minline)
+							labels = response.data.labels
+							datasets = []
+							let color
+							if(gtype.value==='year'){
+								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+								datasets.push({
+									'label':response.data.glabel1
+									,'data':response.data.graph_data1
+									,'backgroundColor': color
+									,borderColor: color
+									,fill:true
+									,borderWidth: 4
+									, pointRadius:2
+								})
+								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 0.3)'
+								datasets.push({
+									'label':response.data.glabel2
+									,'data':response.data.graph_data2
+									,'backgroundColor': color
+									,borderColor: color
+									,fill:true
+									,borderWidth: 2
+									, pointRadius:1
+								})
+							}else if(gtype.value==='all'){
+								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+								datasets.push({
+									'label':response.data.glabel1
+									,'data':response.data.graph_data1
+									, pointRadius:1
+									,'backgroundColor': color
+									,borderColor: color
+									,borderWidth: 2
+								})
+							}
+							create_graph(document.getElementById('myChart'))
 							graph_title.value = response.data.graph_title
 						})
 						.catch((error) => {
@@ -335,14 +225,77 @@ if($_POST["gtype"]==="year"){//直近1年
 						.then((response) => {
 							console_log(response.data)
 							kintore_log.value = response.data.kintore_log
-							drow_chart(document.getElementById("graph"),
-								response.data.graph_data1,
-								response.data.graph_data2,
-								response.data.glabel1,
-								response.data.glabel2,
-								response.data.maxline,
-								response.data.minline)
+							labels = response.data.labels
+							datasets = []
+							let color
+							if(gtype.value==='year'){
+								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 0.3)'
+								datasets.push({
+									'label':response.data.glabel2 + 'Mx'
+									,'data':response.data.graph_data_max2
+									,'backgroundColor': color
+									,borderColor: color
+									//,fill:true
+									,borderWidth: 4
+									, pointRadius:2
+								})
+								datasets.push({
+									'label':response.data.glabel2 + 'TTL'
+									,'data':response.data.graph_data_total2
+									,'backgroundColor': color
+									,borderColor: color
+									//,fill:true
+									,borderWidth: 4
+									//, pointRadius:2
+									,type:'bar'
+								})
+								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+								datasets.push({
+									'label':response.data.glabel1 + 'Mx'
+									,'data':response.data.graph_data_max1
+									,'backgroundColor': color
+									,borderColor: color
+									//,fill:true
+									,borderWidth: 2
+									, pointRadius:1
+								})
+								datasets.push({
+									'label':response.data.glabel1 + 'TTL'
+									,'data':response.data.graph_data_total1
+									,'backgroundColor': color
+									,borderColor: color
+									//,fill:true
+									,borderWidth: 2
+									//, pointRadius:1
+									,type:'bar'
+								})
+
+
+							}else if(gtype.value==='all'){
+								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+								datasets.push({
+									'label':response.data.glabel1 + 'Mx'
+									,'data':response.data.graph_data_max1
+									, pointRadius:1
+									,'backgroundColor': color
+									,borderColor: color
+									,borderWidth: 2
+								})
+								datasets.push({
+									'label':response.data.glabel1 + 'TTL'
+									,'data':response.data.graph_data_total1
+									,'backgroundColor': color
+									,borderColor: color
+									//,fill:true
+									,borderWidth: 2
+									//, pointRadius:1
+									,type:'bar'
+								})
+
+							}
+							create_graph(document.getElementById('myChart'))
 							graph_title.value = response.data.graph_title
+							graph_subtitle.value = response.data.subtitle
 						})
 						.catch((error) => {
 							console_log(`get_volume_data ERROR:${error}`)
@@ -375,6 +328,65 @@ if($_POST["gtype"]==="year"){//直近1年
 						})
 				}
 
+
+
+				var graph_obj
+				const create_graph = (ctx) =>{
+					console_log("create_graph : graph_data")
+					
+					const graph_data = {
+						labels    : labels
+						,datasets : datasets
+					}
+				
+					if(graph_obj){
+						graph_obj.destroy()
+					}
+				
+					graph_obj = new Chart(ctx, {
+						type : 'line'
+						,data: graph_data
+						,options: {
+							plugins: {
+								title: {
+									display: false,
+									//text: open_fil.value
+									text: 'test'
+								},
+								filler:{
+									drawTime : 'beforeDraw'
+								}
+							},
+							responsive: true,
+							maintainAspectRatio: false,
+							scales: {
+								x: {
+									stacked: false,
+									ticks:{
+										maxTicksLimit: 6
+										,stepSize: 2,
+									}
+									/*display:true,
+									title:{
+										display:true,
+										text:'月'
+									}*/
+								},
+								y: {
+									stacked: false,
+									/*display:true,
+									title:{
+										display:true,
+										text:'Kg'
+									}*/
+								}
+							}
+						}
+					})      
+				}
+
+
+
 				onMounted(() => {
 					console_log('onMounted')
 					get_data('gtype')
@@ -385,6 +397,7 @@ if($_POST["gtype"]==="year"){//直近1年
 					btn_name,
 					btn_name2,
 					graph_title,
+					graph_subtitle,
 				}
 			}
 		}).mount('#app');
