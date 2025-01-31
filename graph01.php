@@ -44,8 +44,22 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 			</div>
 			
 			<div class='d-flex align-items-center justify-content-center' style='width: 100%;height:40px;'>
-				<div class='text-end' style='width:50%;'><button class='btn btn-primary'   style='width:100%;max-width:200px;' type="button" @click='get_data("gtype")'>{{btn_name}}</button></div>
-				<div class='text-start' style='width:50%;'><button class='btn btn-primary' style='width:100%;max-width:200px;' type="button" @click='get_data("kikan")'>{{btn_name2}}</button></div>
+				<!--<div class='text-end' style='width:50%;'><button class='btn btn-primary'   style='width:100%;max-width:200px;' type="button" @click='get_data("gtype")'>{{btn_name}}</button></div>
+				<div class='text-start' style='width:50%;'><button class='btn btn-primary' style='width:100%;max-width:200px;' type="button" @click='get_data("kikan")'>{{btn_name2}}</button></div>-->
+				<div class='text-end' style='width:50%;max-width:200px;'>
+					<select v-model='g_shu' class='form-select' style='width:100%;max-width:200px;'>
+						<option value='max'>MAX記録</option>
+						<option value='volume'>トレーニング量</option>
+						<option value='growth'>MAX更新前</option>
+					</select>
+				</div>
+				<div class='text-start' style='width:50%;max-width:200px;'>
+					<select v-show='g_shu!=="growth"' v-model='gtype' class='form-select' style='width:100%;max-width:200px;'>
+						<option value='all'>全期間</option>
+						<option value='year'>前年比較</option>
+					</select>
+				</div>
+
 			</div>
 		</div>
 	</div>
@@ -91,8 +105,12 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 			setup(){
 				const kintore_log = ref(<?php //echo $kintore_log;?>)
 				//label
-				const btn_name = ref('MAX記録へ')		 //max -> 量 -> 成長期
-				const btn_name2 = ref('全期間へ')							//1年 -> 全期間へ
+				const gtype = ref('all')	//all.year
+				const g_shu = ref('max')	//max,volume,growth
+
+				//const btn_name = ref('MAX記録へ')		 //max -> 量 -> 成長期
+				//const btn_name2 = ref('全期間へ')							//1年 -> 全期間へ
+				/*
 				const gtype = computed(()=>{
 					if(btn_name2.value==="全期間へ"){
 						return 'year'
@@ -102,13 +120,14 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 						return ''
 					}
 				})
+				*/
 				const shu = ref('<?php echo $_POST["shu"];?>')	//トレーニング種目
 				const graph_title = ref('')
 				const graph_subtitle = ref('')
 				let datasets = []
 				let labels = []
 
-				const get_data = (p) =>{
+				/*const get_data = (p) =>{
 					kintore_log.value = []
 					if(p==="kikan"){
 						if(btn_name2.value==="全期間へ"){
@@ -136,6 +155,16 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 						}
 					}
 				}
+				*/
+				watch([gtype,g_shu],()=>{
+					if(g_shu.value==="growth"){
+						get_growth_data()
+					}else if(g_shu.value==="max"){
+						get_max_data()
+					}else if(g_shu.value==="volume"){
+						get_volume_data()
+					}
+				})
 				
 				const get_max_data = () =>{
 					console_log("start get_max_data")
@@ -150,6 +179,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 							labels = response.data.labels
 							datasets = []
 							let color
+							const skipped = (ctx, value) => ctx.p0.skip || ctx.p1.skip ? value : undefined;
 							if(gtype.value==='year'){
 								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
 								datasets.push({
@@ -160,6 +190,11 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									,fill:true
 									,borderWidth: 4
 									,pointRadius:2
+									,segment: {
+      						  borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') ,
+      						  borderDash: ctx => skipped(ctx, [6, 6]),
+      						}
+									,spanGaps: true
 								})
 								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 0.3)'
 								datasets.push({
@@ -170,6 +205,11 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									,fill:true
 									,borderWidth: 2
 									,pointRadius:1
+									,segment: {
+      						  borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') ,
+      						  borderDash: ctx => skipped(ctx, [6, 6]),
+      						}
+									,spanGaps: true
 								})
 							}else if(gtype.value==='all'){
 								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
@@ -180,6 +220,11 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									,'backgroundColor': color
 									,borderColor: color
 									,borderWidth: 2
+									,segment: {
+      						  borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') ,
+      						  borderDash: ctx => skipped(ctx, [6, 6]),
+      						}
+									,spanGaps: true
 								})
 							}
 							graph_title.value = response.data.graph_title
@@ -222,6 +267,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									,borderWidth: 2
 									, pointRadius:1
 									//,type:'bar'
+									,hidden: true
 								})
 								datasets.push({//去年のトレ量
 									'label':response.data.glabel2 + 'TTL'
@@ -245,6 +291,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									,borderWidth: 4
 									, pointRadius:2
 									//,type:'bar'
+									,hidden: true
 								})
 								datasets.push({
 									'label':response.data.glabel1 + 'TTL'
@@ -302,16 +349,28 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 							kintore_log.value = response.data.kintore_log
 							labels = response.data.labels
 							datasets = []
+							color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 0.5)'
+							datasets.push({
+								'label':response.data.glabel1
+								,'data':response.data.graph_data1
+								, pointRadius:1
+								,'backgroundColor': color
+								,borderColor: color
+								,borderWidth: 2
+								,type:'bar'
+								,yAxisID:"y"
+							})
 							color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
-								datasets.push({
-									'label':response.data.glabel1
-									,'data':response.data.graph_data1
-									, pointRadius:1
-									,'backgroundColor': color
-									,borderColor: color
-									,borderWidth: 2
-									,type:'bar'
-								})
+							datasets.push({
+								'label':response.data.glabel2
+								,'data':response.data.graph_data2
+								, pointRadius:1
+								,'backgroundColor': color
+								,borderColor: color
+								,borderWidth: 2
+								//,type:'bar'
+								,yAxisID:"y2"
+							})
 							graph_title.value = response.data.graph_title
 							graph_subtitle.value = response.data.subtitle
 							create_graph(document.getElementById('myChart'))
@@ -375,6 +434,20 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 										text:'Kg'
 									}*/
 								}
+								,y2: {
+									stacked: false,
+									position: "right",
+									grid: {
+										drawOnChartArea: false,
+        					},
+									display:(g_shu.value==='growth')?true:false,
+									/*
+									title:{
+										display:true,
+										text:'Kg'
+									}*/
+								}
+
 							}
 						}
 					})      
@@ -384,15 +457,18 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 
 				onMounted(() => {
 					console_log('onMounted')
-					get_data('gtype')
+					//get_data('gtype')
+					get_max_data()
 				})
 				return{
 					kintore_log,
-					get_data,
-					btn_name,
-					btn_name2,
+					//get_data,
+					//btn_name,
+					//btn_name2,
 					graph_title,
 					graph_subtitle,
+					g_shu,
+					gtype,
 				}
 			}
 		}).mount('#app');

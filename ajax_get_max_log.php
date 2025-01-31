@@ -69,7 +69,7 @@ $sql = "WITH RECURSIVE cal AS (
 	  left(cal.date, 7) as ym,
 		DATEDIFF(now(),cal.date) as beforedate,
 	  :shumoku2 as shu,
-	  TEMP.max_weight as max_weight
+	  IFNULL(TEMP.m_weight,'NaN') as max_weight
 	from
 	  cal
 	  left join (
@@ -77,7 +77,7 @@ $sql = "WITH RECURSIVE cal AS (
 	      shu,
 	      left(ymd, 7) as ym,
 				MIN(ymd) as min_ymd,
-	      max(max_weight) as max_weight
+	      CONVERT(max(max_weight),char) as m_weight
 	    FROM
 	      `tr_log_max_record`
 	    where
@@ -109,7 +109,7 @@ $graph_data=[];
 $graph_data2=[];
 $labels = [];
 foreach($dataset_work as $row){
-	$weight = number_format($row["max_weight"],2);
+	$weight = ($row["max_weight"]<>"NaN")?number_format($row["max_weight"],2):"NaN";
 	if($row["beforedate"]<0){
 		continue;
 	}

@@ -213,51 +213,53 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 								color4 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
 								opacity1 = ', 1)'
 								opacity2 = ', 0.6)'
-								datasets.push({//去年の体重
+								datasets.push({//今年の体重
 									'label':response.data.glabel1
 									,'data':response.data.graph_data1
 									,'backgroundColor':  color1 + opacity2
 									,borderColor: color1 + opacity2
-									,fill:true
+									//,fill:true
 									//,stepped: 'middle'
 									,borderWidth: 2
 									, pointRadius:1
-									,type:'bar'
+									//,type:'bar'
+									,yAxisID:"y1"
 								})
-								datasets.push({//去年の体脂肪率
+								datasets.push({//今年の体脂肪率
 									'label':response.data.glabel2
 									,'data':response.data.graph_data2
 									,'backgroundColor':  color2 + opacity2
 									,borderColor:  color2 + opacity2
-									,fill:true
-									,stepped: 'middle'
+									//,fill:true
+									//,stepped: 'middle'
 									,borderWidth: 2
 									, pointRadius:1
 									//,type:'bar'
+									,yAxisID:"y2"
 								})
-								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+								/*color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
 								datasets.push({
 									'label':response.data.glabel1
 									,'data':response.data.graph_data3
 									,'backgroundColor':  color3 + opacity1
 									,borderColor:  color3 + opacity1
-									,fill:true
+									//,fill:true
 									//,stepped: 'middle'
 									,borderWidth: 4
 									, pointRadius:2
-									,type:'bar'
+									//,type:'bar'
 								})
 								datasets.push({
 									'label':response.data.glabel2
 									,'data':response.data.graph_data4
 									,'backgroundColor':  color4 + opacity1
 									,borderColor:  color4 + opacity1
-									,fill:true
-									,stepped: 'middle'
+									//,fill:true
+									//,stepped: 'middle'
 									,borderWidth: 4
 									, pointRadius:2
 									//,type:'bar'
-								})
+								})*/
 
 
 							}else if(gtype.value==='all'){

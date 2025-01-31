@@ -140,7 +140,7 @@ $return_sts = array(
 	,"glabel1" => $glabel1
 	,"glabel2" => $glabel2
 	,"graph_title" => $graph_title
-	,"subtitle" => $subtitle
+	,"subtitle" => "月を3分割(10日毎平均)のグラフ"
 	,"height" => $user[0]["height"]
 );
 header('Content-type: application/json');

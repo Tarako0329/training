@@ -47,7 +47,8 @@ ver1.14.2:分析画面作成/PC
   ALTER TABLE `ms_training` CHANGE `display_hide1` `display_hide1` VARCHAR(5) NOT NULL DEFAULT 'false';
 ver1.14.3:分析画面作成/スマホ対応-commited
 ver1.15.0:グラフをchartjsに変更 他-commited
-ver1.15.1:グラフをchartjsに変更 他
+ver1.15.1:グラフをchartjsに変更 他-commited
+ver1.15.2:細かな修正
 
   
 【Issues】
