@@ -39,7 +39,7 @@ foreach($dataset_work as $row){
 	$dataset[$i] = array_merge($row,array('head_wt'=> $weight));
 	$i++;
 }
-//$kintore_log = json_encode($dataset, JSON_UNESCAPED_UNICODE);
+
 $kintore_log = $dataset;
 $dataset_work=[];
 
@@ -106,15 +106,12 @@ $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 $dataset = [];
 $i=1;
-//$maxline=0;
-//$minline=999999;
 $graph_data_max=[];
 $graph_data_max2=[];
 $graph_data_total=[];
 $graph_data_total2=[];
 
 foreach($dataset_work as $row){
-  //$weight = number_format(max_r($row["weight"], $row["rep"] - $row["rep2"]),2);
 	$weight = ($row["total_volume"]);
 	if($row["beforedate"]<0){
 		continue;
@@ -122,22 +119,16 @@ foreach($dataset_work as $row){
 
 	if($_POST["gtype"]==="year"){//直近1年
 		if($row["beforedate"]<=365){
-			//if($maxline<$weight){$maxline=$weight+10;}
-			//if($minline>$weight){$minline=$weight-10;}
 
 			$labels[] = substr($row["ym"],-2);
 			$graph_data_max[] = $row["max_volume"];
 			$graph_data_total[] = $row["total_volume"];
 		}else if($row["beforedate"]<=730){
-			//if($maxline<$weight){$maxline=$weight+10;}
-			//if($minline>$weight){$minline=$weight-10;}
 
 			$graph_data_max2[] = $row["max_volume"];
 			$graph_data_total2[] = $row["total_volume"];
 		}
 	}else if($_POST["gtype"]==="all"){//全期間
-		//if($maxline<$weight){$maxline=$weight+10;}
-		//if($minline>$weight){$minline=$weight-10;}
 		
 		$labels[] = $row["ym"];
 		$graph_data_max[] = $row["max_volume"];
@@ -149,19 +140,14 @@ foreach($dataset_work as $row){
 	$i++;
 }
 
-//if($minline<0){$minline=0;}
 
 //ラベル設定
 if($_POST["gtype"]==="year"){//直近1年
-	//$btn_name2="全期間";
-	//$kikan="all";
 	$glabel1="今";
 	$glabel2="前";
 	$subtitle = "各月の総Volume(棒グ)とDayﾄﾚのMaxVolume(線グ)";
 	$graph_title .= "（前年比較）";
 }else if($_POST["gtype"]==="all"){//全期間
-	//$btn_name2="直近1年";
-	//$kikan="year";
 	$glabel1="";
 	$glabel2="";
 	$subtitle = "全期間対象の月間総Volume推移";
@@ -177,15 +163,10 @@ $return_sts = array(
 	,"graph_data_max2" => $graph_data_max2
 	,"graph_data_total2" => $graph_data_total2
 	,"labels" => $labels
-	//,"btn_name2" => $btn_name2
-	//,"kikan" => $kikan
 	,"glabel1" => $glabel1
 	,"glabel2" => $glabel2
-	//,"maxline" => $maxline
-	//,"minline" => $minline
 	,"graph_title" => $graph_title
 	,"subtitle" => $subtitle
-	//,"btn_name" => $btn_name
 );
 header('Content-type: application/json');
 echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);

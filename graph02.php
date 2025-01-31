@@ -3,10 +3,6 @@
 require "config.php";
 log_writer2("\$_POST",$_POST,"lv3");
 
-$now = date('Y-m-d');
-//$hyoji = $_POST['hyoji'];//最初は１：体重・体脂肪率
-$hyoji = !empty($_POST["hyoji"])?$_POST["hyoji"]:"1";
-$gtype = !empty($_POST["gtype"])?$_POST["gtype"]:"all";
 
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
@@ -22,132 +18,15 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }	
 
 //履歴取得
-$sql = "select ROW_NUMBER() OVER(partition by id order by id,ymd) as No,taisosiki.*,round(weight*taisibou/100,1) as sibouryou,round(weight-(weight*taisibou/100),1) as josibou ,DATEDIFF(now(),ymd) as beforedate
-from taisosiki where id = ? order by ymd desc ";
-
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-$dataset = [];
-$kintore_log = json_encode($dataset_work, JSON_UNESCAPED_UNICODE);
 //var_dump($kintore_log);
 //exit();
 
 //履歴取得
-$sql = "select * from users where id = ?";
-
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->execute();
-$user = $result->fetchAll(PDO::FETCH_ASSOC);
 
 
 //ぐらふでーた取得
-$sql = "SELECT 
-id
-,left(ymd,7) as ym
-,CASE
-	WHEN right(ymd,2) <= 10 THEN '上'
-    WHEN right(ymd,2) <= 20 THEN '中'
-    WHEN right(ymd,2) <= 31 THEN '下'
-END as 旬
-,round(avg(weight),2)
-,round(avg(taisibou),2)
-,round(avg(weight)*avg(taisibou)/100,1) as sibouryou
-,round(avg(weight)-(avg(weight)*avg(taisibou)/100),1) as josibou
-,MIN(DATEDIFF(now(),ymd)) as beforedate
-FROM `taisosiki`
-where id=?
-group by id,left(ymd,7) 
-,CASE
-	WHEN right(ymd,2) <= 10 THEN '上'
-    WHEN right(ymd,2) <= 20 THEN '中'
-    WHEN right(ymd,2) <= 31 THEN '下'
-END
-order by ymd ";
-
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-$dataset = [];
 
 
-if($hyoji == "2"){//骨格筋・脂肪量 の推移
-	$graph_title = "『骨格筋・脂肪量 の推移』";
-	$btn_name = "体重・体脂肪率へ";
-	$glabel1="骨格筋";
-	$glabel2="脂肪";
-	$typ=1;
-	$hyoji_change=1;
-}else if($hyoji == "1"){//体重・体脂肪率 の推移
-	$graph_title = "『体重・体脂肪率 の推移』";
-	$btn_name = "骨格筋・脂肪量へ";
-	$glabel1="体重";
-	$glabel2="体脂肪率";
-	$typ=0;
-	$hyoji_change=2;
-}else{
-	exit();
-}
-
-$i=1;
-$graph_data1=[];
-$graph_data2=[];
-$graph_data3=[];
-$graph_data4=[];
-$labels = [];
-foreach($dataset_work as $row){
-	if($row["beforedate"]<0){
-		continue;
-	}
-
-	if($hyoji == "2"){//MAX表示
-		$weight = ($row["josibou"]/2);
-		$taisibou = ($row["sibouryou"]);
-	}else if($hyoji == "1"){
-		$weight = ($row["weight"]);
-		$taisibou = ($row["taisibou"]);
-	}else{
-		exit();
-	}
-
-	
-	if($gtype==="year"){//直近1年
-		if($row["beforedate"]<=365){
-			$graph_data1[] = $weight;	
-			$graph_data2[] = $taisibou;	
-			$labels[] = $row["beforedate"];
-
-		}else if($row["beforedate"]<=730){
-			$graph_data3[] = $weight;	
-			$graph_data4[] = $taisibou;	
-			//$labels[] = $row["beforedate"];
-		}
-	}else if($gtype==="all"){//全期間
-		$graph_data1[] = $weight;
-		$graph_data2[] = $taisibou;
-		$labels[] = $row["beforedate"];
-	}else{
-		echo "are?";
-		exit();
-	}
-	
-	$i++;
-}
-if($gtype==="year"){//直近1年
-	$btn_name2="全期間";
-	$kikan="all";
-	//$gtype_change="";
-}else if($gtype==="all"){//全期間
-	$btn_name2="直近1年";
-	$kikan="year";
-	//$gtype_change="all";
-}
-
-//var_dump($graph_data);
-//exit();
 ?>
 <!DOCTYPE html>
 <HTML>
@@ -172,26 +51,25 @@ if($gtype==="year"){//直近1年
 			</div>
 		
 			<div  class='d-flex align-items-center justify-content-center' style='width: 100%;height:40px;'>
-				<FORM method="post" action="graph02.php" style='width:50%;'>
-					<button class='btn btn-primary m-0' style='width:100%;max-width:200px;' type="submit"> <?php echo $btn_name;?> </button>
-					<INPUT type="hidden" name="hyoji" value=<?php echo $hyoji_change;?>>
-					<INPUT type="hidden" name="id" value="<?php echo $id;?>">
-					<INPUT type="hidden" name="gtype" value="<?php echo $gtype;?>"><!--期間は変わらない-->
-				</FORM>
-				<FORM method="post" action="graph02.php" style='width:50%;'>
-					<button class='btn btn-primary m-0' style='width:100%;max-width:200px;' type="submit"> <?php echo $btn_name2;?> </button>
-					<INPUT type="hidden" name="hyoji" value=<?php echo $hyoji_change;?>>
-					<INPUT type="hidden" name="id" value="<?php echo $id;?>">
-					<INPUT type="hidden" name="gtype" value="<?php echo $kikan;?>">
-				</FORM>
+				<div class='text-end' style='width:50%;max-width:200px;'>
+					<select v-model='shu' class='form-select' style='width:100%;max-width:200px;'>
+						<option value='taiju'>体重・体脂肪率</option>
+						<option value='kinryou'>骨格筋量・脂肪量</option>
+					</select>
+				</div>
+				<div class='text-start' style='width:50%;max-width:200px;'>
+					<select v-model='gtype' class='form-select' style='width:100%;max-width:200px;'>
+						<option value='all'>全期間</option>
+						<option value='year'>前年比較</option>
+					</select>
+				</div>
 			</div>
 		</div>
 	</div>
 	<main class='container-fluid'>
-		<div class='' style='position:fixed;top:355px;left:0px; width: 100%;'>
+		<div class='' style='position:fixed;top:350px;left:12px; width: 100%;'>
 			<table class='table m-0' style='max-width:400px;width:100%;'>
 				<thead class=''>
-					<!--<th>日付</th>-->
 					<th class='text-end p-0' style='width:50px;'>体重<br></th>
 					<th class='text-end p-0' style='width:50px;'>脂肪率<br></th>
 					<th class='text-end p-0' style='width:50px;'>脂肪量<br></th>
@@ -203,7 +81,7 @@ if($gtype==="year"){//直近1年
 		</div>
 		<div >
 			<table class='table ' style='max-width:400px;width:100%;'>
-				<template v-for='(list,index) in kintore_log' :key='list.ymd+list.No'>
+				<template v-for='(list,index) in taisosiki_log' :key='list.ymd+list.No'>
 					<tr class='lst'>
 						<td class='text-left p-0' colspan="6" style=''>{{list.ymd}} memo:{{list.memo}}</td>
 					</tr>
@@ -229,22 +107,18 @@ if($gtype==="year"){//直近1年
 		const { createApp, ref, onMounted, computed, VueCookies,watch } = Vue;
 		createApp({
 			setup(){
-				const kintore_log = ref(<?php echo $kintore_log;?>)
-				const tall = ref(<?php echo $user[0]["height"] / 100;?>)
+				const taisosiki_log = ref([])
+				const tall = ref(0)
 
-
-				const G_type = ref('<?php echo $gtype ?>')
-				const graph_title = ref('<?php echo $graph_title ?>')
-				const graph_subtitle = ref('<?php echo $graph_subtitle ?>')
-				let G_data1 = <?php echo json_encode($graph_data1); ?>
-
-				let G_data2 = [<?php echo json_encode($graph_data2, JSON_UNESCAPED_UNICODE); ?>]
-
-				let G_data3 = [<?php echo json_encode($graph_data3, JSON_UNESCAPED_UNICODE); ?>]
-
-				let G_data4 = [<?php echo json_encode($graph_data4, JSON_UNESCAPED_UNICODE); ?>]
-
-				let labels = [<?php echo json_encode($labels, JSON_UNESCAPED_UNICODE); ?>]
+				const gtype = ref('all')
+				const shu = ref('taiju')
+				const graph_title = ref('')
+				const graph_subtitle = ref('')
+				let G_data1 = []
+				let G_data2 = []
+				let G_data3 = []
+				let G_data4 = []
+				let labels = []
 				
 				let datasets = []
 
@@ -253,7 +127,7 @@ if($gtype==="year"){//直近1年
 					console_log("create_graph : graph_data")
 					
 					const graph_data = {
-						labels    : labels[0]
+						labels    : labels
 						,datasets : datasets
 					}
 					
@@ -286,14 +160,27 @@ if($gtype==="year"){//直近1年
 										maxTicksLimit: 6
 										,stepSize: 2,
 									}
+									,display:true,
+									title:{
+										display:true,
+										text:'ヵ月前'
+									}
+								},
+								y1: {
+									stacked: false
+									//,min: 30
 									/*display:true,
 									title:{
 										display:true,
-										text:'月'
+										text:'Kg'
 									}*/
-								},
-								y: {
+								}
+								,y2: {
 									stacked: false,
+									position:     "right",
+									grid: {
+										drawOnChartArea: false,
+        					},
 									/*display:true,
 									title:{
 										display:true,
@@ -305,102 +192,133 @@ if($gtype==="year"){//直近1年
 					})      
 				}
 
-				onMounted(() => {
-					console_log('onMounted')
-					if(G_type.value==='all'){
-						console_log('onMounted:all')
-						color1 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
-						color3 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
-						color2 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
-						color4 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
-						opacity1 = ', 1)'
-						opacity2 = ', 0.6)'
-						datasets.push({//体重・徐脂肪
-							'label':'Mx'
-							,'data':G_data1
-							,'backgroundColor':  color1 + opacity2
-							,borderColor: color1 + opacity2
-							//,fill:true
-							//,stepped: 'middle'
-							,borderWidth: 2
-							, pointRadius:1
-							//,type:'bar'
-						})
-						datasets.push({//体脂肪率・体脂肪量
-							'label':'TTL'
-							,'data':G_data2
-							,'backgroundColor':  color2 + opacity2
-							,borderColor:  color2 + opacity2
-							//,fill:true
-							//,stepped: 'middle'
-							,borderWidth: 2
-							, pointRadius:1
-							//,type:'bar'
-						})
-						console_log(datasets)
-						create_graph(document.getElementById('myChart'))
+				const get_taiju_data = () =>{
+					console_log("start get_taiju_data")
+					const form_data = new FormData()
+					form_data.append(`hyoji`, shu.value)
+					form_data.append(`gtype`, gtype.value)
+					axios
+						.post("ajax_get_taiju_sibouritu_log.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
+						.then((response) => {
+							console_log(response.data)
+							taisosiki_log.value = response.data.taisosiki_log
+							tall.value = response.data.height
+							labels = response.data.labels
+							datasets = []
+							let color
+							if(gtype.value==='year'){
+								color1 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
+								color3 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
+								color2 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
+								color4 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
+								opacity1 = ', 1)'
+								opacity2 = ', 0.6)'
+								datasets.push({//去年の体重
+									'label':response.data.glabel1
+									,'data':response.data.graph_data1
+									,'backgroundColor':  color1 + opacity2
+									,borderColor: color1 + opacity2
+									,fill:true
+									//,stepped: 'middle'
+									,borderWidth: 2
+									, pointRadius:1
+									,type:'bar'
+								})
+								datasets.push({//去年の体脂肪率
+									'label':response.data.glabel2
+									,'data':response.data.graph_data2
+									,'backgroundColor':  color2 + opacity2
+									,borderColor:  color2 + opacity2
+									,fill:true
+									,stepped: 'middle'
+									,borderWidth: 2
+									, pointRadius:1
+									//,type:'bar'
+								})
+								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+								datasets.push({
+									'label':response.data.glabel1
+									,'data':response.data.graph_data3
+									,'backgroundColor':  color3 + opacity1
+									,borderColor:  color3 + opacity1
+									,fill:true
+									//,stepped: 'middle'
+									,borderWidth: 4
+									, pointRadius:2
+									,type:'bar'
+								})
+								datasets.push({
+									'label':response.data.glabel2
+									,'data':response.data.graph_data4
+									,'backgroundColor':  color4 + opacity1
+									,borderColor:  color4 + opacity1
+									,fill:true
+									,stepped: 'middle'
+									,borderWidth: 4
+									, pointRadius:2
+									//,type:'bar'
+								})
 
+
+							}else if(gtype.value==='all'){
+								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+								datasets.push({
+									'label':response.data.glabel1
+									,'data':response.data.graph_data1
+									, pointRadius:1
+									,'backgroundColor': color
+									,borderColor: color
+									,borderWidth: 2
+									//,type:'bar'
+									,yAxisID:"y1"
+									
+								})
+								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+								datasets.push({
+									'label':response.data.glabel2
+									,'data':response.data.graph_data2
+									,'backgroundColor': color
+									,borderColor: color
+									//,fill:true
+									,borderWidth: 2
+									//, pointRadius:1
+									//,type:'bar'
+									,yAxisID:"y2"
+								})
+
+							}
+							graph_title.value = response.data.graph_title
+							graph_subtitle.value = response.data.subtitle
+							create_graph(document.getElementById('myChart'))
+						})
+						.catch((error) => {
+							console_log(`get_volume_data ERROR:${error}`)
+						})
+						.finally(()=>{
+						})
+				}
+
+				watch([gtype,shu],()=>{
+					if(shu.value==='taiju'){
+						get_taiju_data()
+					}else if(shu.value==='kinryou'){
+						get_taiju_data()
 					}else{
-						console_log('onMounted:year')
-						color1 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
-						color3 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
-						color2 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
-						color4 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
-						opacity1 = ', 1)'
-						opacity2 = ', 0.6)'
-						datasets.push({//体重・徐脂肪
-							'label':'Mx'
-							,'data':G_data1
-							,'backgroundColor':  color1 + opacity2
-							,borderColor: color1 + opacity2
-							,fill:true
-							//,stepped: 'middle'
-							,borderWidth: 2
-							, pointRadius:1
-							//,type:'bar'
-						})
-						datasets.push({//体脂肪率・体脂肪量
-							'label':'TTL'
-							,'data':G_data2
-							,'backgroundColor':  color2 + opacity2
-							,borderColor:  color2 + opacity2
-							,fill:true
-							//,stepped: 'middle'
-							,borderWidth: 2
-							, pointRadius:1
-							//,type:'bar'
-						})
-						datasets.push({//体重・徐脂肪
-							'label':'Mx'
-							,'data':G_data3
-							,'backgroundColor':  color1 + opacity2
-							,borderColor: color1 + opacity2
-							,fill:true
-							//,stepped: 'middle'
-							,borderWidth: 2
-							, pointRadius:1
-							//,type:'bar'
-						})
-						datasets.push({//体脂肪率・体脂肪量
-							'label':'TTL'
-							,'data':G_data4
-							,'backgroundColor':  color2 + opacity2
-							,borderColor:  color2 + opacity2
-							,fill:true
-							//,stepped: 'middle'
-							,borderWidth: 2
-							, pointRadius:1
-							//,type:'bar'
-						})
-						console_log(datasets)
-						create_graph(document.getElementById('myChart'))
+
 					}
 				})
+				onMounted(() => {
+					console_log('onMounted')
+					get_taiju_data()
+				})
+
 				return{
-					kintore_log,
+					taisosiki_log,
 					tall,
 					graph_title,
 					graph_subtitle,
+					gtype,
+					shu,
 				}
 			}
 		}).mount('#app');

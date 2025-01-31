@@ -61,22 +61,12 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 				<div v-if='String(list.jun)!=="0"'  :id='`collapseOne${list.ymd}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 					<div class='row lst accordion-body'>
 						<div class='col-12' style='padding:0  0 6px;display:flex;'>
-						<div style='width: 20px;'>{{list.No - 1}}</div>
-						<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
-						<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
-						<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
-						<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-						<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
-
-
-
-						<!--<div class='col-1' style='padding:0 0 0 6px;'>
-							{{list.No - 1}}
-						</div>
-						<div class='col-2 text-end' style='padding:0;'>{{list.weight}}kg</div>
-						<div class='col-2' style='padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
-						<div class='col-2' style='padding-right:0;'>{{list.sets}}sets</div>
-						<div class='col-5' style='padding:0;'>{{list.memo}}</div>-->
+							<div style='width: 20px;'>{{list.No - 1}}</div>
+							<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
+							<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+							<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
+							<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
+							<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
 						</div>
 					</div>
 				</div>
@@ -117,37 +107,6 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 				const graph_subtitle = ref('')
 				let datasets = []
 				let labels = []
-
-				/*const drow_chart =(container,data1,data2,lb1,lb2,maxl,minl)=> {
-				  let d1 = data1,
-					d2 = data2,
-				  data = [
-						{
-				      data: d1,
-				      label: lb1
-						},{
-				      data: d2,
-							label: lb2
-						}
-				  ];
-				  function labelFn(label) {
-				      return label;
-				  }
-					
-				  graph = Flotr.draw(container, data, {
-						yaxis:{
-							min:minl,        //y軸の最小値を設定
-							max:maxl,        //y軸の最大値を設定
-							title:'(kg)'
-						}, //y軸にタイトルを表示
-				  	legend: {
-				      position: 'se',
-				      labelFormatter: labelFn,
-				      backgroundColor: "#D2E8FF"
-				  	},
-				    HtmlText: false
-				  });
-				}*/
 
 				const get_data = (p) =>{
 					kintore_log.value = []
