@@ -127,14 +127,31 @@ try{
 	}
 
 
-	$pdo_h->commit();
+	//$pdo_h->commit();
 
 	//種目マスタ追加
-	$sql = 'INSERT IGNORE INTO ms_training(id,shu,sort) VALUES(:id,:shu,0)';
+	$sql = "select max(sort)+1 as next from ms_training where id = :id and sort < 100 group by id;";
+	
+	$result = $pdo_h->prepare($sql);
+	$result->bindValue("id", $id, PDO::PARAM_STR);
+	$result->execute();
+	$row_cnt = $result->rowCount();
+	$row = $result->fetchAll(PDO::FETCH_ASSOC);
+
+	if($row_cnt==0){
+		$next = 1;
+	}else{
+		$next = $row[0]["next"];
+	}
+
+
+	$sql = 'INSERT IGNORE INTO ms_training(id,shu,sort) VALUES(:id,:shu,'.$next.')';
 	$stmt = $pdo_h->prepare($sql);
 	$stmt->bindValue(1, $id, PDO::PARAM_STR);
 	$stmt->bindValue(2, $shu, PDO::PARAM_STR);
 	$stmt->execute();
+
+	$pdo_h->commit();
 	
 	$return_sts = array(
 		"MSG" => "success"

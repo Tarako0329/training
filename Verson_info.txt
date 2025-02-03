@@ -48,11 +48,15 @@ ver1.14.2:分析画面作成/PC
 ver1.14.3:分析画面作成/スマホ対応-commited
 ver1.15.0:グラフをchartjsに変更 他-commited
 ver1.15.1:グラフをchartjsに変更 他-commited
-ver1.15.2:細かな修正
+ver1.15.2:細かな修正-commited
+ver1.15.3:マスタソート機能の修正-commited
+  update ms_training set sort = sort * 10;
 
   
 【Issues】
 目標設定機能
+
+【完了】
 体組織・平均で推移表示
 BIG3マックス表示（３か月・１年・ALL）
 PC・タブレット画面対応

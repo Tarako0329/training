@@ -196,25 +196,25 @@
 													<i v-show='dragIndex===null' class="bi bi-arrow-down-up"></i>
 													<i v-show='dragIndex!==null' class="bi bi-box-arrow-in-down-right"></i>
 												</td>
-												<td rowspan="3" style='max-width:100px;'>
+												<td class='pb-0' rowspan="3" style='max-width:100px;'>
 													{{list.shu}}
 												</td>
-												<td colspan="1">{{list.M3_max}}</td>
-												<td colspan="1">{{list.Y1_max}}</td>
-												<td colspan="1">{{list.mybest}}</td>
-												<td v-show='setting_switch1' rowspan="3" class='text-center' style='width:30px;'>
+												<td class='pb-0' colspan="1">{{list.M3_max}}</td>
+												<td class='pb-0' colspan="1">{{list.Y1_max}}</td>
+												<td class='pb-0' colspan="1">{{list.mybest}}</td>
+												<td class='pb-0' v-show='setting_switch1' rowspan="3" class='text-center' style='width:30px;'>
 													<input type='checkbox' class='form-check-input' v-model='list.display_hide1'>
 												</td>
 											</tr>
 											<tr>
-												<td>{{list.M3_date}}</td>
-												<td>{{list.Y1_date}}</td>
-												<td>'{{list.MB_date}}</td>
+												<td class='pb-0'>{{list.M3_date}}</td>
+												<td class='pb-0'>{{list.Y1_date}}</td>
+												<td class='pb-0'>'{{list.MB_date}}</td>
 											</tr>
 											<tr>
-												<td>{{list.M3_set}}</td>
-												<td>{{list.Y1_set}}</td>
-												<td>{{list.MB_set}}</td>
+												<td class='pb-0'>{{list.M3_set}}</td>
+												<td class='pb-0'>{{list.Y1_set}}</td>
+												<td class='pb-0'>{{list.MB_set}}</td>
 											</tr>
 										</template>
 									</tbody>
@@ -542,7 +542,7 @@
 						console_log('start get_trlog')
 						const response = await axios.post("ajax_get_trlog.php")
 							.catch((error) => {
-								console_log(`get_max_data ERROR:${error}`)
+								console_log(`ajax_get_trlog ERROR:${error}`)
 								console_log(error)
 							})
 							.finally(()=>{
@@ -852,7 +852,7 @@
 									max_log_sort.value[dragIndex.value].sort = Number(max_log_sort.value[p_index].sort) + 1
 								}
 								max_log_sort.value.forEach((list,index)=>{
-									list.sort = Number(index) * 10
+									list.sort = (Number(index) + Number(1)) * Number(100)
 								})
 							}
 							draggingItem.value.classList.remove('table-primary');
