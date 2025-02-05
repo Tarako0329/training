@@ -51,7 +51,9 @@ ver1.15.1:グラフをchartjsに変更 他-commited
 ver1.15.2:細かな修正-commited
 ver1.15.3:マスタソート機能の修正-commited
   update ms_training set sort = sort * 10;
-
+ver1.16.0:目標設定機能
+  ALTER TABLE `ms_training` ADD `mokuhyou_type` VARCHAR(3) NULL DEFAULT '' COMMENT 'kg or par(sent)' AFTER `display_hide1`, ADD `mokuhyou` DECIMAL(5,2) NULL DEFAULT '0' COMMENT '目標値' AFTER `mokuhyou_type`;
+  ALTER TABLE `ms_training` CHANGE `mokuhyou_type` `mokuhyou_type` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'kg' COMMENT 'kg or par(sent)';
   
 【Issues】
 目標設定機能

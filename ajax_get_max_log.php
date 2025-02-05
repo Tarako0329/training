@@ -15,6 +15,29 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	exit();
 }	
 
+$gtype = ($_POST["gtype"]==='12M')?'year':$_POST["gtype"];
+
+
+//目標取得
+$sql = "SELECT * from ms_training where id=:id and shu=:shu";
+$result = $pdo_h->prepare( $sql );
+$result->bindValue("id", $id, PDO::PARAM_STR);
+$result->bindValue("shu", $shu, PDO::PARAM_STR);
+$result->execute();
+$ms_training = $result->fetchAll(PDO::FETCH_ASSOC);
+
+//最新の体組織取得
+$sql = "SELECT ts.* from taisosiki ts 
+	inner join (
+			select id,max(ymd) as seq from taisosiki where id=:id group by id
+		) tmp 
+	on ts.id=tmp.id 
+	and ts.ymd=tmp.seq";
+$result = $pdo_h->prepare( $sql );
+$result->bindValue("id", $id, PDO::PARAM_STR);
+$result->execute();
+$taisosiki = $result->fetchAll(PDO::FETCH_ASSOC);
+
 //履歴取得
 $sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select *,0 as max_weight from tr_log where id = ? and shu = ? ";
 $sql .= "UNION ALL select * from  tr_log_max_record where id = ? and shu = ?) as T ";
@@ -41,11 +64,11 @@ $dataset_work=[];
 
 //ぐらふでーた取得
 //$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2,max_weight from tr_log_max_record where id = ? and shu = ? ";
-if($_POST["gtype"]==="year"){//直近1年
+if($gtype==="year"){//直近1年
 	$timestamp = strtotime('-23 months first day of this month');
 	// タイムスタンプを日付形式に変換
 	$date = date('Y-m-d', $timestamp);
-}else if($_POST["gtype"]==="all"){//全期間
+}else if($gtype==="all"){//全期間
 	$date = '2017-05-01';
 }else{
 	exit();
@@ -113,7 +136,7 @@ foreach($dataset_work as $row){
 	if($row["beforedate"]<0){
 		continue;
 	}
-	if($_POST["gtype"]==="year"){//直近1年
+	if($gtype==="year"){//直近1年
 		if($row["beforedate"]<=365){
 			//if($maxline<$weight){$maxline=$weight+10;}
 			//if($minline>$weight){$minline=$weight-10;}
@@ -124,7 +147,7 @@ foreach($dataset_work as $row){
 			//if($minline>$weight){$minline=$weight-10;}
 			$graph_data2[] = $weight;	
 		}
-	}else if($_POST["gtype"]==="all"){//全期間
+	}else if($gtype==="all"){//全期間
 		//if($maxline<$weight){$maxline=$weight+10;}
 		//if($minline>$weight){$minline=$weight-10;}
 		
@@ -140,13 +163,13 @@ foreach($dataset_work as $row){
 //if($minline<0){$minline=0;}
 
 //ラベル設定
-if($_POST["gtype"]==="year"){//直近1年
+if($gtype==="year"){//直近1年
 	//$btn_name2="全期間";
 	//$kikan="all";
 	$glabel1="今年";
 	$glabel2="去年";
 	$subtitle="";
-}else if($_POST["gtype"]==="all"){//全期間
+}else if($gtype==="all"){//全期間
 	//$btn_name2="直近1年";
 	//$kikan="year";
 	$glabel1="全期間";
@@ -170,6 +193,8 @@ $return_sts = array(
 	,"graph_title" => $graph_title
 	,"subtitle" => $subtitle
 	//,"btn_name" => $btn_name
+	,"ms_training" => $ms_training[0]
+	,"taisosiki" => $taisosiki[0]
 );
 header('Content-type: application/json');
 echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);

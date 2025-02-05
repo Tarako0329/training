@@ -15,6 +15,8 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	exit();
 }	
 
+$gtype = ($_POST["gtype"]==='12M')?'year':$_POST["gtype"];
+
 //履歴取得
 $sql = "select 
 	ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* 
@@ -44,11 +46,11 @@ $kintore_log = $dataset;
 $dataset_work=[];
 
 //ぐらふでーた取得
-if($_POST["gtype"]==="year"){//直近1年
+if($gtype==="year"){//直近1年
 	$timestamp = strtotime('-23 months first day of this month');
 	// タイムスタンプを日付形式に変換
 	$date = date('Y-m-d', $timestamp);
-}else if($_POST["gtype"]==="all"){//全期間
+}else if($gtype==="all"){//全期間
 	$date = '2017-05-01';
 }else{
 	exit();
@@ -117,7 +119,7 @@ foreach($dataset_work as $row){
 		continue;
 	}
 
-	if($_POST["gtype"]==="year"){//直近1年
+	if($gtype==="year"){//直近1年
 		if($row["beforedate"]<=365){
 
 			$labels[] = substr($row["ym"],-2);
@@ -128,7 +130,7 @@ foreach($dataset_work as $row){
 			$graph_data_max2[] = $row["max_volume"];
 			$graph_data_total2[] = $row["total_volume"];
 		}
-	}else if($_POST["gtype"]==="all"){//全期間
+	}else if($gtype==="all"){//全期間
 		
 		$labels[] = $row["ym"];
 		$graph_data_max[] = $row["max_volume"];
@@ -142,12 +144,12 @@ foreach($dataset_work as $row){
 
 
 //ラベル設定
-if($_POST["gtype"]==="year"){//直近1年
+if($gtype==="year"){//直近1年
 	$glabel1="今";
 	$glabel2="前";
 	$subtitle = "各月の総Volume(棒グ)とDayﾄﾚのMaxVolume(線グ)";
 	$graph_title .= "（前年比較）";
-}else if($_POST["gtype"]==="all"){//全期間
+}else if($gtype==="all"){//全期間
 	$glabel1="";
 	$glabel2="";
 	$subtitle = "全期間対象の月間総Volume推移";
