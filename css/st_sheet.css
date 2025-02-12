@@ -154,6 +154,11 @@ body.graph{  /*グラフページ用*/
 	background: #f1f8ff;
 	margin: 0;
 	padding: 375px 0 45px 0;
+	height: 100%;
+	width:100%;
+	position:fixed;
+	top:0;
+	left:0;
 }
 div#headerArea2 {  /*グラフページ用*/
 		position: fixed !important;

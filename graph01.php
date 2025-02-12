@@ -66,7 +66,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 		</div>
 	</div>
 	</div>
-	<main class='container'>
+	<main class='container' style='height:calc(100vh - 372px);overflow-y: scroll;padding-bottom:90px;'>
 		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
 			<div class='accordion-item'>
 				<div v-if='String(list.jun)==="0"' class='row shu accordion-header'>

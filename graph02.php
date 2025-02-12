@@ -37,7 +37,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 	<TITLE>肉体改造ネットワーク</TITLE>
 </HEAD>
-<BODY class = "graph" style='padding-top:392px;'>
+<BODY class = "graph" style='padding-top:372px;'>
 <div  id='app'>
 	<div id="headerArea2">
 		<div class='row' style='height:100%;'>
@@ -66,10 +66,10 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 			</div>
 		</div>
 	</div>
-	<main class='container-fluid'>
-		<div class='' style='position:fixed;top:350px;left:12px; width: 100%;'>
-			<table class='table m-0' style='max-width:400px;width:100%;'>
-				<thead class=''>
+	<main class='container d-flex justify-content-center' style='height:calc(100vh - 372px);overflow-y: scroll;padding-bottom:90px;'>
+		<!--<div class='' style='position:fixed;top:370px;left:50%;transform:translateX(-50%); width: 100%;'>-->
+			<table class='table' style='max-width:400px;width:100%;'>
+				<thead class='sticky-top'>
 					<th class='text-end p-0' style='width:50px;'>体重<br></th>
 					<th class='text-end p-0' style='width:50px;'>脂肪率<br></th>
 					<th class='text-end p-0' style='width:50px;'>脂肪量<br></th>
@@ -77,10 +77,10 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 					<th class='text-end p-0' style='width:50px;'>骨格<br>筋率</th>
 					<th class='text-end p-0' style='width:50px;'>BMI<br></th>
 				</thead>
-			</table>
+			<!--</table>
 		</div>
 		<div >
-			<table class='table ' style='max-width:400px;width:100%;'>
+			<table class='table ' style='max-width:400px;width:100%;'>-->
 				<template v-for='(list,index) in taisosiki_log' :key='list.ymd+list.No'>
 					<tr class='lst'>
 						<td class='text-left p-0' colspan="6" style=''>{{list.ymd}} memo:{{list.memo}}</td>

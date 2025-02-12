@@ -4,7 +4,7 @@ session_start();
 date_default_timezone_set('Asia/Tokyo');
 require "./vendor/autoload.php";
 require "functions.php";
-
+$time="ver1.16.1";
 
 
 //.envの取得
@@ -15,11 +15,12 @@ define("MAIN_DOMAIN",$_ENV["MAIN_DOMAIN"]);
 define("EXEC_MODE",$_ENV["KANKYO"]);
 if(EXEC_MODE==="local"){
   define("ROOT_URL","http://".MAIN_DOMAIN."/");
+  $time=date('Ymd-His');
 }else{
   define("ROOT_URL","https://".MAIN_DOMAIN."/");
+  
 }
 
-$time=date('Ymd-His');
 
 //DB接続関連
 define("DNS","mysql:host=".$_ENV["SV"].";dbname=".$_ENV["DBNAME"].";charset=utf8");

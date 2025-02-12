@@ -273,7 +273,6 @@
 							</div>
 							<div class='modal-footer'>
 								<button type='button' style='width:90px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" >キャンセル</button>
-								<!--<button type='submit' style='width:90px;' name='btn' value='w_rireki' class="btn btn-primary mbtn" data-bs-dismiss="modal" >履歴</button>-->
 								<a href='graph02.php' style='width:90px;' class="btn btn-primary mbtn" >履歴</a>
 								<button type='submit' style='width:90px;' name='btn' value='w_ins_bt' class="btn btn-primary mbtn" data-bs-dismiss="modal" >登録</button>
 

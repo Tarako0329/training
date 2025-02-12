@@ -14,7 +14,7 @@
 
 <!--最新のjqueryらしい-->
 <!--<script src="js/original.js"></script>-->
-<script type="text/javascript" src="js/flotr2.min.js"></script>
+<!--<script type="text/javascript" src="js/flotr2.min.js"></script>-->
 
 <!-- Bootstrap5 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
@@ -27,7 +27,7 @@
 <link rel="stylesheet" type="text/css" href="css/st_sheet.css?<?php echo $time; ?>">
 <!-- Vue.js -->
 <script src="https://cdn.jsdelivr.net/npm/vue@3.4.4"></script>
-<script src="https://unpkg.com/vue-cookies@1.8.2/vue-cookies.js"></script>
+<!--<script src="https://unpkg.com/vue-cookies@1.8.2/vue-cookies.js"></script>-->
 <!--ajaxライブラリ-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
 <script>axios.defaults.baseURL = "<?php echo ROOT_URL;?>";</script>
@@ -61,7 +61,7 @@
         }
         */
         
-        if ('serviceWorker' in navigator) {
+        /*if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('serviceworker.js')
                 .then(registration => {
                     // 登録成功
@@ -83,5 +83,5 @@
             // ここにPWA環境下でのみ実行するコードを記述
         }
         //スマフォで:active :hover を有効に
-        document.getElementsByTagName('html')[0].setAttribute('ontouchstart', '');
+        document.getElementsByTagName('html')[0].setAttribute('ontouchstart', '');*/
     </script>
