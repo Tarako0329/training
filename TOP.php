@@ -827,11 +827,12 @@
 					
 					onBeforeMount(()=>{
 						console_log('onBeforeMount')
-						get_trlog()
+						//get_trlog()
 					})
 
 					onMounted(() => {
 						console_log('onMounted')
+						get_trlog()
 						const date2 = new Date();
 						const diffMilliseconds = date2.getTime() - date1.getTime(); // ミリ秒単位の差分
 						const diffSeconds = Math.floor(diffMilliseconds / 1000); // 秒単位
