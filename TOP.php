@@ -953,7 +953,7 @@
 				}
 			}
 			window.onload = function() {
-				axios.get("ajax_timestamper.php?point=TOP_loaded")
+				axios.get("ajax_timestamper.php?point=TOP.js_loaded")
 				.catch((error) => {
 					console_log(`ajax_timestamper ERROR:${error}`)
 					console_log(error)
@@ -972,5 +972,5 @@
 	$time = microtime();
 	$parts = explode(" ", $time);
 	$current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
-	log_writer2("TOP",$current_time_with_microseconds,"lv1");
+	log_writer2("TOP.php end",$current_time_with_microseconds,"lv1");
 	?>
