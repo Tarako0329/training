@@ -1,19 +1,22 @@
 <?php
-require "config.php";
-log_writer2("\$_POST",$_POST,"lv3");
-$shu = ($_POST["shu"]);
-if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
-	$id = $_SESSION['USER_ID'];
-}else if (check_auto_login($_COOKIE['token'])==0) {
-	$id = $_SESSION['USER_ID'];
-}else{
-	$return_sts = array(
-		"MSG" => "失敗"
-	);
-	header('Content-type: application/json');
-	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
-	exit();
-}	
+	require "config.php";
+	log_writer2("\$_POST",$_POST,"lv3");
+	//$shu = ($_POST["shu"]);
+	if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
+		$id = $_SESSION['USER_ID'];
+	}else if (check_auto_login($_COOKIE['token'])==0) {
+		$id = $_SESSION['USER_ID'];
+	}else{
+		$return_sts = array(
+			"MSG" => "失敗"
+		);
+		header('Content-type: application/json');
+		echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
+		exit();
+	}	
+
+	$msg = "";
+	$alert_status = "";
 
 	//履歴取得
 	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3
@@ -93,16 +96,16 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$dataset = null;
 
 
-$return_sts = array(
-	"MSG" => $msg
-	,"status" => $alert_status
-	,"kintore_log" => $kintore_log
-	,"shumoku_list" => $shumoku_list
-	,"max_log" => $max_list
-);
-header('Content-type: application/json');
-echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
+	$return_sts = array(
+		"MSG" => $msg
+		,"status" => $alert_status
+		,"kintore_log" => $kintore_log
+		,"shumoku_list" => $shumoku_list
+		,"max_log" => $max_list
+	);
+	header('Content-type: application/json');
+	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
 
-exit();
+	exit();
 
 ?>

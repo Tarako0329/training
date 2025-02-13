@@ -1,7 +1,13 @@
 <?php
 require "config.php";
-log_writer2("index",date("H:m:s:i"),"lv1");
-if($_GET["logoff"]==="out"){
+$time = microtime();
+$parts = explode(" ", $time);
+$current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
+log_writer2("index",$current_time_with_microseconds,"lv1");
+
+$logoff = (!empty($_GET["logoff"]))?$_GET["logoff"]:"";
+
+if($logoff==="out"){
 	delete_old_token($_COOKIE['token']);
 	$_SESSION = [];
 	setCookie("token", '', -1, "/", "", true, true);
