@@ -477,6 +477,8 @@
 			const { createApp, ref, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
 			createApp({
 				setup(){
+					const date1 = new Date();
+
 					const kintore_log = ref([])
 					const shumoku = ref([])
 					const max_log = ref([])
@@ -829,8 +831,11 @@
 					})
 
 					onMounted(() => {
-						alert('<?php echo $_SESSION["sokutei"]." => ".date("s") ;?>')
 						console_log('onMounted')
+						const date2 = new Date();
+						const diffMilliseconds = date2.getTime() - date1.getTime(); // ミリ秒単位の差分
+						const diffSeconds = Math.floor(diffMilliseconds / 1000); // 秒単位
+						console_log(diffSeconds)
 					})
 
 					const draggingItem = ref(null);
@@ -958,4 +963,5 @@
 
 <?php
 	$pdo_h = null;
+	log_writer2("TOP end",date("H:m:s:i"),"lv1");
 ?>

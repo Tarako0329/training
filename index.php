@@ -1,6 +1,6 @@
 <?php
 require "config.php";
-$_SESSION["sokutei"]="";
+log_writer2("index",date("H:m:s:i"),"lv1");
 if($_GET["logoff"]==="out"){
 	delete_old_token($_COOKIE['token']);
 	$_SESSION = [];
