@@ -1,5 +1,6 @@
 <?php
 require "config.php";
+$_SESSION["sokutei"]="";
 if($_GET["logoff"]==="out"){
 	delete_old_token($_COOKIE['token']);
 	$_SESSION = [];
@@ -11,7 +12,6 @@ if($_GET["logoff"]==="out"){
 	//exit();
 }
 
-//require "functions.php";
 $height = '30';
 ?>
 <!DOCTYPE html>
@@ -19,7 +19,6 @@ $height = '30';
 	<HEAD>
 		<?php
 			require "header.php";
-			//echo "pass:".passEx("000000","tarako");
 		?>
 	</HEAD>
 	<!--ログイン画面-->

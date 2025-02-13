@@ -2,7 +2,7 @@
 	// 設定ファイルインクルード【開発中】
 	require "config.php";
 
-	$time=date("YmdHis");
+	//$time=date("YmdHis");
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
@@ -33,23 +33,23 @@
 	  '土', //6
 	];
 
-		unset($sql);
+	unset($sql);
 
-		$sql = "select * from users where ((id)=?)";
-		$stmt = $pdo_h->prepare( $sql );
-		$stmt->bindValue(1, $id, PDO::PARAM_STR);
-		$stmt->execute();
-		$row_cnt = $stmt->rowCount();
-		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	$sql = "select * from users where ((id)=?)";
+	$stmt = $pdo_h->prepare( $sql );
+	$stmt->bindValue(1, $id, PDO::PARAM_STR);
+	$stmt->execute();
+	$row_cnt = $stmt->rowCount();
+	$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-		if($row_cnt==0){
-			echo "<P>ＩＤ 又はパスワードが間違っています。</P>";//.$id.$pass;
-			?><a href="index.php"> 戻る</a><?php
-			exit();
-		}
+	if($row_cnt==0){
+		echo "<P>ＩＤ 又はパスワードが間違っています。</P>";//.$id.$pass;
+		?><a href="index.php"> 戻る</a><?php
+		exit();
+	}
 
-		$user_name = ($row[0]["name"]);
-		//echo "ログインＯＫ<BR>";
+	$user_name = ($row[0]["name"]);
+	//echo "ログインＯＫ<BR>";
 	//}
 ?>
 <!DOCTYPE html>
@@ -829,6 +829,7 @@
 					})
 
 					onMounted(() => {
+						alert('<?php echo $_SESSION["sokutei"]." => ".date("s") ;?>')
 						console_log('onMounted')
 					})
 

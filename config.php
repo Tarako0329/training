@@ -5,6 +5,7 @@ date_default_timezone_set('Asia/Tokyo');
 require "./vendor/autoload.php";
 require "functions.php";
 $time="ver1.16.1";
+$_SESSION["sokutei"] = (!empty($_SESSION["sokutei"]))?$_SESSION["sokutei"]:date('s');
 
 
 //.envの取得
