@@ -67,7 +67,6 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 		</div>
 	</div>
 	<main class='container d-flex justify-content-center' style='height:calc(100vh - 372px);overflow-y: scroll;padding-bottom:90px;'>
-		<!--<div class='' style='position:fixed;top:370px;left:50%;transform:translateX(-50%); width: 100%;'>-->
 			<table class='table' style='max-width:400px;width:100%;'>
 				<thead class='sticky-top'>
 					<th class='text-end p-0' style='width:50px;'>体重<br></th>
@@ -77,10 +76,6 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 					<th class='text-end p-0' style='width:50px;'>骨格<br>筋率</th>
 					<th class='text-end p-0' style='width:50px;'>BMI<br></th>
 				</thead>
-			<!--</table>
-		</div>
-		<div >
-			<table class='table ' style='max-width:400px;width:100%;'>-->
 				<template v-for='(list,index) in taisosiki_log' :key='list.ymd+list.No'>
 					<tr class='lst'>
 						<td class='text-left p-0' colspan="6" style=''>{{list.ymd}} memo:{{list.memo}}</td>
@@ -95,10 +90,10 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 					</tr>
 				</template>
 			</table>
-		</div>
 	</main>
 	<footer id=""  class='footerArea text-center' >
-		<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
+		<!--<a href=<?php //echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>-->
+		<a href='TOP.php' class='btn btn-secondary ps-5 pe-5' style = 'margin-top:0.8em;'>戻 る</a>
 	</footer>
 </div>
 	<script>

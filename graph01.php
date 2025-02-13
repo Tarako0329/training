@@ -94,7 +94,8 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 		<div class='container hf_color'>
 		<div class='row'>
 			<div class='col-12 text-center'>
-				<a href=<?php echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>
+				<!--<a href=<?php //echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>-->
+				<a href='TOP.php' class='btn btn-secondary ps-5 pe-5' style = 'margin-top:0.8em;'>戻 る</a>
 			</div>
 		</div>
 		</div>
