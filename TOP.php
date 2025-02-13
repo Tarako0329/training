@@ -477,8 +477,6 @@
 			const { createApp, ref, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
 			createApp({
 				setup(){
-					const date1 = new Date();
-
 					const kintore_log = ref([])
 					const shumoku = ref([])
 					const max_log = ref([])
@@ -572,7 +570,7 @@
 								}
 							}
 						})
-
+						console_log('おわり2 get_trlog')
 					}
 
 					const kiroku = ref(['','','',0])
@@ -833,10 +831,7 @@
 					onMounted(() => {
 						console_log('onMounted')
 						get_trlog()
-						const date2 = new Date();
-						const diffMilliseconds = date2.getTime() - date1.getTime(); // ミリ秒単位の差分
-						const diffSeconds = Math.floor(diffMilliseconds / 1000); // 秒単位
-						console_log(diffSeconds)
+						console_log('onMounted2')
 					})
 
 					const draggingItem = ref(null);
@@ -958,8 +953,14 @@
 				}
 			}
 			window.onload = function() {
-  			const loadTime = performance.now();
-  			alert(`ページの読み込み時間は${loadTime}ミリ秒です。`);
+				axios.get("ajax_timestamper.php?point=TOP_loaded")
+				.catch((error) => {
+					console_log(`ajax_timestamper ERROR:${error}`)
+					console_log(error)
+				})
+				.finally(()=>{
+					console_log('おわり ajax_timestamper')
+				})
 			};
 
 		</script>

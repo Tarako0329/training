@@ -11,7 +11,7 @@
   $normal_result = 1;
   $auto_result = 1;
   
-  log_writer("\$cookie_token",$cookie_token);
+  //log_writer("\$cookie_token",$cookie_token);
  
   //簡易ログイン
   if (empty($cookie_token)) {
