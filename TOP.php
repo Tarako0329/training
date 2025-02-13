@@ -956,6 +956,10 @@
 					e.preventDefault();
 				}
 			}
+			window.onload = function() {
+  			const loadTime = performance.now();
+  			alert(`ページの読み込み時間は${loadTime}ミリ秒です。`);
+			};
 
 		</script>
 	</BODY>

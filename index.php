@@ -18,7 +18,6 @@ if($logoff==="out"){
 	//exit();
 }
 
-$height = '30';
 ?>
 <!DOCTYPE html>
 <HTML>
