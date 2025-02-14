@@ -56,7 +56,16 @@ ver1.16.0:目標設定機能-commited
   ALTER TABLE `ms_training` CHANGE `mokuhyou_type` `mokuhyou_type` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'kg' COMMENT 'kg or par(sent)';
 ver1.16.1:レイアウト調整など-commited
 ver1.17.0:性能改善テスト
-
+ver1.18.0:テーブル定義見直し他リファクタリング等
+  ALTER TABLE `ms_training` CHANGE `id` `id` VARCHAR(100) CHARACTER SET   utf8 COLLATE utf8_general_ci NOT NULL;
+  ALTER TABLE `taisosiki` CHANGE `id` `id` VARCHAR(100) CHARACTER SET     utf8 COLLATE utf8_unicode_ci NOT NULL;
+  ALTER TABLE `tr_condition` CHANGE `id` `id` VARCHAR(100) CHARACTER SET  utf8 COLLATE utf8_general_ci NOT NULL;
+  ALTER TABLE `tr_log` CHANGE `id` `id` CHAR(100) CHARACTER SET           utf8 COLLATE utf8_general_ci NOT NULL;
+  ALTER TABLE `users` CHANGE `id` `id` VARCHAR(100) CHARACTER SET         utf8 COLLATE utf8_general_ci NOT NULL;
+  ALTER TABLE `users` ADD `insdatetime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `birthday`;
+  ALTER TABLE `users` CHANGE `pass` `pass` VARCHAR(100) CHARACTER SET     utf8 COLLATE utf8_general_ci NOT NULL;
+  ALTER TABLE `users` CHANGE `id` `id` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, CHANGE `pass` `pass` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL;
+  ALTER TABLE `ms_training` CHANGE `mokuhyou_type` `mokuhyou_type` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'kg' COMMENT 'kg|par(sent)|m/月|cal/月';
   
 【Issues】
 目標設定機能-体組織

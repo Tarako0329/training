@@ -39,11 +39,11 @@ if($logoff==="out"){
 				<DIV style='text-align: center;'>
 					<div style='display:flex; justify-content:center;'>
 						<label for="id" class="form-label" style='width:100px;text-align:right;'>ＩＤ：</label>
-						<INPUT type="text" class='form-control' id="id" name="id" maxlength="10" style='ime-mode:disabled;max-width:200px;'>
+						<INPUT type="text" class='form-control' id="id" name="id" maxlength="100" style='ime-mode:disabled;max-width:200px;'>
 					</div>
 					<div style='margin-top:30px;display:flex; justify-content:center;'>
 						<label for="pass" class="form-label" style='width:100px;text-align:right;'>パスワード：</label>
-						<INPUT type="password" class='form-control' id="pass" name="pass" maxlength="10" style='max-width:200px;'>
+						<INPUT type="password" class='form-control' id="pass" name="pass" maxlength="100" style='max-width:200px;'>
 					</div>
 					<button type="submit" class='btn btn-primary'style='margin-top:30px;' name="btn" value="ＧＯ！！">
 						ＧＯ！！
@@ -66,11 +66,11 @@ if($logoff==="out"){
 									<div class='col-1 col-md-0' ></div>
 									<div class='col-10 col-md-7' >
 										<FORM method="post" action="recording.php">
-											<DIV>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="10" style='ime-mode:disabled;'></DIV>
-											<DIV>パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="10" style=''></DIV>
-											<DIV>名前：<INPUT required='required' type="text" class='form-control' name="fname" maxlength="10" style=''></DIV>
+											<DIV>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="100" style='ime-mode:disabled;'></DIV>
+											<DIV>パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="100" style=''></DIV>
+											<DIV>名前：<INPUT required='required' type="text" class='form-control' name="fname" maxlength="100" style=''></DIV>
 											<DIV>身長：<INPUT type="number" class='form-control' step="0.1" name="height" maxlength="10" style=''> cm</DIV>
-											<DIV>生年月日：<INPUT type="date" class='form-control' name="birthday" maxlength="10" style=''></DIV>
+											<DIV>生年月日：<INPUT required='required' type="date" class='form-control' name="birthday" maxlength="10" style=''></DIV>
 											<DIV>性別：
 												<SELECT size="1" name="sex" class='form-select' style=''>
 												<OPTION value="1">男</OPTION>

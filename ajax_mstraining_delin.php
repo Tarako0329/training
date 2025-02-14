@@ -31,7 +31,7 @@ try{
 		$stmt->bindValue(1, $id, PDO::PARAM_STR);
 		$stmt->execute();
 
-		$sql = "insert into ms_training(id,shu,sort,display_hide1) values(:id,:shu,:sort,:display_hide1)";
+		$sql = "insert into ms_training(id,shu,sort,display_hide1,mokuhyou_type,mokuhyou) values(:id,:shu,:sort,:display_hide1,:mokuhyou_type,:mokuhyou)";
 		foreach(json_decode($_POST["data"],true) as $row){
 			$display_hide1 = ($row["display_hide1"]===true)?"true":"false";
 			$stmt = $pdo_h->prepare($sql);
@@ -39,6 +39,8 @@ try{
 			$stmt->bindValue('shu', $row["shu"], PDO::PARAM_STR);
 			$stmt->bindValue('sort', $row["sort"], PDO::PARAM_STR);
 			$stmt->bindValue('display_hide1', $display_hide1, PDO::PARAM_STR);
+			$stmt->bindValue('mokuhyou_type', $row["mokuhyou_type"], PDO::PARAM_STR);
+			$stmt->bindValue('mokuhyou', $row["mokuhyou"], PDO::PARAM_INT);
 			$stmt->execute();
 		}
 		$msg = "success";

@@ -1,19 +1,19 @@
 <?php
 // 設定ファイルインクルード
 require "config.php";
-log_writer2("\$_POST",$_POST,"lv3");
+log_writer2("\$_GET",$_GET,"lv3");
 $now = date('Y-m-d');
 //トレーニング種別
-$shu = ($_POST["shu"]);
+$shu = ($_GET["shu"]);
 //グラフ種類（MAX:0 or トレーニング量:1 or MAX更新時:2)
-$hyoji = ($_POST["hyoji"]);
+$hyoji = ($_GET["hyoji"]);
+//グラフ種類（MAX:0 or トレーニング量:1 or MAX更新時:2)
+$gtype = ($_GET["gtype"]);
 
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
-	//echo "session:".$id;
 }else if (check_auto_login($_COOKIE['token'])==0) {
 	$id = $_SESSION['USER_ID'];
-	//echo "クッキー:".$id;
 }else{
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: index.php");
@@ -68,7 +68,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	</div>
 	<main class='container' style='height:calc(100vh - 372px);overflow-y: scroll;padding-bottom:90px;'>
 		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
-			<div class='accordion-item'>
+			<div >
 				<div v-if='String(list.jun)==="0"' class='row shu accordion-header'>
 					<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd}${list.shu}`' 
 					aria-expanded='false' aria-controls='collapseOne' >
@@ -94,7 +94,6 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 		<div class='container hf_color'>
 		<div class='row'>
 			<div class='col-12 text-center'>
-				<!--<a href=<?php //echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>-->
 				<a href='TOP.php' class='btn btn-secondary ps-5 pe-5' style = 'margin-top:0.8em;'>戻 る</a>
 			</div>
 		</div>
@@ -154,10 +153,9 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 			setup(){
 				const kintore_log = ref()
 				//label
-				const gtype = ref('all')	//all.year
+				const gtype = ref('<?php echo $gtype;?>')	//all.year
 				const g_shu = ref('max')	//max,volume,growth
-
-				const shu = ref('<?php echo $_POST["shu"];?>')	//トレーニング種目
+				const shu = ref('<?php echo $shu;?>')	//トレーニング種目
 				const graph_title = ref('')
 				const graph_subtitle = ref('')
 				let datasets = []
@@ -278,6 +276,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 						.finally(()=>{
 						})
 				}
+
 				const get_volume_data = () =>{
 					console_log("start get_volume_data")
 					const form_data = new FormData()
@@ -431,6 +430,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 						.finally(()=>{
 						})
 				}
+
 				const get_growth_data = () =>{
 					console_log("start get_growth_data")
 					const form_data = new FormData()

@@ -19,7 +19,7 @@ $gtype = ($_POST["gtype"]==='12M')?'year':$_POST["gtype"];
 
 
 //目標取得
-$sql = "SELECT * from ms_training where id=:id and shu=:shu";
+$sql = "SELECT * FROM ms_training WHERE id=:id and shu=:shu";
 $result = $pdo_h->prepare( $sql );
 $result->bindValue("id", $id, PDO::PARAM_STR);
 $result->bindValue("shu", $shu, PDO::PARAM_STR);
@@ -27,9 +27,9 @@ $result->execute();
 $ms_training = $result->fetchAll(PDO::FETCH_ASSOC);
 
 //最新の体組織取得
-$sql = "SELECT ts.* from taisosiki ts 
+$sql = "SELECT ts.* FROM taisosiki ts 
 	inner join (
-			select id,max(ymd) as seq from taisosiki where id=:id group by id
+			SELECT id,max(ymd) AS seq FROM taisosiki WHERE id=:id group by id
 		) tmp 
 	on ts.id=tmp.id 
 	and ts.ymd=tmp.seq";
@@ -39,9 +39,9 @@ $result->execute();
 $taisosiki = $result->fetchAll(PDO::FETCH_ASSOC);
 
 //履歴取得
-$sql = "select ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* from (select *,0 as max_weight from tr_log where id = ? and shu = ? ";
-$sql .= "UNION ALL select * from  tr_log_max_record where id = ? and shu = ?) as T ";
-$sql .= "order by T.ymd desc,T.jun ";
+$sql = "SELECT ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu ORDER BY T.ymd,T.jun) AS No,T.* FROM (SELECT *,0 AS max_weight FROM tr_log WHERE id = ? and shu = ? 
+	UNION ALL SELECT * FROM  tr_log_max_record WHERE id = ? and shu = ?) AS T 
+	ORDER BY T.ymd desc,T.jun ";
 
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
@@ -53,7 +53,7 @@ $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 //log_writer2("\$dataset_work",$dataset_work,"lv3");
 $dataset = [];
 $i=0;
-foreach($dataset_work as $row){
+foreach($dataset_work AS $row){
   $weight = " - MAX：".number_format($row["max_weight"],2);
 	$dataset[$i] = array_merge($row,array('head_wt'=> $weight));
 	$i++;
@@ -63,7 +63,7 @@ $kintore_log = $dataset;
 $dataset_work=[];
 
 //ぐらふでーた取得
-//$sql = "select ymd,DATEDIFF(now(),ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,weight,rep,rep2,max_weight from tr_log_max_record where id = ? and shu = ? ";
+//$sql = "SELECT ymd,DATEDIFF(now(),ymd) AS beforedate,ROW_NUMBER() OVER(ORDER BY ymd) AS No,weight,rep,rep2,max_weight FROM tr_log_max_record WHERE id = ? and shu = ? ";
 if($gtype==="year"){//直近1年
 	$timestamp = strtotime('-23 months first day of this month');
 	// タイムスタンプを日付形式に変換
@@ -76,40 +76,40 @@ if($gtype==="year"){//直近1年
 $sql = "WITH RECURSIVE cal AS (
 	  SELECT
 	    A.min_ymd AS date
-	  from
+	  FROM
 	    (
-	      select min(ymd) as min_ymd from tr_log
-	      where
+	      SELECT min(ymd) AS min_ymd FROM tr_log
+	      WHERE
 	        id = :id1
 	        and shu = :shumoku1
 					and ymd >= '$date'
 	      group by id, shu
-	    ) as A
+	    ) AS A
 	  UNION ALL
 	  SELECT DATE_ADD(cal.date, INTERVAL 1 Month) FROM cal WHERE cal.date <= CURDATE()
 	)
-	select
-	  left(cal.date, 7) as ym,
-		DATEDIFF(now(),cal.date) as beforedate,
-	  :shumoku2 as shu,
-	  IFNULL(TEMP.m_weight,'NaN') as max_weight
-	from
+	SELECT
+	  left(cal.date, 7) AS ym,
+		DATEDIFF(now(),cal.date) AS beforedate,
+	  :shumoku2 AS shu,
+	  IFNULL(TEMP.m_weight,'NaN') AS max_weight
+	FROM
 	  cal
 	  left join (
 	    SELECT
 	      shu,
-	      left(ymd, 7) as ym,
-				MIN(ymd) as min_ymd,
-	      CONVERT(max(max_weight),char) as m_weight
+	      left(ymd, 7) AS ym,
+				MIN(ymd) AS min_ymd,
+	      CONVERT(max(max_weight),char) AS m_weight
 	    FROM
 	      `tr_log_max_record`
-	    where
+	    WHERE
 	      id = :id2
 	      and shu = :shumoku3
 	    group by
 	      shu,
 	      left(ymd, 7)
-	  ) as TEMP ON left(cal.date, 7) = TEMP.ym
+	  ) AS TEMP ON left(cal.date, 7) = TEMP.ym
 		ORDER BY left(cal.date,7)";
 
 $graph_title = "『".$shu."のＭＡＸ推移』";
@@ -131,7 +131,7 @@ $i=1;
 $graph_data=[];
 $graph_data2=[];
 $labels = [];
-foreach($dataset_work as $row){
+foreach($dataset_work AS $row){
 	$weight = ($row["max_weight"]<>"NaN")?number_format($row["max_weight"],2):"NaN";
 	if($row["beforedate"]<0){
 		continue;
@@ -177,6 +177,9 @@ if($gtype==="year"){//直近1年
 	$subtitle="";
 }
 
+if(empty($taisosiki[0])){
+	$taisosiki[0]["weight"] = 0;
+}
 $return_sts = array(
 	"MSG" => $msg
 	,"status" => $alert_status

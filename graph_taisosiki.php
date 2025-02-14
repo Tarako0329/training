@@ -3,29 +3,14 @@
 require "config.php";
 log_writer2("\$_POST",$_POST,"lv3");
 
-
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
-	//echo "session:".$id;
 }else if (check_auto_login($_COOKIE['token'])==0) {
 	$id = $_SESSION['USER_ID'];
-	//echo "クッキー:".$id;
 }else{
-	//header("HTTP/1.1 301 Moved Permanently");
-	//header("Location: index.php");
 	var_dump($_SESSION);
 	exit();
 }	
-
-//履歴取得
-//var_dump($kintore_log);
-//exit();
-
-//履歴取得
-
-
-//ぐらふでーた取得
-
 
 ?>
 <!DOCTYPE html>
@@ -92,7 +77,6 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 			</table>
 	</main>
 	<footer id=""  class='footerArea text-center' >
-		<!--<a href=<?php //echo "'TOP.php?id=".$id."&pass=".$pass."'" ?> class='btn btn-secondary' style = 'margin-top:0.8em;text-decoration: none;'>戻 る</a>-->
 		<a href='TOP.php' class='btn btn-secondary ps-5 pe-5' style = 'margin-top:0.8em;'>戻 る</a>
 	</footer>
 </div>

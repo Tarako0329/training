@@ -51,6 +51,8 @@
 					  ,MAX(IF(sort_MB = 1,max_weight,0)) as mybest, MAX(IF(sort_MB = 1,concat(weight,' x ',rep,'(',rep2,')'),'-')) as MB_set,                    MAX(IF(sort_MB = 1,ymd_MB,'-')) as MB_date
 						,ms.sort
 						,ms.display_hide1
+						,ms.mokuhyou_type
+						,ms.mokuhyou
 					FROM (
 						SELECT 
 							SEQ,id,shu,max_weight,weight,rep,rep2

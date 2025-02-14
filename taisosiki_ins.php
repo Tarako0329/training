@@ -1,6 +1,6 @@
 <?php
   require "config.php";
-  //require "functions.php";
+  
   //トランザクション処理
   if(isset($_SESSION['USER_ID'])){
     $id = $_SESSION['USER_ID'];
@@ -13,15 +13,7 @@
     header("Location: index.php");
     exit();
   }
-  /*
-  if($_POST["btn"] == "w_rireki"){
-    //体組織記録画面の「履歴」ボタン
-    //リダイレクト
-    header("HTTP/1.1 307 Moved Permanently");
-    header("Location: graph02.php");
-    exit();
-  }
-  */
+  
   if($_POST["btn"] == "w_ins_bt"){
     //体組織記録画面の「記録」ボタン
     try{
@@ -49,7 +41,7 @@
     }
     //リダイレクト
     header("HTTP/1.1 307 Moved Permanently");
-    header("Location: graph02.php");
+    header("Location: graph_taisosiki.php");
     exit();
   } 
   //ログイン失敗

@@ -114,9 +114,18 @@
 											<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
 											<template v-if="list.typ==='2'">-Non Weight:{{Number(list.total).toLocaleString()}}回</template>
 										</button>
-										<button type='button' class='icn-btn' @click='GoGrapho01(list.shu,0)' style=''>
+										<!--<button type='button' class='icn-btn' @click='GoGrapho_kintore(list.shu,0)' style=''>
 											<i class='bi bi-graph-up-arrow' ></i>
-										</button>
+										</button>-->
+										<a v-if="list.typ==='0'" :href='`graph_kintore.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
+											<i class='bi bi-graph-up-arrow' ></i>
+										</a>
+										<a v-if="list.typ==='2'" :href='`graph_kintore.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
+											<i class='bi bi-graph-up-arrow' ></i>
+										</a>
+										<a v-if="list.typ==='1'" :href='`graph_usanso.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
+											<i class='bi bi-graph-up-arrow' ></i>
+										</a>
 									</div>
 									<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 										<div class='row m-0 lst accordion-body'>
@@ -128,8 +137,7 @@
 												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
 												<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
-													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
-													data-bs-toggle='modal' data-bs-target='#edit_wt'>
+													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
 													<i class='bi bi-pencil'></i>
 												</button>
 											</div>
@@ -141,8 +149,7 @@
 												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
 												<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
-													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ)'
-													data-bs-toggle='modal' data-bs-target='#edit_wt'>
+													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
 													<i class='bi bi-pencil'></i>
 												</button>
 											</div>
@@ -154,8 +161,7 @@
 												<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
 												<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
-													@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ)'
-													data-bs-toggle='modal' data-bs-target='#usanso'>
+													@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ,"usanso")'>
 													<i class='bi bi-pencil'></i>
 												</button>
 											</div>
@@ -272,11 +278,11 @@
 								</div>
 							</div>
 							<div class='modal-footer'>
-								<button type='button' style='width:90px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" >キャンセル</button>
-								<a href='graph02.php' style='width:90px;' class="btn btn-primary mbtn" >履歴</a>
+								<button type='button' style='width:90px;font-size:13px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='ts_modal_close'>キャンセル</button>
+								<a href='graph_taisosiki.php' style='width:90px;' class="btn btn-primary mbtn" >履歴</a>
 								<button type='submit' style='width:90px;' name='btn' value='w_ins_bt' class="btn btn-primary mbtn" data-bs-dismiss="modal" >登録</button>
 
-								<button type='button' style="display:none;" class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='ts_modal_close' ></button><!--キャンセル-->
+								<!--<button type='button' style="display:none;" class="btn btn-secondary mbtn" data-bs-dismiss="modal"  ></button>キャンセル-->
 							</div>
 							<input type='hidden' name='hyoji' value='1'>
 							<input type='hidden' name='gtype' value='all'>
@@ -292,7 +298,7 @@
 						<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit'>
 							<div class='modal-header'>
 	        			<h5 class="modal-title">有酸素トレーニング</h5>
-  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
 							</div>
 							<div class='modal-body container'>
 								<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
@@ -320,7 +326,7 @@
 									<input type='text' @focus='keydown' class="form-control form-control-sm" id='rep2' name='rep2' :value='kiroku[3]'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
-									<label for='cal' class="form-label" style='padding-left:0;margin-bottom:1px;'>カロリー：</label>
+									<label for='cal' class="form-label" style='padding-left:0;margin-bottom:1px;'>カロリー(Kcal)</label>
 									<input type='text' @focus='keydown' class="form-control form-control-sm" id='cal' name='cal' :value='kiroku[0]'> <!--cal を weightで代用-->
 								</div>
 								<div class='row' style='margin:1px 20px;'>
@@ -353,13 +359,13 @@
 			</div>
 
 			<!--↓ウェイト記録モーダル-->
-			<div class='modal fade' id='edit_wt' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
+			<div class='modal fade' id='edit_wt' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true' >
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
 						<form method = 'post' @submit.prevent='OnSubmit' id='wt'>
 							<div class='modal-header'>
 	        			<h5 class="modal-title">トレーニング記録</h5>
-  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
 							</div>
 							<div class='modal-body container'>
 								<!--<Transition>-->
@@ -652,7 +658,9 @@
 					const jiju = ref(false)	//自重種目ONOFF
 					//const shu2 = ref('')
 					const memo = ref('')
-					const setUpdate = (NO,YMD,SHU,wt,rep,set,rep2,MEMO,typ) =>{
+					let MODAL_INST
+					let MODAL
+					const setUpdate = (NO,YMD,SHU,wt,rep,set,rep2,MEMO,typ,modal_id) =>{
 						console_log('setUpdate start')
 						Num.value = NO
 						ymd.value = YMD
@@ -666,9 +674,16 @@
 						mBtnName.value[0] = '更新'
 						mBtnName.value[1] = 'キャンセル'
 						jiju.value = (typ==="2")?true:false
+
+						MODAL = document.getElementById(modal_id)
+						MODAL_INST = new bootstrap.Modal(MODAL, {
+    					backdrop: 'static' // backdropをstaticに設定
+  					});
+						MODAL_INST.show();
 					}
 					const setCancel = () =>{
 						console_log('setCancel start')
+						
 						Num.value = 0
 						ymd.value = '<?php echo $now?>'
 						shu.value = ''
@@ -681,6 +696,10 @@
 						mBtnName.value[1] = '閉じる'
 						keybord_show.value=false
 						kiroku_index.value=''
+
+						MODAL_INST = new bootstrap.Modal(MODAL, {
+    					backdrop: 'true' // backdropをstaticに設定
+  					});
 					}
 					const delete_log = (NO,YMD) =>{
 						console_log('delete_log start')
@@ -708,15 +727,15 @@
 						
     				form.submit();						
 					}
-					const GoGrapho01 = (SHURUI,HYOUJI) =>{
-						console_log('GoGrapho01 start')
+					/*const GoGrapho_kintore = (SHURUI,HYOUJI) =>{
+						console_log('GoGrapho_kintore start')
 						let form = document.createElement('form');
     				let shu = document.createElement('input');
 						let hyoji = document.createElement('input');
 						let gtype = document.createElement('input');
 
     				form.method = 'POST';
-    				form.action = 'graph01.php';
+    				form.action = 'graph_kintore.php';
 						
     				shu.type = 'hidden'; //入力フォームが表示されないように
     				shu.name = 'shu';
@@ -736,7 +755,7 @@
     				document.body.appendChild(form);
 						
     				form.submit();						
-					}
+					}*/
 					let new_shu
 					const add_shumoku_wt = (e) =>{
 						console_log(`add_shumoku_wt e:${e.target.value}`)
@@ -807,6 +826,13 @@
 								keybord_show.value=false
 								kiroku_index.value=''
 								if(new_shu){new_shu.value = ''}
+								
+								if(MODAL_INST){
+									MODAL_INST = new bootstrap.Modal(MODAL, {
+		    						backdrop: 'true' // backdropをstaticに設定
+	  							})
+								}
+
 							}else{
 								alert("処理が失敗しました")
 								alert(response.data)
@@ -816,7 +842,6 @@
 							console_log(`OnSubmit ERROR:${error}`)
 							console_log(error)
 							alert("ERROR:処理が失敗しました")
-							//alert(error)
 							filter.value = "%"
 						})
 						.finally(()=>{
@@ -825,7 +850,6 @@
 					
 					onBeforeMount(()=>{
 						console_log('onBeforeMount')
-						//get_trlog()
 					})
 
 					onMounted(() => {
@@ -916,7 +940,6 @@
 						kiroku_index,
 						input_select,
 						id,
-						//pass,
 						mBtnName,
 						Num,
 						ymd,
@@ -926,8 +949,7 @@
 						setUpdate,
 						setCancel,
 						delete_log,
-						GoGrapho01,
-						//shu2,
+						//GoGrapho_kintore,
 						add_shumoku_wt,
 						OnSubmit,
 						filter,
