@@ -107,16 +107,13 @@
 								<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row m-0' style='position:relative'><div class=' ymd'>{{list.ymd}} {{list.condition}}</div></div><!--日付-->
 		
 								<div class='accordion-item' style='position:relative;'>
-									<div v-if='list.setjun === 1 || (list.shu+list.typ) !== (log_edit[index-1].shu+log_edit[index-1].typ)' class='row m-0 shu accordion-header'>
+									<div v-if='list.setjun === 1 || (list.shu+list.typ) !== (log_edit[index-1].shu+log_edit[index-1].typ)' class='row m-0 pb-0 shu accordion-header'>
 										<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' :id='`btn_collapseOne${list.ymd3}${list.shu}`'
 											aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
 											{{list.shu}} 
 											<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
 											<template v-if="list.typ==='2'">-Non Weight:{{Number(list.total).toLocaleString()}}回</template>
 										</button>
-										<!--<button type='button' class='icn-btn' @click='GoGrapho_kintore(list.shu,0)' style=''>
-											<i class='bi bi-graph-up-arrow' ></i>
-										</button>-->
 										<a v-if="list.typ==='0'" :href='`graph_kintore.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
 											<i class='bi bi-graph-up-arrow' ></i>
 										</a>
@@ -129,37 +126,37 @@
 									</div>
 									<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 										<div class='row m-0 lst accordion-body'>
-											<div v-if="list.typ==='0'" class='col-12' style='padding:0  0 6px;display:flex;'><!--ウェイト-->
+											<div v-if="list.typ==='0'" class='col-12' style='padding:0  0 6px;display:flex;height:100%;'><!--ウェイト-->
 												<div style='width: 20px;'>{{list.setjun}}</div>
 												<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
 												<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
 												<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
 												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-												<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+												<div class='' style='padding:0 0 0 10px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
 													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
 													<i class='bi bi-pencil'></i>
 												</button>
 											</div>
-											<div v-if="list.typ==='2'" class='col-12' style='padding:0  0 6px;display:flex;'><!--nonウェイト-->
+											<div v-if="list.typ==='2'" class='col-12' style='padding:0  0 6px;display:flex;height:100%;'><!--nonウェイト-->
 												<div style='width: 20px;'>{{list.setjun}}</div>
 												<div class='text-end' style='width: 70px;padding:0;'>自重</div>
 												<div v-if="list.tani==='0'"       class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
 												<div v-else-if="list.tani==='1'"  class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
 												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-												<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+												<div class='' style='padding:0 0 0 10px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
 													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
 													<i class='bi bi-pencil'></i>
 												</button>
 											</div>
-											<div v-if="list.typ==='1'" class='col-12' style='padding:0  0 6px;display:flex;'><!--有酸素-->
+											<div v-if="list.typ==='1'" class='col-12' style='padding:0  0 6px;display:flex;height:100%;'><!--有酸素-->
 												<div style='width: 20px;'>{{list.setjun}}</div>
 												<div class='text-end' style='width: 50px;padding-right:0;'>{{list.rep}}分</div>	
 												<div class='text-end' style='width: 70px;padding:0;'>{{list.rep2}}ｍ</div>
 		
 												<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
-												<div class='' style='padding:0 0 0 10px;'>{{list.memo}}</div>
+												<div class='' style='padding:0 0 0 10px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
 													@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ,"usanso")'>
 													<i class='bi bi-pencil'></i>
