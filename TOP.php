@@ -132,7 +132,7 @@
 												<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
 												<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
 												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-												<div class='' style='padding:0 0 0 10px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+												<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
 													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
 													<i class='bi bi-pencil'></i>
@@ -144,7 +144,7 @@
 												<div v-if="list.tani==='0'"       class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
 												<div v-else-if="list.tani==='1'"  class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
 												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-												<div class='' style='padding:0 0 0 10px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+												<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
 													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
 													<i class='bi bi-pencil'></i>
@@ -156,7 +156,7 @@
 												<div class='text-end' style='width: 70px;padding:0;'>{{list.rep2}}ｍ</div>
 		
 												<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
-												<div class='' style='padding:0 0 0 10px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+												<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
 													@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ,"usanso")'>
 													<i class='bi bi-pencil'></i>
