@@ -1,7 +1,6 @@
 <?php
 require "config.php";
 log_writer2("\$_POST",$_POST,"lv3");
-$shu = ($_POST["shu"]);
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
 }else if (check_auto_login($_COOKIE['token'])==0) {
@@ -15,7 +14,11 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	exit();
 }	
 
-$gtype = ($_POST["gtype"]==='12M')?'year':$_POST["gtype"];
+$gtype = $_POST["gtype"];
+$shu = $_POST["shu"];
+$tani = $_POST["tani"];
+$msg = "";
+$alert_status = "";
 
 //履歴取得
 $sql = "SELECT 
@@ -46,7 +49,7 @@ $kintore_log = $dataset;
 $dataset_work=[];
 
 //ぐらふでーた取得
-if($gtype==="year"){//直近1年
+if($gtype==="hikaku" || $gtype==="12M"){//前年比or直近1年
 	$timestamp = strtotime('-23 months first day of this month');
 	// タイムスタンプを日付形式に変換
 	$date = date('Y-m-d', $timestamp);
@@ -56,42 +59,61 @@ if($gtype==="year"){//直近1年
 	exit();
 }
 //
-$sql = "WITH RECURSIVE cal AS (
+if($tani==="month"){
+	$sql = "WITH RECURSIVE cal AS (
+			SELECT
+				DATE_FORMAT(A.min_ymd, '%Y-%m-01') AS date
+			FROM
+				(
+					SELECT min(ymd) as min_ymd FROM tr_log
+					where
+						id = :id1
+						and shu = :shumoku1
+						and ymd >= '$date'
+					group by id, shu
+				) as A
+			UNION ALL
+			SELECT DATE_ADD(cal.date, INTERVAL 1 Month) AS date FROM cal WHERE cal.date <= DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+		)
 		SELECT
-			DATE_FORMAT(A.min_ymd, '%Y-%m-01') AS date
+			left(cal.date, 7) as ym
+			,DATEDIFF(now(),cal.date) as beforedate
+			,:shumoku2 as shu
+			,IFNULL(TEMP.max_volume,0) as max_volume
+			,IFNULL(TEMP.total_volume,0) as total_volume
+		FROM
+		cal
+		left join (
+			SELECT shu, left(ymd, 7) as ym, max(total_weight) as max_volume, sum(total_weight) as total_volume FROM 
+			(SELECT shu, left(ymd, 7) as ym, ymd, sum(weight*rep*sets) as total_weight FROM `tr_log` where id = :id2 and shu = :shumoku3 group by shu, ymd) as tmp
+ 			group by shu, left(ymd, 7)
+ 		) as TEMP ON left(cal.date, 7) = TEMP.ym
+		ORDER BY left(cal.date,7)";
+
+}else if($tani==="day"){
+	$sql="SELECT
+			TEMP.ymd as ym
+			,DATEDIFF(now(),TEMP.ymd) as beforedate
+			,:shumoku2 as shu
+			,IFNULL(TEMP.max_volume,0) as max_volume
+			,IFNULL(TEMP.total_volume,0) as total_volume
 		FROM
 			(
-				SELECT min(ymd) as min_ymd FROM tr_log
-				where
-					id = :id1
-					and shu = :shumoku1
-					and ymd >= '$date'
-				group by id, shu
-			) as A
-		UNION ALL
-		SELECT DATE_ADD(cal.date, INTERVAL 1 Month) AS date FROM cal WHERE cal.date <= DATE_ADD(CURDATE(), INTERVAL 1 DAY)
-	)
-	SELECT
-		left(cal.date, 7) as ym
-		,DATEDIFF(now(),cal.date) as beforedate
-		,:shumoku2 as shu
-		,IFNULL(TEMP.max_volume,0) as max_volume
-		,IFNULL(TEMP.total_volume,0) as total_volume
-	FROM
-	cal
-	left join (
-		SELECT shu, left(ymd, 7) as ym, max(total_weight) as max_volume, sum(total_weight) as total_volume FROM 
-		(SELECT shu, left(ymd, 7) as ym, ymd, sum(weight*rep*sets) as total_weight FROM `tr_log` where id = :id2 and shu = :shumoku3 group by shu, ymd) as tmp
- 		group by shu, left(ymd, 7)
- 	) as TEMP ON left(cal.date, 7) = TEMP.ym
-	ORDER BY left(cal.date,7)";
+				SELECT shu, ymd, max(total_weight) as max_volume, sum(total_weight) as total_volume FROM 
+					(SELECT shu, ymd, sum(weight*rep*sets) as total_weight FROM `tr_log` where id = :id2 and shu = :shumoku3 and ymd >= '$date' group by shu, ymd) as tmp
+			 	group by shu, ymd
+		 	) as TEMP
+		ORDER BY TEMP.ymd";
+}
 
 $graph_title = "『".$shu."のﾄﾚｰﾆﾝｸﾞ量推移』";
 
 $result = $pdo_h->prepare( $sql );
-$result->bindValue('id1', $id, PDO::PARAM_STR);
+if($tani==="month"){
+	$result->bindValue('id1', $id, PDO::PARAM_STR);
+	$result->bindValue('shumoku1', $shu, PDO::PARAM_STR);
+}
 $result->bindValue('id2', $id, PDO::PARAM_STR);
-$result->bindValue('shumoku1', $shu, PDO::PARAM_STR);
 $result->bindValue('shumoku2', $shu, PDO::PARAM_STR);
 $result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
 $result->execute();
@@ -108,6 +130,7 @@ $graph_data_max=[];
 $graph_data_max2=[];
 $graph_data_total=[];
 $graph_data_total2=[];
+$min_val = 100000;
 
 foreach($dataset_work as $row){
 	$weight = ($row["total_volume"]);
@@ -115,23 +138,34 @@ foreach($dataset_work as $row){
 		continue;
 	}
 
-	if($gtype==="year"){//直近1年
+	if($gtype==="hikaku"){//前年比（月集計のみ）
 		if($row["beforedate"]<=365){
-
+			$min_val = ($min_val>$row["max_volume"])?$row["max_volume"]:$min_val;
 			$labels[] = substr($row["ym"],-2);
 			$graph_data_max[] = $row["max_volume"];
 			$graph_data_total[] = $row["total_volume"];
 		}else if($row["beforedate"]<=730){
-
+			$min_val = ($min_val>$row["max_volume"])?$row["max_volume"]:$min_val;
 			$graph_data_max2[] = $row["max_volume"];
 			$graph_data_total2[] = $row["total_volume"];
+		}else{
+			break;
 		}
-	}else if($gtype==="all"){//全期間
-		
-		$labels[] = $row["ym"];
+	}else if($gtype==="12M"){//直近１年（月集計の場合はyyyymm、日ごとの場合はN日前）
+		if($row["beforedate"]<=365){
+			$min_val = ($min_val>$row["max_volume"])?$row["max_volume"]:$min_val;
+			$labels[] = ($tani==="month")?substr($row["ym"],-2):$row["beforedate"];
+			$graph_data_max[] = $row["max_volume"];
+			$graph_data_total[] = $row["total_volume"];
+		}else{
+			//break;
+		}
+	}else if($gtype==="all"){//全期間（月集計の場合はyyyymm、日ごとの場合はN日前）
+		$min_val = ($min_val>$row["max_volume"])?$row["max_volume"]:$min_val;
+		$labels[] = ($tani==="month")?$row["ym"]:$row["beforedate"];
 		$graph_data_max[] = $row["max_volume"];
 		$graph_data_total[] = $row["total_volume"];
-}else{
+	}else{
 		exit();
 	}
 	
@@ -140,16 +174,27 @@ foreach($dataset_work as $row){
 
 
 //ラベル設定
-if($gtype==="year"){//直近1年
-	$glabel1="今";
-	$glabel2="前";
-	$subtitle = "各月の総Volume(棒グ)とDayﾄﾚのMaxVolume(線グ)";
+if($gtype==="hikaku"){//前年比
+	$glabel1="今年";
+	$glabel2="前年";
+	$subtitle = "各月の総Volと最大Vol";
 	$graph_title .= "（前年比較）";
 }else if($gtype==="all"){//全期間
-	$glabel1="";
-	$glabel2="";
-	$subtitle = "全期間対象の月間総Volume推移";
+	$glabel1="1日最大Vol";
+	$glabel2=($tani==="month")?"月間総Vol":"1日Vol";
+	$subtitle = "全期間対象のVolume推移";
 	$graph_title .= "（全期間）";
+}else if($gtype==="12M"){//直近１年
+	$glabel1="1日最大Vol";
+	$glabel2=($tani==="month")?"月間総Vol":"1日Vol";
+	$subtitle = "直近１年のVolume推移";
+	$graph_title .= "（直近１年）";
+}
+
+if($min_val===0 || $min_val <= 500){
+	$min_val = 0;
+}else{
+	$min_val = ($min_val % 500<=200)?$min_val-500 - ($min_val % 500):$min_val - ($min_val % 500);
 }
 
 $return_sts = array(
@@ -165,6 +210,7 @@ $return_sts = array(
 	,"glabel2" => $glabel2
 	,"graph_title" => $graph_title
 	,"subtitle" => $subtitle
+	,"min_val" => (int)$min_val
 );
 header('Content-type: application/json');
 echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);

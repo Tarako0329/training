@@ -1,7 +1,6 @@
 <?php
 require "config.php";
 log_writer2("\$_POST",$_POST,"lv3");
-$shu = ($_POST["shu"]);
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
 }else if (check_auto_login($_COOKIE['token'])==0) {
@@ -15,7 +14,11 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	exit();
 }	
 
-$gtype = ($_POST["gtype"]==='12M')?'year':$_POST["gtype"];
+$shu = $_POST["shu"];
+$gtype = $_POST["gtype"];
+$tani = $_POST["tani"];
+$msg = "";
+$alert_status = "";
 
 
 //目標取得
@@ -58,13 +61,12 @@ foreach($dataset_work AS $row){
 	$dataset[$i] = array_merge($row,array('head_wt'=> $weight));
 	$i++;
 }
-//$kintore_log = json_encode($dataset, JSON_UNESCAPED_UNICODE);
+
 $kintore_log = $dataset;
 $dataset_work=[];
 
 //ぐらふでーた取得
-//$sql = "SELECT ymd,DATEDIFF(now(),ymd) AS beforedate,ROW_NUMBER() OVER(ORDER BY ymd) AS No,weight,rep,rep2,max_weight FROM tr_log_max_record WHERE id = ? and shu = ? ";
-if($gtype==="year"){//直近1年
+if($gtype==="hikaku" || $gtype==="12M"){//前年比or直近1年
 	$timestamp = strtotime('-23 months first day of this month');
 	// タイムスタンプを日付形式に変換
 	$date = date('Y-m-d', $timestamp);
@@ -73,7 +75,9 @@ if($gtype==="year"){//直近1年
 }else{
 	exit();
 }
-$sql = "WITH RECURSIVE cal AS (
+
+if($tani==="month"){
+	$sql = "WITH RECURSIVE cal AS (
 	  SELECT
 	    A.min_ymd AS date
 	  FROM
@@ -111,23 +115,51 @@ $sql = "WITH RECURSIVE cal AS (
 	      left(ymd, 7)
 	  ) AS TEMP ON left(cal.date, 7) = TEMP.ym
 		ORDER BY left(cal.date,7)";
+}else if($tani==="day"){
+	$sql = "SELECT
+	  TEMP.ym AS ym,
+		DATEDIFF(now(),TEMP.ym) AS beforedate,
+	  :shumoku2 AS shu,
+	  IFNULL(TEMP.m_weight,'NaN') AS max_weight
+	FROM
+	  (
+	    SELECT
+	      shu,
+	      ymd AS ym,
+				MIN(ymd) AS min_ymd,
+	      CONVERT(max(max_weight),char) AS m_weight
+	    FROM
+	      `tr_log_max_record`
+	    WHERE
+	      id = :id2
+	      and shu = :shumoku3
+	    group by
+	      shu,
+	      ymd
+	  ) AS TEMP
+		ORDER BY TEMP.ym";
+
+}
 
 $graph_title = "『".$shu."のＭＡＸ推移』";
-$btn_name = "ﾄﾚｰﾆﾝｸﾞ量グラフへ";
+
 $typ=1;
 
 $result = $pdo_h->prepare( $sql );
-$result->bindValue('id1', $id, PDO::PARAM_STR);
+if($tani==="month"){
+	$result->bindValue('id1', $id, PDO::PARAM_STR);
+	$result->bindValue('shumoku1', $shu, PDO::PARAM_STR);
+}
 $result->bindValue('id2', $id, PDO::PARAM_STR);
-$result->bindValue('shumoku1', $shu, PDO::PARAM_STR);
 $result->bindValue('shumoku2', $shu, PDO::PARAM_STR);
 $result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 $dataset = [];
 $i=1;
-//$maxline=0;
-//$minline=999999;
+
+$min_val=999999;
+$max_val=0;
 $graph_data=[];
 $graph_data2=[];
 $labels = [];
@@ -136,22 +168,39 @@ foreach($dataset_work AS $row){
 	if($row["beforedate"]<0){
 		continue;
 	}
-	if($gtype==="year"){//直近1年
+	if($gtype==="hikaku"){//直近1年
 		if($row["beforedate"]<=365){
-			//if($maxline<$weight){$maxline=$weight+10;}
-			//if($minline>$weight){$minline=$weight-10;}
-			$graph_data[] = $weight;
+			if($weight<>"NaN"){
+				$min_val = ($min_val>$weight)?$weight:$min_val;
+				$max_val = ($max_val<$weight)?$weight:$max_val;
+			}
 			$labels[] = substr($row["ym"],-2);
+			$graph_data[] = $weight;
 		}else if($row["beforedate"]<=730){
-			//if($maxline<$weight){$maxline=$weight+10;}
-			//if($minline>$weight){$minline=$weight-10;}
+			if($weight<>"NaN"){
+				$min_val = ($min_val>$weight)?$weight:$min_val;
+				$max_val = ($max_val<$weight)?$weight:$max_val;
+			}
 			$graph_data2[] = $weight;	
 		}
+	}else if($gtype==="12M"){//直近１年（月集計の場合はyyyymm、日ごとの場合はN日前）
+		if($row["beforedate"]<=365){
+			if($weight<>"NaN"){
+				$min_val = ($min_val>$weight)?$weight:$min_val;
+				$max_val = ($max_val<$weight)?$weight:$max_val;
+			}
+			$labels[] = ($tani==="month")?substr($row["ym"],-2):$row["beforedate"];
+			$graph_data[] = $weight;
+		}else{
+			//break;
+		}
 	}else if($gtype==="all"){//全期間
-		//if($maxline<$weight){$maxline=$weight+10;}
-		//if($minline>$weight){$minline=$weight-10;}
-		
-		$labels[] = $row["ym"];
+		//$labels[] = $row["ym"];
+		if($weight<>"NaN"){
+			$min_val = ($min_val>$weight)?$weight:$min_val;
+			$max_val = ($max_val<$weight)?$weight:$max_val;
+		}
+	$labels[] = ($tani==="month")?substr($row["ym"],-2):$row["beforedate"];
 		$graph_data[] = $weight;
 	}else{
 		exit();
@@ -163,18 +212,20 @@ foreach($dataset_work AS $row){
 //if($minline<0){$minline=0;}
 
 //ラベル設定
-if($gtype==="year"){//直近1年
-	//$btn_name2="全期間";
-	//$kikan="all";
+if($gtype==="hikaku"){//直近1年
 	$glabel1="今年";
 	$glabel2="去年";
 	$subtitle="";
-}else if($gtype==="all"){//全期間
-	//$btn_name2="直近1年";
-	//$kikan="year";
-	$glabel1="全期間";
+}else if($gtype==="all" || $gtype==="12M"){//全期間
+	$glabel1="";
 	$glabel2="";
 	$subtitle="";
+}
+
+if($min_val===0 || $min_val <= 20){
+	$min_val = 0;
+}else{
+	$min_val = ($min_val % 20<=10)?$min_val-20 - ($min_val % 20):$min_val - ($min_val % 20);
 }
 
 if(empty($taisosiki[0])){
@@ -187,15 +238,12 @@ $return_sts = array(
 	,"graph_data1" => $graph_data
 	,"graph_data2" => $graph_data2
 	,"labels" => $labels
-	//,"btn_name2" => $btn_name2
-	//,"kikan" => $kikan
 	,"glabel1" => $glabel1
 	,"glabel2" => $glabel2
-	//,"maxline" => $maxline
-	//,"minline" => $minline
+	,"min_val" => (int)$min_val
+	,"max_val" => (int)$max_val
 	,"graph_title" => $graph_title
 	,"subtitle" => $subtitle
-	//,"btn_name" => $btn_name
 	,"ms_training" => $ms_training[0]
 	,"taisosiki" => $taisosiki[0]
 );
