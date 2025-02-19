@@ -195,6 +195,9 @@ if($data[0]["before_date"]<(30*3)){
 					}else if(g_shu.value==="volume"){
 						get_volume_data()
 					}
+					localStorage.setItem('gtype',gtype.value);
+					localStorage.setItem('g_shu',g_shu.value);
+					localStorage.setItem('tani' ,tani.value);
 				})
 				
 				const get_max_data = () =>{
@@ -633,8 +636,18 @@ if($data[0]["before_date"]<(30*3)){
 				}
 
 				onMounted(() => {
-					console_log('onMounted')
-					get_max_data()
+					console_log('onMounted'+localStorage.getItem('gtype'))
+					if(localStorage.getItem('gtype')){gtype.value = localStorage.getItem('gtype')}
+					if(localStorage.getItem('g_shu')){g_shu.value = localStorage.getItem('g_shu')}
+					if(localStorage.getItem('tani')){tani.value = localStorage.getItem('tani')}
+					
+					if(g_shu.value==="growth"){
+						get_growth_data()
+					}else if(g_shu.value==="max"){
+						get_max_data()
+					}else if(g_shu.value==="volume"){
+						get_volume_data()
+					}
 				})
 				return{
 					kintore_log,

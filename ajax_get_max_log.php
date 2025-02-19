@@ -195,12 +195,11 @@ foreach($dataset_work AS $row){
 			//break;
 		}
 	}else if($gtype==="all"){//全期間
-		//$labels[] = $row["ym"];
 		if($weight<>"NaN"){
 			$min_val = ($min_val>$weight)?$weight:$min_val;
 			$max_val = ($max_val<$weight)?$weight:$max_val;
 		}
-	$labels[] = ($tani==="month")?substr($row["ym"],-2):$row["beforedate"];
+		$labels[] = ($tani==="month")?$row["ym"]:$row["beforedate"];
 		$graph_data[] = $weight;
 	}else{
 		exit();
@@ -208,8 +207,6 @@ foreach($dataset_work AS $row){
 	
 	$i++;
 }
-
-//if($minline<0){$minline=0;}
 
 //ラベル設定
 if($gtype==="hikaku"){//直近1年
