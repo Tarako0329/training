@@ -68,7 +68,8 @@ ver1.18.0:テーブル定義見直し他リファクタリング等-commited
   ALTER TABLE `ms_training` CHANGE `mokuhyou_type` `mokuhyou_type` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'kg' COMMENT 'kg|par(sent)|m/月|cal/月';
 ver1.18.1:レイアウト調整-commited
 ver1.18.2:筋トレグラフ1日単位の追加-commited
-ver1.18.3:筋トレグラフ-前回表示設定の記録
+ver1.18.3:筋トレグラフ-前回表示設定の記録-commited
+ver1.18.4:ユーザ登録関連処理変更-commited
 【Issues】
 目標設定機能-体組織
 
