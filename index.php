@@ -45,7 +45,7 @@ if($logoff==="out"){
 						<label for="pass" class="form-label" style='width:100px;text-align:right;'>パスワード：</label>
 						<INPUT type="password" class='form-control' id="pass" name="pass" maxlength="100" style='max-width:200px;'>
 					</div>
-					<button type="submit" class='btn btn-primary'style='margin-top:30px;' name="btn" value="ＧＯ！！">
+					<button type="submit" class='btn btn-primary'style='margin-top:30px;'>
 						ＧＯ！！
 					</button>
 				</DIV>
@@ -69,14 +69,15 @@ if($logoff==="out"){
 											<DIV>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="100" style='ime-mode:disabled;'></DIV>
 											<DIV>パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="100" style=''></DIV>
 											<DIV>名前：<INPUT required='required' type="text" class='form-control' name="fname" maxlength="100" style=''></DIV>
-											<DIV>身長：<INPUT type="number" class='form-control' step="0.1" name="height" maxlength="10" style=''> cm</DIV>
-											<DIV>生年月日：<INPUT required='required' type="date" class='form-control' name="birthday" maxlength="10" style=''></DIV>
-											<DIV>性別：
+											<DIV><span style='color:red;'>*</span>身長(cm)：<INPUT type="number" class='form-control' step="1" name="height" maxlength="10" style=''></DIV>
+											<DIV><span style='color:red;'>*</span>生年月日：<INPUT required='required' type="date" class='form-control' name="birthday" maxlength="10" style=''></DIV>
+											<DIV><span style='color:red;'>*</span>性別：
 												<SELECT size="1" name="sex" class='form-select' style=''>
 												<OPTION value="1">男</OPTION>
 												<OPTION value="0">女</OPTION>
 												</SELECT>
 											</DIV>
+											<DIV>(<span style='color:red;'>*</span>) パスワードを忘れた際の再設定に利用します。</DIV>
 											<div class='text-center' style='margin-top:5px;margin-top:20px;'>
 												<button class='btn btn-primary' type='submit' name="btn" value="ユーザー登録">ユーザー登録</button>
 											</div>
@@ -99,9 +100,9 @@ if($logoff==="out"){
 									<div class='col-1 col-md-0' ></div>
 									<div class='col-10 col-md-7' >
 										<FORM method="post" action="passreset.php">
-											<DIV>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="10" style='ime-mode:disabled;'></DIV>
-											<DIV>新パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="10" style=''></DIV>
-											<DIV>登録時の名前：<INPUT required='required' type="text" class='form-control' name="fname" maxlength="10" style=''></DIV>
+											<DIV>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="100" style='ime-mode:disabled;'></DIV>
+											<DIV>新パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="100" style=''></DIV>
+											<DIV>登録時の身長(cm)：<INPUT required='required' type="number" step="1" class='form-control' name="fname" maxlength="10" style=''></DIV>
 											<DIV>
 												生年月日：
 												<INPUT type="date" class='form-control' name="birthday" maxlength="10" style='' aria-labelledby="HelpBlock">

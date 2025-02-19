@@ -80,7 +80,7 @@
         	    <i class="bi bi-list fs-1"></i>
         	  </a>
         	  <ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="#">種目別 ＭＡＸ一覧</a></li>
+							<li><a class="dropdown-item" href="#">ユーザー情報</a></li>
         	    <li><a class="dropdown-item" href="index.php?logoff=out">ログオフ</a></li>
         	  </ul>
         	</div>
@@ -99,10 +99,10 @@
 					</div>
 				</div>
 			</header>
-			<main class='container p-0' style='height:100vh;'>
-				<div class='row position-relative' style='height:100vh;'>
-					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 ' style='height:100vh;'>
-						<div style='overflow-y: scroll;height:100vh;width:100%;padding-bottom:170px;'>
+			<main class='container p-0' style='height:calc(100vh - 115px);'>
+				<div class='row position-relative' style='height:100%;'>
+					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 ' style='height:100%;'>
+						<div style='overflow-y:scroll;height:100%;width:100%;padding-bottom:170px;' id='tr_log_area'>
 							<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun+list.shu'>
 								<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row m-0' style='position:relative'><div class=' ymd'>{{list.ymd}} {{list.condition}}</div></div><!--日付-->
 		
@@ -231,9 +231,9 @@
 				<div class='container d-flex hf_color p-0'>
 					<div class='row m-0' style='width:100%;'><div class='p-0 col-12 col-md-7 col-lg-6 col-xl-5'>
 						<ul id="menu">
-						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki'>体組織</a></li>
-						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'>有酸素系</a></li>
-						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'>ウェイト</a></li>
+						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki' >体組織</a></li><!--@click='lock_trlog_area'-->
+						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'    >有酸素系</a></li>
+						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'   >ウェイト</a></li>
 						</ul>
 					</div></div>
 				</div>
@@ -312,7 +312,7 @@
 								</div>
 								<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
 									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
-									<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力'>
+									<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力' autocomplete="off">
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='rep' class="form-label" style='padding-left:0;margin-bottom:1px;'>時間(分)</label>
@@ -382,7 +382,7 @@
 								<!--<Transition>-->
 									<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
 										<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
-										<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力'>
+										<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力' autocomplete="off">
 									</div>
 								<!--</Transition>-->
 								<div class='row pt-1' style='margin:1px 20px;'>
@@ -480,6 +480,15 @@
 			const { createApp, ref, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
 			createApp({
 				setup(){
+					const lock_trlog_area = () =>{
+						document.getElementById('tr_log_area').style.overflowY = 'hidden'
+						document.getElementById('tr_log_area').style.pointerEvents = 'none'
+					}
+					const unlock_trlog_area = () =>{
+						document.getElementById('tr_log_area').style.overflowY = 'hidden'
+						document.getElementById('tr_log_area').style.pointerEvents = 'none'
+					}
+
 					const kintore_log = ref([])
 					const shumoku = ref([])
 					const max_log = ref([])
@@ -946,7 +955,6 @@
 						setUpdate,
 						setCancel,
 						delete_log,
-						//GoGrapho_kintore,
 						add_shumoku_wt,
 						OnSubmit,
 						filter,
@@ -957,6 +965,8 @@
 						move_recorde,
 						setting_switch1,
 						setting1,
+						lock_trlog_area,
+						unlock_trlog_area,
 					}
 				}
 			}).mount('#logger');

@@ -6,13 +6,13 @@
   if($_POST["btn"] == "パスワード更新"){
     //新規ユーザ登録画面の「登録」ボタン
 		$id = ($_POST["id2"]);
-		$birthday = !empty($_POST["birthday"])?$_POST["birthday"]:"2000-01-01";
-		$sql = "select * from users where id=? and name = ? and birthday = ? and sex = ?";
+		$birthday = !empty($_POST["birthday"])?$_POST["birthday"]:"%";
+		$sql = "select * from users where id=:id and height = :height and birthday like :birthday and sex = :sex";
 		$stmt = $pdo_h->prepare( $sql );
-		$stmt->bindValue(1, $_POST["id2"], PDO::PARAM_STR);
-		$stmt->bindValue(2, ($_POST['fname']), PDO::PARAM_STR);
-		$stmt->bindValue(3, $birthday, PDO::PARAM_STR);
-		$stmt->bindValue(4, $_POST["sex"], PDO::PARAM_STR);
+		$stmt->bindValue("id", $_POST["id2"], PDO::PARAM_STR);
+		$stmt->bindValue("height", ($_POST['fname']), PDO::PARAM_STR);
+		$stmt->bindValue("birthday", $birthday, PDO::PARAM_STR);
+		$stmt->bindValue("sex", $_POST["sex"], PDO::PARAM_STR);
 		$stmt->execute();
 		$row_cnt = $stmt->rowCount();
 		if($row_cnt!==1){
