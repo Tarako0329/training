@@ -231,9 +231,9 @@
 				<div class='container d-flex hf_color p-0'>
 					<div class='row m-0' style='width:100%;'><div class='p-0 col-12 col-md-7 col-lg-6 col-xl-5'>
 						<ul id="menu">
-						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki' >体組織</a></li><!--@click='lock_trlog_area'-->
-						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'    >有酸素系</a></li>
-						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'   >ウェイト</a></li>
+						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki' @click='lock_trlog_area()'>体組織</a></li><!--@click='lock_trlog_area'-->
+						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'    @click='lock_trlog_area()'>有酸素系</a></li>
+						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'   @click='lock_trlog_area()'>ウェイト</a></li>
 						</ul>
 					</div></div>
 				</div>
@@ -278,8 +278,6 @@
 								<button type='button' style='width:90px;font-size:13px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='ts_modal_close'>キャンセル</button>
 								<a href='graph_taisosiki.php' style='width:90px;' class="btn btn-primary mbtn" >履歴</a>
 								<button type='submit' style='width:90px;' name='btn' value='w_ins_bt' class="btn btn-primary mbtn" data-bs-dismiss="modal" >登録</button>
-
-								<!--<button type='button' style="display:none;" class="btn btn-secondary mbtn" data-bs-dismiss="modal"  ></button>キャンセル-->
 							</div>
 							<input type='hidden' name='hyoji' value='1'>
 							<input type='hidden' name='gtype' value='all'>
@@ -365,12 +363,10 @@
   	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
 							</div>
 							<div class='modal-body container'>
-								<!--<Transition>-->
-									<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
-										<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
-										<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
-									</div>
-								<!--</Transition>-->
+								<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
+									<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
+									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
+								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
 									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
@@ -379,12 +375,10 @@
 										</template>
 									</select>
 								</div>
-								<!--<Transition>-->
-									<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
-										<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
-										<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力' autocomplete="off">
-									</div>
-								<!--</Transition>-->
+								<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
+									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
+									<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力' autocomplete="off">
+								</div>
 								<div class='row pt-1' style='margin:1px 20px;'>
 									<div class="col-3 p-0">
 										<label class="form-label" style='padding-left:0;margin-bottom:1px;'>重量</label>
@@ -411,40 +405,40 @@
 									<input type='number' :class="input_select[3]" readonly style='width:50px;' id='rep2' @Click='setindex(3)' name='rep2' :value="kiroku[3]">
 								</div>
 								
-									<template v-if='keybord_show'>
-										<div class='row' style='margin:15px 20px 1px 20px;'>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
-										</div>
-									</template>
-									<template v-if='keybord_show'>
-										<div class='row' style='margin:1px 20px 1px 20px;'>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>5</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
-										</div>
-									</template>
-									<template v-if='keybord_show'>
-										<div class='row' style='margin:1px 20px 1px 20px;'>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>8</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
-										</div>
-									</template>
-									<template v-if='keybord_show'>
-										<div class='row' style='margin:1px 20px 1px 20px;'>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
-											<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
-										</div>
-									</template>
-									<template v-if='keybord_show'>
-										<div class='row' style='margin:1px 20px 1px 20px;'>
-											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='-1'>≪</button>
-											<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='1'>≫</button>
-										</div>
-									</template>
+								<template v-if='keybord_show'>
+									<div class='row' style='margin:15px 20px 1px 20px;'>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
+									</div>
+								</template>
+								<template v-if='keybord_show'>
+									<div class='row' style='margin:1px 20px 1px 20px;'>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>5</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
+									</div>
+								</template>
+								<template v-if='keybord_show'>
+									<div class='row' style='margin:1px 20px 1px 20px;'>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>8</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
+									</div>
+								</template>
+								<template v-if='keybord_show'>
+									<div class='row' style='margin:1px 20px 1px 20px;'>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
+									</div>
+								</template>
+								<template v-if='keybord_show'>
+									<div class='row' style='margin:1px 20px 1px 20px;'>
+										<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='-1'>≪</button>
+										<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='1'>≫</button>
+									</div>
+								</template>
 								
 								<div class='row' style='margin:1px 20px;'>
 								</div>
@@ -485,8 +479,8 @@
 						document.getElementById('tr_log_area').style.pointerEvents = 'none'
 					}
 					const unlock_trlog_area = () =>{
-						document.getElementById('tr_log_area').style.overflowY = 'hidden'
-						document.getElementById('tr_log_area').style.pointerEvents = 'none'
+						document.getElementById('tr_log_area').style.overflowY = 'scroll'
+						document.getElementById('tr_log_area').style.pointerEvents = 'auto'
 					}
 
 					const kintore_log = ref([])
@@ -807,7 +801,7 @@
 								filter.value = response.data.filter
 								const accordion_elm = document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`)
 								const door = accordion_elm ? accordion_elm.getAttribute( 'aria-expanded' ) : undefined
-								//if(document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).getAttribute( 'aria-expanded' )==='true'){
+								
 								if(door==='true'){
 									console_log("アコーディオン閉じる")
 									document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
@@ -854,15 +848,6 @@
 						})
 					}
 					
-					onBeforeMount(()=>{
-						console_log('onBeforeMount')
-					})
-
-					onMounted(() => {
-						console_log('onMounted')
-						get_trlog()
-						console_log('onMounted2')
-					})
 
 					const draggingItem = ref(null);
 					const dragIndex = ref(null);
@@ -929,6 +914,32 @@
 							document.getElementById('ms_training').style.height='500px'
 						}
 					}
+					
+					onBeforeMount(()=>{
+						console_log('onBeforeMount')
+					})
+
+					onMounted(() => {
+						console_log('onMounted')
+						get_trlog()
+						const Modal_taisosiki = document.getElementById('taisosiki'); // モーダルのIDを取得
+						const Modal_usanso = document.getElementById('usanso'); // モーダルのIDを取得
+						const Modal_edit_wt = document.getElementById('edit_wt'); // モーダルのIDを取得
+
+						Modal_taisosiki.addEventListener('hidden.bs.modal', function (event) {
+						  console.log('モーダルが閉じました');
+							unlock_trlog_area()
+						});
+						Modal_usanso.addEventListener('hidden.bs.modal', function (event) {
+						  console.log('モーダルが閉じました');
+							unlock_trlog_area()
+						});
+						Modal_edit_wt.addEventListener('hidden.bs.modal', function (event) {
+						  console.log('モーダルが閉じました');
+							unlock_trlog_area()
+						});
+
+					})
 
 					return{
 						kintore_log,
