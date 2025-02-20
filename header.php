@@ -8,34 +8,19 @@
 <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">
 <meta name="msapplication-TileColor" content="#2b5797">
 <meta name="theme-color" content="#ffffff">
-
-
-
-
-<!--最新のjqueryらしい-->
-<!--<script src="js/original.js"></script>-->
-<!--<script type="text/javascript" src="js/flotr2.min.js"></script>-->
-
 <!-- Bootstrap5 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <!-- Bootstrap Javascript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <!-- fontawesome -->
-<!--<link href="css/FontAwesome/6.1.1-web/css/all.css" rel="stylesheet">-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <!-- オリジナル CSS -->
 <link rel="stylesheet" type="text/css" href="css/st_sheet.css?<?php echo $time; ?>">
 <!-- Vue.js -->
 <script src="https://cdn.jsdelivr.net/npm/vue@3.4.4"></script>
-<!--<script src="https://unpkg.com/vue-cookies@1.8.2/vue-cookies.js"></script>-->
 <!--ajaxライブラリ-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
 <script>axios.defaults.baseURL = "<?php echo ROOT_URL;?>";</script>
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/9.0.0/decimal.min.js"></script>小数演算ライブラリ-->
-
-
-
-
 
 <meta property='og:locale' content='ja_JP' />
 <meta property='og:title' content='『トレーニングを記録しよう』' />

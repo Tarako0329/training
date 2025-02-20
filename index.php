@@ -24,6 +24,7 @@ if($logoff==="out"){
 		<?php
 			require "header.php";
 		?>
+		<meta name="description" content="【完全無料】シンプルを極めたトレーニング記録WEBアプリ！自分用のオリジナルメニューのみで、記録時のメニュー選択もスムーズに！Volume/Maxも自動計算！グラフ化で成長具合も！">
 	</HEAD>
 	<!--ログイン画面-->
 	<TITLE>ログイン画面</TITLE>
