@@ -94,7 +94,7 @@ if($tani==="month"){
 	)
 	SELECT
 	  left(cal.date, 7) AS ym,
-		DATEDIFF(now(),cal.date) AS beforedate,
+		DATEDIFF(now(),IFNULL(TEMP.max_ymd,cal.date)) AS beforedate,
 	  :shumoku2 AS shu,
 	  IFNULL(TEMP.m_weight,'NaN') AS max_weight
 	FROM
@@ -103,7 +103,7 @@ if($tani==="month"){
 	    SELECT
 	      shu,
 	      left(ymd, 7) AS ym,
-				MIN(ymd) AS min_ymd,
+				MAX(ymd) AS max_ymd,
 	      CONVERT(max(max_weight),char) AS m_weight
 	    FROM
 	      `tr_log_max_record`
@@ -155,6 +155,9 @@ $result->bindValue('shumoku2', $shu, PDO::PARAM_STR);
 $result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
+
+log_writer2("\$dataset_work",$dataset_work,"lv3");
+
 $dataset = [];
 $i=1;
 

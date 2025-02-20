@@ -18,19 +18,21 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	exit();
 }	
 
-//トレーニングデータが3か月分を超えたらデフォルトを月計とする
-$sql='SELECT MAX(DATEDIFF(now(),ymd)) as before_date FROM tr_log WHERE id=:id and shu=:shu GROUP BY id,shu';
+//トレーニングデータから直近3か月分の継続を確認したらデフォルトを月計とする
+//$sql='SELECT MAX(DATEDIFF(now(),ymd)) as before_date FROM tr_log WHERE id=:id and shu=:shu GROUP BY id,shu';
+$sql='SELECT left(ymd,7) FROM `tr_log` WHERE id=:id and shu=:shu  and DATEDIFF(now(),ymd) < 93 group by left(ymd,7)';
 $result = $pdo_h->prepare( $sql );
 $result->bindValue('id', $id, PDO::PARAM_STR);
 $result->bindValue('shu', $shu, PDO::PARAM_STR);
 $result->execute();
 $data = $result->fetchAll(PDO::FETCH_ASSOC);
-if($data[0]["before_date"]<(30*3)){
+//if($data[0]["before_date"]<(30*3)){
+if(count($data) < 3){
 	$tani = "day";
+	$gtype = "12M";
 }else{
 	$tani = "month";
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -83,7 +85,7 @@ if($data[0]["before_date"]<(30*3)){
 		</div>
 	</div>
 	</div>
-	<main class='container p-0' style='height:calc(100vh - 372px);overflow-y: scroll;padding-bottom:90px;'>
+	<main class='container ps-0 pe-0' style='height:calc(100vh - 372px);overflow-y: scroll;padding-bottom:90px;'>
 		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
 			<div >
 				<div v-if='String(list.jun)==="0"' class='row m-0 shu accordion-header'>

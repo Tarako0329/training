@@ -121,7 +121,7 @@ $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 //log_writer2("\$sql",$sql,"lv3");
 //log_writer2("\$id",$id,"lv3");
 //log_writer2("\$shu",$shu,"lv3");
-log_writer2("\$dataset_work",$dataset_work,"lv3");
+//log_writer2("\$dataset_work",$dataset_work,"lv3");
 
 $result->closeCursor();
 $result = null;

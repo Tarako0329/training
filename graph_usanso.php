@@ -18,7 +18,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }	
 
 //トレーニングデータから直近3か月分の継続を確認したらデフォルトを月計とする
-$sql='SELECT MAX(DATEDIFF(now(),ymd)) as before_date FROM tr_log WHERE id=:id and shu=:shu GROUP BY id,shu';
+//$sql='SELECT MAX(DATEDIFF(now(),ymd)) as before_date FROM tr_log WHERE id=:id and shu=:shu GROUP BY id,shu';
 $sql='SELECT left(ymd,7) FROM `tr_log` WHERE id=:id and shu=:shu  and DATEDIFF(now(),ymd) < 93 group by left(ymd,7)';
 $result = $pdo_h->prepare( $sql );
 $result->bindValue('id', $id, PDO::PARAM_STR);
