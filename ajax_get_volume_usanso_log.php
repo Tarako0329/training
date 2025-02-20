@@ -16,6 +16,9 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }	
 
 $gtype = $_POST["gtype"];
+$msg = "";
+$alert_status = "";
+
 
 //履歴取得
 $sql = "SELECT 

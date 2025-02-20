@@ -17,7 +17,7 @@ if($logoff==="out"){
 	header("Location: logincheck.php");
 	//exit();
 }
-
+$_SESSION["msg"]=''
 ?>
 <!DOCTYPE html>
 <HTML>
@@ -39,11 +39,11 @@ if($logoff==="out"){
 				<DIV style='text-align: center;'>
 					<div style='display:flex; justify-content:center;'>
 						<label for="id" class="form-label" style='width:100px;text-align:right;'>ＩＤ：</label>
-						<INPUT type="text" class='form-control' id="id" name="id" maxlength="100" style='ime-mode:disabled;max-width:200px;'>
+						<INPUT type="text" required='required' class='form-control' id="id" name="id" maxlength="100" style='ime-mode:disabled;max-width:200px;'>
 					</div>
 					<div style='margin-top:30px;display:flex; justify-content:center;'>
 						<label for="pass" class="form-label" style='width:100px;text-align:right;'>パスワード：</label>
-						<INPUT type="password" class='form-control' id="pass" name="pass" maxlength="100" style='max-width:200px;'>
+						<INPUT type="password" required='required' class='form-control' id="pass" name="pass" maxlength="100" style='max-width:200px;'>
 					</div>
 					<button type="submit" class='btn btn-primary'style='margin-top:30px;'>
 						ＧＯ！！
@@ -154,6 +154,3 @@ if($logoff==="out"){
 		</script>
 	</BODY>
 </HTML>
-<?php
-$_SESSION["msg"]=''
-?>

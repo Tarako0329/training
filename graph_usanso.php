@@ -6,7 +6,7 @@ $now = date('Y-m-d');
 //トレーニング種別
 $shu = ($_GET["shu"]);
 //グラフ種類（MAX:0 or トレーニング量:1 or MAX更新時:2)
-$hyoji = ($_GET["hyoji"]);
+//$hyoji = ($_GET["hyoji"]);
 //グラフ種類（MAX:0 or トレーニング量:1 or MAX更新時:2)
 $gtype = ($_GET["gtype"]);
 

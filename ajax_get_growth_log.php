@@ -1,7 +1,6 @@
 <?php
 require "config.php";
 log_writer2("\$_POST",$_POST,"lv3");
-$shu = ($_POST["shu"]);
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
 }else if (check_auto_login($_COOKIE['token'])==0) {
@@ -14,6 +13,11 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
 	exit();
 }	
+
+$shu = ($_POST["shu"]);
+$msg = "";
+$alert_status = "";
+
 
 //max値を検索
 $sql = "SELECT id,shu,max(max_weight) as max_w FROM `tr_log_max_record` where id=? and shu=? group by id,shu";
@@ -128,7 +132,7 @@ $return_sts = array(
 	,"graph_data1" => $graph_data
 	,"graph_data2" => $graph_data2
 	,"labels" => $labels
-	,"kikan" => $kikan
+	//,"kikan" => $kikan
 	,"glabel1" => "総Volume"
 	,"glabel2" => "Max"
 	,"graph_title" => $graph_title

@@ -1,7 +1,7 @@
 <?php
 require "config.php";
 log_writer2("\$_POST",$_POST,"lv3");
-$shu = ($_POST["shu"]);
+
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
 }else if (check_auto_login($_COOKIE['token'])==0) {
@@ -19,6 +19,9 @@ $now = date('Y-m-d');
 //$hyoji  taiju：体重・体脂肪率 kinryou：筋肉量・脂肪量
 $hyoji = !empty($_POST["hyoji"])?$_POST["hyoji"]:"1";
 $gtype = !empty($_POST["gtype"])?$_POST["gtype"]:"all";
+
+$msg="";
+$alert_status="";
 
 //履歴取得
 $sql = "select ROW_NUMBER() OVER(partition by id order by id,ymd) as No,taisosiki.*,round(weight*taisibou/100,1) as sibouryou,round(weight-(weight*taisibou/100),1) as josibou ,DATEDIFF(now(),ymd) as beforedate

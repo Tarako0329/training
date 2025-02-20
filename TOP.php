@@ -254,8 +254,8 @@
 									<input type='date' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
-									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>体重（KG）</label>
-									<input type='Number' step="0.01" class="form-control form-control-sm" id='shu2' name='weight' required='required'>
+									<label for='taiju' class="form-label" style='padding-left:0;margin-bottom:1px;'>体重（KG）</label>
+									<input type='Number' step="0.01" class="form-control form-control-sm" id='taiju' name='weight' required='required'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='sibo' class="form-label" style='padding-left:0;margin-bottom:1px;'>体脂肪率（％）</label>
@@ -290,7 +290,7 @@
 			<div class='modal fade' id='usanso' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
-						<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit'>
+						<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit' id='us'>
 							<div class='modal-header'>
 	        			<h5 class="modal-title">有酸素トレーニング</h5>
   	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
@@ -302,7 +302,7 @@
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
-									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
+									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu' >
 										<template v-for='(list,index) in shumoku_us' :key='list.sort'>
 											<option :value='`${list.shu}`'>{{list.shu}}</option>
 										</template>
@@ -462,6 +462,7 @@
 								<button type='button' style="display:none;" class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='wt_modal_close' ></button><!--キャンセル-->
 							</div>
 							<INPUT type="hidden" name="typ" value="0">
+							<INPUT type="hidden" name="cal" value="0">
 							<INPUT type="hidden" name="NO" :value="Num">
 							<INPUT type="hidden" name="motoYMD" :value="motoymd">
 						</form>
@@ -533,7 +534,7 @@
 
 					const shumoku_wt = computed(()=>{
 						return shumoku.value.filter((list)=>{
-							if(list.typ!==1){return true}
+							if(list.typ!=1){return true}
 						})
 					})
 
@@ -656,7 +657,7 @@
 					const motoymd = ref('')
 					const shu = ref()
 					const jiju = ref(false)	//自重種目ONOFF
-					//const shu2 = ref('')
+					
 					const memo = ref('')
 					let MODAL_INST
 					let MODAL
@@ -727,35 +728,7 @@
 						
     				form.submit();						
 					}
-					/*const GoGrapho_kintore = (SHURUI,HYOUJI) =>{
-						console_log('GoGrapho_kintore start')
-						let form = document.createElement('form');
-    				let shu = document.createElement('input');
-						let hyoji = document.createElement('input');
-						let gtype = document.createElement('input');
 
-    				form.method = 'POST';
-    				form.action = 'graph_kintore.php';
-						
-    				shu.type = 'hidden'; //入力フォームが表示されないように
-    				shu.name = 'shu';
-    				shu.value = SHURUI;
-						
-    				hyoji.type = 'hidden'; //入力フォームが表示されないように
-    				hyoji.name = 'hyoji';
-    				hyoji.value = HYOUJI;
-
-    				gtype.type = 'hidden'; //入力フォームが表示されないように
-    				gtype.name = 'gtype';
-    				gtype.value = 'year';
-
-						form.appendChild(shu);
-						form.appendChild(hyoji);
-						form.appendChild(gtype);
-    				document.body.appendChild(form);
-						
-    				form.submit();						
-					}*/
 					let new_shu
 					const add_shumoku_wt = (e) =>{
 						console_log(`add_shumoku_wt e:${e.target.value}`)
@@ -771,8 +744,8 @@
 						}
 					})
 					const OnSubmit = (e) =>{
-						console_log(`OnSubmit e:${e.target}`)
-						console_log(e.currentTarget)
+						console_log(`OnSubmit`)
+						console_log(e.currentTarget.elements['shu1'].value)
 						if(e.target.id==='wt'){
 							keybord_show.value=false
 							if(!ymd.value){
@@ -787,11 +760,22 @@
 							}else if(!kiroku.value[2]){
 								alert('セット数が未入力です')
 								return
-							}else if(!kiroku.value[0]){
-								kiroku.value[0]=0
+							}else if(!e.currentTarget.elements['shu1'].value){
+								if(!e.currentTarget.elements['shu2'].value){
+									alert('トレーニング種目が未入力です')
+									return
+								}
+							}
+						}else if(e.target.id==='us'){
+							if(!e.currentTarget.elements['shu1'].value){
+								if(!e.currentTarget.elements['shu2'].value){
+									alert('トレーニング種目が未入力です')
+									return
+								}
 							}
 						}
-						//e.target.submit()
+						//return
+						
 						const formData = new FormData(e.target);
 						axios
 						.post("ajax_trlog_Ins.php",formData, {headers: {'Content-Type': 'multipart/form-data'}})

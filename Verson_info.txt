@@ -70,7 +70,8 @@ ver1.18.1:レイアウト調整-commited
 ver1.18.2:筋トレグラフ1日単位の追加-commited
 ver1.18.3:筋トレグラフ-前回表示設定の記録-commited
 ver1.18.4:ユーザ登録関連処理変更-commited
-ver1.18.5:スマホだとModalオープン時も背後が反応する問題
+ver1.18.5:スマホだとModalオープン時も背後が反応する問題-commited
+ver1.18.6:php-warning潰し、他コbugfix
 
 
 【Issues】
