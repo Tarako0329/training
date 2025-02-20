@@ -6,18 +6,17 @@ $current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
 log_writer2("index",$current_time_with_microseconds,"lv1");
 
 $logoff = (!empty($_GET["logoff"]))?$_GET["logoff"]:"";
-
+$msg="";
 if($logoff==="out"){
 	delete_old_token($_COOKIE['token']);
 	$_SESSION = [];
 	setCookie("token", '', -1, "/", "", true, true);
-	$_SESSION["msg"]='ログオフしました';
+	$msg='ログオフしました';
 }else if (isset($_COOKIE['token'])) {
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: logincheck.php");
 	//exit();
 }
-$_SESSION["msg"]=''
 ?>
 <!DOCTYPE html>
 <HTML>
@@ -145,7 +144,7 @@ $_SESSION["msg"]=''
 			const { createApp, ref, onMounted, computed, VueCookies,watch } = Vue;
 			createApp({
 				setup(){
-					const msg = ref('<?php echo $_SESSION["msg"];?>')
+					const msg = ref('<?php echo $msg;?>')
 					return{
 						msg
 					}

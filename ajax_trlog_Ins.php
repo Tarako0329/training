@@ -130,7 +130,7 @@ try{
 	//$pdo_h->commit();
 
 	//種目マスタ追加
-	$sql = "select shu from ms_training where id = :id and shu = :shu";
+	$sql = "select shu,count(*) as cnt from ms_training where id = :id and shu = :shu";
 	
 	$result = $pdo_h->prepare($sql);
 	$result->bindValue("id", $id, PDO::PARAM_STR);

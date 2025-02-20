@@ -130,6 +130,7 @@ $graph_data_max=[];
 $graph_data_max2=[];
 $graph_data_total=[];
 $graph_data_total2=[];
+$labels=[];
 $min_val = 100000;
 
 foreach($dataset_work as $row){
