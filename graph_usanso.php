@@ -2,11 +2,8 @@
 // 設定ファイルインクルード
 require "config.php";
 log_writer2("\$_GET",$_GET,"lv3");
-$now = date('Y-m-d');
 //トレーニング種別
 $shu = ($_GET["shu"]);
-//グラフ種類（MAX:0 or トレーニング量:1 or MAX更新時:2)
-//$hyoji = ($_GET["hyoji"]);
 //グラフ種類（MAX:0 or トレーニング量:1 or MAX更新時:2)
 $gtype = ($_GET["gtype"]);
 
@@ -19,6 +16,23 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	header("Location: index.php");
 	exit();
 }	
+
+//トレーニングデータから直近3か月分の継続を確認したらデフォルトを月計とする
+$sql='SELECT MAX(DATEDIFF(now(),ymd)) as before_date FROM tr_log WHERE id=:id and shu=:shu GROUP BY id,shu';
+$sql='SELECT left(ymd,7) FROM `tr_log` WHERE id=:id and shu=:shu  and DATEDIFF(now(),ymd) < 93 group by left(ymd,7)';
+$result = $pdo_h->prepare( $sql );
+$result->bindValue('id', $id, PDO::PARAM_STR);
+$result->bindValue('shu', $shu, PDO::PARAM_STR);
+$result->execute();
+$data = $result->fetchAll(PDO::FETCH_ASSOC);
+//if($data[0]["before_date"]<(30*3)){
+if(count($data) < 3){
+	$tani = "day";
+	$gtype = "12M";
+}else{
+	$tani = "month";
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -40,20 +54,26 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 				<p v-show='graph_subtitle!==""' style='color:darkgrey;font-size:12px;'>{{graph_subtitle}}</p>
 			</div>
 			<div class='col-12 text-end' style='margin-top:-10px;'>
-				<a href="#" data-bs-toggle='modal' data-bs-target='#mokuhyou' style='font-size:12px;'>{{mokuhyou_disp}}</a>
+				<!--目標設定は未開発<a href="#" data-bs-toggle='modal' data-bs-target='#mokuhyou' style='font-size:12px;'>{{mokuhyou_disp}}</a>-->
 			</div>
 			<div class='col-12' id="graph" style='height:250px;margin-bottom:5px;position:relative;max-width:900px;'>
 				<canvas id="myChart"></canvas>
 			</div>
 			
 			<div class='d-flex align-items-center justify-content-center' style='width: 100%;height:40px;'>
-				<div class='text-end' style='width:50%;max-width:200px;'>
+				<!--<div class='text-end' style='width:50%;max-width:200px;'>
 					<select v-model='g_shu' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
 						<option value='volume'>トレーニング量</option>
 					</select>
+				</div>-->
+				<div class='text-center' style='width:50%;max-width:200px;'>
+					<select v-model='tani' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
+						<option value='day'>日毎</option>
+						<option value='month'>月毎</option>
+					</select>
 				</div>
 				<div class='text-start' style='width:50%;max-width:200px;'>
-					<select v-show='g_shu!=="growth"' v-model='gtype' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
+					<select v-model='gtype' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
 						<option value='12M'>直近12ヵ月</option>
 						<option value='all'>全期間</option>
 					</select>
@@ -151,14 +171,16 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 				//label
 				const gtype = ref('<?php echo $gtype;?>')	//all.year
 				const g_shu = ref('volume')	
+				const tani = ref('<?php echo $tani;?>')	//all.year
 				const shu = ref('<?php echo $shu;?>')	//トレーニング種目
 				const graph_title = ref('')
 				const graph_subtitle = ref('')
 				let datasets = []
 				let labels = []
+				let x_label = ""
 				let fill_sts = []
 
-				watch([gtype],()=>{
+				watch([gtype,tani],()=>{
 					get_volume_data()
 				})
 
@@ -167,23 +189,26 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 					const form_data = new FormData()
 					form_data.append(`shu`, shu.value)
 					form_data.append(`gtype`, gtype.value)
+					form_data.append(`tani`, tani.value)
 					axios
 						.post("ajax_get_volume_usanso_log.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
 						.then((response) => {
 							console_log(response.data)
 							kintore_log.value = response.data.kintore_log
-							labels = response.data.labels
 							datasets = []
+							labels = []
+							labels = response.data.labels
 
-							color3 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
-							color4 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
+							color_kyori = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	
+							color_cal = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	
+							color_min = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	
 							opacity1 = ', 0.6)'
 							opacity2 = ', 0.6)'
 							datasets.push({
 								'label':response.data.glabel_km
 								,'data':response.data.graph_data_total_km
-								,'backgroundColor':  color3 + opacity1
-								,borderColor:  color3 + opacity1
+								,'backgroundColor':  color_kyori + opacity1
+								,borderColor:  color_kyori + opacity1
 								//,fill:true
 								//,stepped: 'middle'
 								,borderWidth: 4
@@ -195,8 +220,20 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 							datasets.push({
 								'label':response.data.glabel_cal
 								,'data':response.data.graph_data_total_cal
-								,'backgroundColor':  color4 + opacity1
-								,borderColor:  color4 + opacity1
+								,'backgroundColor':  color_cal + opacity1
+								,borderColor:  color_cal + opacity1
+								//,fill:true
+								//,stepped: 'middle'
+								,borderWidth: 2
+								, pointRadius:0.5
+								//,type:'bar'
+								,yAxisID:"y2"
+							})
+							datasets.push({
+								'label':response.data.glabel_H
+								,'data':response.data.graph_data_total_H
+								,'backgroundColor':  color_min + opacity1
+								,borderColor:  color_min + opacity1
 								//,fill:true
 								//,stepped: 'middle'
 								,borderWidth: 2
@@ -206,6 +243,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 							})
 							graph_title.value = response.data.graph_title
 							graph_subtitle.value = response.data.subtitle
+							x_label = response.data.x_label
 							create_graph(document.getElementById('myChart'))
 						})
 						.catch((error) => {
@@ -250,12 +288,12 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									ticks:{
 										maxTicksLimit: 6
 										,stepSize: 2,
-									}
-									/*display:true,
+									},
+									/*display:true,*/
 									title:{
 										display:true,
-										text:'月'
-									}*/
+										text:x_label
+									}
 								},
 								y: {
 									stacked: false,
@@ -275,7 +313,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									
 									title:{
 										display:true,
-										text:'Kcal'
+										text:'Kcal・分'
 									}
 								}
 
@@ -347,6 +385,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 					graph_subtitle,
 					g_shu,
 					gtype,
+					tani,
 					mokuhyou_type,
 					mokuhyou_par,
 					mokuhyou_kg,
