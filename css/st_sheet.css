@@ -2,7 +2,10 @@
 body {
 	background: #f0fff0;
 }
-
+.modal-header,.modal-body{
+	padding-top:5px;
+	padding-bottom:5px;
+}
 
 /* モーダル コンテンツエリア */
 .edit {
@@ -13,6 +16,10 @@ body {
 	opacity:1;
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;
+}
+.training_menu{
+	background-color: #4E9ABE;
+	color: #fff;
 }
 .mbtn{/*モーダルフッタボタン*/
 	width:130px;

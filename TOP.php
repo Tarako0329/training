@@ -367,19 +367,58 @@
 									<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
 									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
 								</div>
+
+
 								<div class='row' style='margin:1px 20px;'>
 									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
-									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
+									<!--<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
 										<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
 											<option :value='`${list.shu}`'>{{list.shu}}</option>
 										</template>
-									</select>
+									</select>-->
 								</div>
-								<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
+
+								<!--<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
 									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
 									<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力' autocomplete="off">
+								</div>-->
+
+								<div class='row' style='margin:1px 20px;'>
+								<nav class="navbar navbar-expand-lg bg-body-tertiary p-0 " style='border-radius:4px;'>
+								  <div class="container-fluid p-0 ">
+								    <!--<a class="navbar-brand" href="#"></a>-->
+								    <button class="navbar-toggler ps-2 pt-2 pb-2 d-flex" type="button" style='height:100%;width:100%;border-radius:0;font-size:14px;color:black;' 
+										data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation" id='tr_select'>
+								      <span class='text-start' style="width:90%;">{{shu}}</span><span class='text-end' style="width:10%;">▼</span>
+								    </button>
+								    <div class="collapse navbar-collapse" id="navbarScroll">
+								      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 200px;">
+													<!--<li class="nav-item dropdown ps-3">
+								        	  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								        	    胸部
+								        	  </a>
+								        	  <ul class="dropdown-menu">
+								        	    <li><a class="dropdown-item ps-1" href="#">ベンチプレス</a></li>
+								        	    <li><a class="dropdown-item ps-1" href="#">ダンベルプレス</a></li>
+								        	    <li><a class="dropdown-item ps-1" href="#">ダンベルフライ</a></li>
+								        	  </ul>
+								        	</li>-->
+												<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
+													<li class="nav-item p-0 ps-3" style='font-size:14px;color:black;'>
+								        	  <a class="nav-link" @click='set_shumoku(list.shu)'>{{list.shu}}</a>
+								        	</li>
+												</template>
+												</ul>
+								      <div class="d-flex" >
+								        <input class="form-control" style='width:80%;border-radius:0;' type="text" placeholder='追加種目名' autocomplete="off" id='new_tr'>
+												<button type='button' class='btn btn-primary' style='width:20%;border-radius:0;' @click='add_shumoku_wt'>追加</button>
+											</div>
+								    </div>
+								  </div>
+								</nav>
 								</div>
-								<div class='row pt-1' style='margin:1px 20px;'>
+
+								<div class='row pt-1' style='margin:1px 20px;'><!--重量など記録部分label-->
 									<div class="col-3 p-0">
 										<label class="form-label" style='padding-left:0;margin-bottom:1px;'>重量</label>
 									</div>
@@ -390,7 +429,7 @@
 										）
 									</div>
 								</div>
-								<div class='row' style='margin:1px 0px 1px 20px;display:flexbox;'>
+								<div class='row' style='margin:1px 0px 1px 20px;display:flexbox;'><!--重量など記録部分-->
 									<input type='number' :class="input_select[0]" readonly style='width:70px;padding:6 6;' @Click='setindex(0)' name='weight' :value="kiroku[0]" required='required'>
 									<span style='padding:8px 0 0 5px;width:40px;'>kg x</span>
 									<input type='number' :class="input_select[1]" readonly style='width:50px;padding:6 6;' @Click='setindex(1)' name='rep' :value="kiroku[1]" required='required'>
@@ -400,45 +439,39 @@
 									</select><span style='padding:8px 0 0 5px;width:15px;'>x</span>
 									<input type='number' :class="input_select[2]" readonly style='width:40px;padding:6 6;' @Click='setindex(2)' name='sets' :value="kiroku[2]" required='required'><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
 								</div>
-								<div class='row' style='margin:1px 20px;'>
-									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>内 有補助回数</label>
+								<div class='row ' style='margin:1px 20px;'>
+									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>補助/チート</label>
 									<input type='number' :class="input_select[3]" readonly style='width:50px;' id='rep2' @Click='setindex(3)' name='rep2' :value="kiroku[3]">
+									
 								</div>
 								
-								<template v-if='keybord_show'>
-									<div class='row' style='margin:15px 20px 1px 20px;'>
+								<div v-show='keybord_show'>
+									<div class='row' style='margin:15px 20px 1px 20px;position:relative;'>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
+										<button type='button' class='btn btn-secondary input-btn' style='position: absolute; right: 0px; top: -32px;height:30px;' @click='keybord_close()'>Ｘ</button>
 									</div>
-								</template>
-								<template v-if='keybord_show'>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>5</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
 									</div>
-								</template>
-								<template v-if='keybord_show'>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>8</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
 									</div>
-								</template>
-								<template v-if='keybord_show'>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
 									</div>
-								</template>
-								<template v-if='keybord_show'>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
 										<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='-1'>≪</button>
 										<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='1'>≫</button>
 									</div>
-								</template>
+								</div>
 								
 								<div class='row' style='margin:1px 20px;'>
 								</div>
@@ -461,6 +494,7 @@
 								
 								<button type='button' style="display:none;" class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='wt_modal_close' ></button><!--キャンセル-->
 							</div>
+							<INPUT type="hidden" name="shu1" :value="shu">
 							<INPUT type="hidden" name="typ" value="0">
 							<INPUT type="hidden" name="cal" value="0">
 							<INPUT type="hidden" name="NO" :value="Num">
@@ -639,6 +673,7 @@
 							keybord_show.value=false
 						}
 					}
+					const keybord_close = () =>{keybord_show.value=false}
 					const input_select = ref([['form-control','form-control-sm',''],['form-control','form-control-sm',''],['form-control','form-control-sm',''],['form-control','form-control-sm','']])
 					watch([kiroku_index],()=>{
 						console_log('watch kiroku_index')
@@ -659,6 +694,11 @@
 					const jiju = ref(false)	//自重種目ONOFF
 					
 					const memo = ref('')
+
+					const set_shumoku =(p_shu) =>{
+						shu.value = p_shu
+						document.getElementById('tr_select').click()
+					}
 					let MODAL_INST
 					let MODAL
 					const setUpdate = (NO,YMD,SHU,wt,rep,set,rep2,MEMO,typ,modal_id) =>{
@@ -729,12 +769,18 @@
     				form.submit();						
 					}
 
-					let new_shu
-					const add_shumoku_wt = (e) =>{
+					//let new_shu
+					const add_shumoku_wt = () =>{
+						/*
 						console_log(`add_shumoku_wt e:${e.target.value}`)
 						shumoku_wt.value.unshift({shu:e.target.value,sort:''})
 						shu.value = e.target.value
 						new_shu = e.target
+						*/
+						const new_tr = document.getElementById('new_tr').value
+						shumoku_wt.value.unshift({shu:new_tr,sort:''})
+						shu.value = new_tr
+						document.getElementById('tr_select').click()
 					}
 					watch([jiju],()=>{
 						if(jiju.value===true){
@@ -761,10 +807,10 @@
 								alert('セット数が未入力です')
 								return
 							}else if(!e.currentTarget.elements['shu1'].value){
-								if(!e.currentTarget.elements['shu2'].value){
+								//if(!e.currentTarget.elements['shu2'].value){
 									alert('トレーニング種目が未入力です')
 									return
-								}
+								//}
 							}
 						}else if(e.target.id==='us'){
 							if(!e.currentTarget.elements['shu1'].value){
@@ -809,7 +855,7 @@
 								mBtnName.value[1] = '閉じる'
 								keybord_show.value=false
 								kiroku_index.value=''
-								if(new_shu){new_shu.value = ''}
+								//if(new_shu){new_shu.value = ''}
 								
 								if(MODAL_INST){
 									MODAL_INST = new bootstrap.Modal(MODAL, {
@@ -937,6 +983,7 @@
 						keydown,
 						kiroku,
 						keybord_show,
+						keybord_close,
 						setindex,
 						kiroku_index,
 						input_select,
@@ -946,6 +993,7 @@
 						ymd,
 						motoymd,
 						shu,
+						set_shumoku,
 						memo,
 						setUpdate,
 						setCancel,
