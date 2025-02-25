@@ -261,14 +261,14 @@
 									<label for='sibo' class="form-label" style='padding-left:0;margin-bottom:1px;'>体脂肪率（％）</label>
 									<input type='Number' step="0.01" class="form-control form-control-sm" id='sibo' name='sibo'>
 								</div>
-								<div class='row' style='margin:1px 20px;'>
+								<!--<div class='row' style='margin:1px 20px;'>
 									<label for='yobi1' class="form-label" style='padding-left:0;margin-bottom:1px;'>予備１</label>
 									<input type='text' class="form-control form-control-sm" id='yobi1' name='yobi1'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='yobi2' class="form-label" style='padding-left:0;margin-bottom:1px;'>予備２</label>
 									<input type='text' class="form-control form-control-sm" id='yobi2' name='yobi2'>
-								</div>
+								</div>-->
 								<div class='row' style='margin:1px 20px;'>
 									<label for='memo' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
 									<input type='text' class="form-control form-control-sm" id='memo' name='memo' value='' placeholder='空腹時・食後など'>
@@ -302,16 +302,42 @@
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
-									<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu' >
+									<!--<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu' >
 										<template v-for='(list,index) in shumoku_us' :key='list.sort'>
 											<option :value='`${list.shu}`'>{{list.shu}}</option>
 										</template>
-									</select>
+									</select>-->
 								</div>
-								<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
+								<!--<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
 									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
 									<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力' autocomplete="off">
+								</div>-->
+
+								<div class='row' style='margin:1px 20px;'>
+								<nav class="navbar bg-body-tertiary p-0 " style='border-radius:4px;'>
+								  <div class="container-fluid p-0 ">
+								    <!--<a class="navbar-brand" href="#"></a>-->
+								    <button class="navbar-toggler ps-2 pt-2 pb-2 d-flex" type="button" style='height:100%;width:100%;border-radius:0;font-size:14px;color:black;' 
+										data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation" id='us_select'>
+								      <span class='text-start' style="width:90%;">{{shu_us}}</span><span class='text-end' style="width:10%;">▼</span>
+								    </button>
+								    <div class="collapse navbar-collapse" id="navbarScroll">
+								      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 200px;">
+												<template v-for='(list,index) in shumoku_us' :key='list.sort'>
+													<li class="nav-item p-0 ps-3" style='font-size:14px;color:black;'>
+								        	  <a class="nav-link" @click='set_shumoku(list.shu,"us")' role='button'>{{list.shu}}</a>
+								        	</li>
+												</template>
+												</ul>
+								      <div class="d-flex" >
+								        <input class="form-control" style='width:80%;border-radius:0;' type="text" placeholder='トレーニング名' autocomplete="off" id='new_us'>
+												<button type='button' class='btn btn-primary' style='width:20%;border-radius:0;' @click='add_shumoku("us","new_us")'>追加</button>
+											</div>
+								    </div>
+								  </div>
+								</nav>
 								</div>
+
 								<div class='row' style='margin:1px 20px;'>
 									<label for='rep' class="form-label" style='padding-left:0;margin-bottom:1px;'>時間(分)</label>
 									<input type='text' @focus='keydown' class="form-control form-control-sm" id='rep' name='rep' :value='kiroku[1]'>
@@ -338,11 +364,12 @@
 									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(Num,motoymd)'>削除</button>
 								</template>
 								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel'>{{mBtnName[1]}}</button><!--キャンセル-->
-								<input type='submit'  class="btn btn-primary mbtn" :value='mBtnName[0]'>{{}}<!--登録・更新-->
+								<input type='submit'  class="btn btn-primary mbtn" :value='mBtnName[0]'><!--登録・更新-->
 
 								<button type='button' style="display:none;" class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='us_modal_close' ></button><!--キャンセル-->
 							</div>
 							<INPUT type="hidden" name="typ" value="1">
+							<INPUT type="hidden" name="shu1" :value="shu_us">							
 							<INPUT type="hidden" name="NO" :value="Num">
 							<INPUT type="hidden" name="motoYMD" :value="motoymd">
 							<INPUT type="hidden" name="tani" value="2">
@@ -384,7 +411,7 @@
 								</div>-->
 
 								<div class='row' style='margin:1px 20px;'>
-								<nav class="navbar navbar-expand-lg bg-body-tertiary p-0 " style='border-radius:4px;'>
+								<nav class="navbar bg-body-tertiary p-0 " style='border-radius:4px;'>
 								  <div class="container-fluid p-0 ">
 								    <!--<a class="navbar-brand" href="#"></a>-->
 								    <button class="navbar-toggler ps-2 pt-2 pb-2 d-flex" type="button" style='height:100%;width:100%;border-radius:0;font-size:14px;color:black;' 
@@ -405,13 +432,13 @@
 								        	</li>-->
 												<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
 													<li class="nav-item p-0 ps-3" style='font-size:14px;color:black;'>
-								        	  <a class="nav-link" @click='set_shumoku(list.shu)'>{{list.shu}}</a>
+								        	  <a class="nav-link" @click='set_shumoku(list.shu,"wt")' role='button'>{{list.shu}}</a>
 								        	</li>
 												</template>
 												</ul>
 								      <div class="d-flex" >
-								        <input class="form-control" style='width:80%;border-radius:0;' type="text" placeholder='追加種目名' autocomplete="off" id='new_tr'>
-												<button type='button' class='btn btn-primary' style='width:20%;border-radius:0;' @click='add_shumoku_wt'>追加</button>
+								        <input class="form-control" style='width:80%;border-radius:0;' type="text" placeholder='トレーニング名' autocomplete="off" id='new_tr'>
+												<button type='button' class='btn btn-primary' style='width:20%;border-radius:0;' @click='add_shumoku("wt","new_tr")'>追加</button>
 											</div>
 								    </div>
 								  </div>
@@ -578,8 +605,9 @@
 						})
 					})
 
-					const get_trlog = async(p) =>{
+					const get_trlog = async(p,p_shumoku) =>{
 						console_log('start get_trlog')
+						console_log('start get_trlog :: ' + p + '::' + p_shumoku)
 						const response = await axios.post("ajax_get_trlog.php")
 							.catch((error) => {
 								console_log(`ajax_get_trlog ERROR:${error}`)
@@ -594,6 +622,7 @@
 						kintore_log.value = response.data.kintore_log
 						max_log.value = response.data.max_log
 						shu.value = shumoku_wt.value[0]["shu"]
+						shu_us.value = shumoku_us.value[0]["shu"]
 
 						max_log.value.forEach((list,index)=>{
 							if(list.M3_max === list.Y1_max && list.M3_max === list.mybest){list.mybest = '〃' }
@@ -606,7 +635,8 @@
 								if(p==='open'){
 									setTimeout(()=>{
 										console_log("アコーディオン開く")
-										document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
+										//document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
+										document.getElementById(`btn_collapseOne${ymd.value}${p_shumoku}`).click()
 									}, 1000)
 								}
 							}
@@ -691,13 +721,19 @@
 					const ymd = ref('<?php echo $now?>')
 					const motoymd = ref('')
 					const shu = ref()
+					const shu_us = ref()
 					const jiju = ref(false)	//自重種目ONOFF
 					
 					const memo = ref('')
 
-					const set_shumoku =(p_shu) =>{
-						shu.value = p_shu
-						document.getElementById('tr_select').click()
+					const set_shumoku =(p_shu,p_type) =>{
+						if(p_type==="wt"){
+							shu.value = p_shu
+							document.getElementById('tr_select').click()
+						}else if(p_type==="us"){
+							shu_us.value = p_shu
+							document.getElementById('us_select').click()
+						}
 					}
 					let MODAL_INST
 					let MODAL
@@ -706,7 +742,12 @@
 						Num.value = NO
 						ymd.value = YMD
 						motoymd.value = YMD
-						shu.value = SHU
+						//shu.value = SHU
+						if(typ==="1"){
+							shu_us.value = SHU
+						}else{
+							shu.value = SHU
+						}
 						kiroku.value[0]=wt
 						kiroku.value[1]=rep
 						kiroku.value[2]=set
@@ -728,6 +769,7 @@
 						Num.value = 0
 						ymd.value = '<?php echo $now?>'
 						shu.value = ''
+						shu_us.value = ''
 						kiroku.value[0]=0
 						kiroku.value[1]=0
 						kiroku.value[2]=0
@@ -770,18 +812,32 @@
 					}
 
 					//let new_shu
-					const add_shumoku_wt = () =>{
+					const add_shumoku = (p_type,p_id) =>{
 						/*
 						console_log(`add_shumoku_wt e:${e.target.value}`)
 						shumoku_wt.value.unshift({shu:e.target.value,sort:''})
 						shu.value = e.target.value
 						new_shu = e.target
 						*/
-						const new_tr = document.getElementById('new_tr').value
+						const new_tr = document.getElementById(p_id).value
+						if(new_tr==""){
+							alert('トレーニング名を入力して下さい')
+							return
+						}
+						if(p_type==="wt"){
+							//const new_tr = document.getElementById('new_tr').value
+							document.getElementById('tr_select').click()
+							shu.value = new_tr
+							document.getElementById('new_tr').value = ""
+						}else if(p_type==="us"){
+							//const new_tr = document.getElementById('new_us').value
+							document.getElementById('us_select').click()
+							shu_us.value = new_tr
+							document.getElementById('new_us').value = ""
+						}
 						shumoku_wt.value.unshift({shu:new_tr,sort:''})
-						shu.value = new_tr
-						document.getElementById('tr_select').click()
 					}
+
 					watch([jiju],()=>{
 						if(jiju.value===true){
 							kiroku.value[0] = "1"
@@ -814,14 +870,14 @@
 							}
 						}else if(e.target.id==='us'){
 							if(!e.currentTarget.elements['shu1'].value){
-								if(!e.currentTarget.elements['shu2'].value){
+								//if(!e.currentTarget.elements['shu2'].value){
 									alert('トレーニング種目が未入力です')
 									return
-								}
+								//}
 							}
 						}
 						//return
-						
+						const shumoku = e.currentTarget.elements['shu1'].value
 						const formData = new FormData(e.target);
 						axios
 						.post("ajax_trlog_Ins.php",formData, {headers: {'Content-Type': 'multipart/form-data'}})
@@ -829,13 +885,15 @@
 							console_log(response.data)
 							if(response.data.status==="success"){
 								filter.value = response.data.filter
-								const accordion_elm = document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`)
+								//const accordion_elm = document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`)
+								const accordion_elm = document.getElementById(`btn_collapseOne${ymd.value}${shumoku}`)
 								const door = accordion_elm ? accordion_elm.getAttribute( 'aria-expanded' ) : undefined
 								
 								if(door==='true'){
 									console_log("アコーディオン閉じる")
-									document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
-									get_trlog('open')
+									//document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
+									document.getElementById(`btn_collapseOne${ymd.value}${shumoku}`).click()
+									get_trlog('open',shumoku)
 								}else{
 									get_trlog()
 								}
@@ -993,12 +1051,13 @@
 						ymd,
 						motoymd,
 						shu,
+						shu_us,
 						set_shumoku,
 						memo,
 						setUpdate,
 						setCancel,
 						delete_log,
-						add_shumoku_wt,
+						add_shumoku,
 						OnSubmit,
 						filter,
 						jiju,
