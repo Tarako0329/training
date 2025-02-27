@@ -477,6 +477,7 @@
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
+										<a href='#' onclick="alert('RM数を入力してください。直近3カ月のMAX重量から適切な重量を逆算してセットします。')" class='m-0 p-0 ps-2' style='position: absolute; left: 33%; top: -57px;height:30px;color:#fff;width:120px;font-size:12px;'><i class="bi bi-question-square me-1"></i>RM換算とは</a>
 										<input type='checkbox'  autocomplete="off"  class="btn-check" id='rm_mode' v-model='rm_mode'>
 										<label for='rm_mode' class='btn btn-outline-success input-btn' style='position: absolute; right: 33%; top: -32px;height:30px;color:#fff;' >RM換算</label>
 										<button type='button' class='btn btn-secondary input-btn' style='position: absolute; right: 3px; top: -32px;height:30px;' @click='keybord_close()'>Ｘ</button>
@@ -497,8 +498,8 @@
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
 									</div>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
-										<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='-1'>≪</button>
-										<button type='button' class='btn btn-primary' style='height:60px;width:50%' @click='keydown' value='1'>≫</button>
+										<button type='button' class='btn btn-primary' style='height:50px;width:50%' @click='keydown' value='-1'>≪</button>
+										<button type='button' class='btn btn-primary' style='height:50px;width:50%' @click='keydown' value='1'>≫</button>
 									</div>
 								</div>
 								
