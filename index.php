@@ -2,8 +2,8 @@
 require "config.php";
 $time = microtime();
 $parts = explode(" ", $time);
-$current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
-log_writer2("index",$current_time_with_microseconds,"lv1");
+//$current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
+//log_writer2("index",$current_time_with_microseconds,"lv1");
 
 $logoff = (!empty($_GET["logoff"]))?$_GET["logoff"]:"";
 $msg="";
