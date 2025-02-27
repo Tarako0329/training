@@ -477,7 +477,9 @@
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
-										<button type='button' class='btn btn-secondary input-btn' style='position: absolute; right: 0px; top: -32px;height:30px;' @click='keybord_close()'>Ｘ</button>
+										<input type='checkbox'  autocomplete="off"  class="btn-check" id='rm_mode' v-model='rm_mode'>
+										<label for='rm_mode' class='btn btn-outline-success input-btn' style='position: absolute; right: 33%; top: -32px;height:30px;color:#fff;' >RM換算</label>
+										<button type='button' class='btn btn-secondary input-btn' style='position: absolute; right: 3px; top: -32px;height:30px;' @click='keybord_close()'>Ｘ</button>
 									</div>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
@@ -490,8 +492,8 @@
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
 									</div>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>0</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>{{zero_ten}}</button>
+										<button v-show='rm_mode===false' type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
 									</div>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
@@ -647,6 +649,7 @@
 					const kiroku = ref(['','','',0])
 					const kiroku_index = ref('')
 					const keybord_show = ref(false)
+					const rm_mode = ref(false)
 					const setindex = (i) =>{
 						console_log(`setindex:${i}`)
 						if(i===0 && jiju.value===true){
@@ -657,18 +660,19 @@
 						keybord_show.value=true
 					}
 					let before_val = '-'
+					const zero_ten = computed(()=>{if(rm_mode.value){return '10'}else{return '0'}})
 					const keydown = (e) => {//電卓ボタンの処理
 						console_log('target.value=' + e.target.value)
 						console_log('target.innerHTML=' + e.target.innerHTML)
-						if(e.target.innerHTML==="C"){
+						if(e.target.innerHTML==="C"){//クリア
 							kiroku.value[kiroku_index.value] = 0
 							before_val='-'
 							console_log('c')
-						}else if(e.target.value==='-1'){
+						}else if(e.target.value==='-1'){//フォーカス戻る
 							console_log('<')
 							if(kiroku_index.value===0){return}
 							kiroku_index.value = Number(kiroku_index.value) - 1
-						}else if(e.target.value==='1'){
+						}else if(e.target.value==='1'){//フォーカス進む
 							console_log('>')
 							if(kiroku_index.value===3){
 								kiroku_index.value=''
@@ -676,33 +680,53 @@
 								return
 							}
 							kiroku_index.value = Number(kiroku_index.value) + 1
-						}else if(e.target.value==='99'){
+						}else if(e.target.value==='99'){//ない
 							console_log('99')
 							kiroku_index.value=''
 							keybord_show.value=false
-						}else if(e.target.innerHTML==="."){
+						}else if(e.target.innerHTML==="."){//小数点
 							console_log('.')
 							if(kiroku.value[kiroku_index.value].toString().indexOf('.')!==-1){
 								//小数点連続は無視
 								return
 							}
 							before_val = "."
-						}else if((Number(e.target.innerHTML) >= 0 && Number(e.target.innerHTML)<=9 && e.target.innerHTML !== '') || before_val==='.'){
+						}else if((Number(e.target.innerHTML) >= 0 && Number(e.target.innerHTML)<=10 && e.target.innerHTML !== '') || before_val==='.'){
 							console_log('key input')
-							if(kiroku.value[kiroku_index.value]==''){
-								kiroku.value[kiroku_index.value] = e.target.innerHTML.toString()
-							}else if(before_val==='.'){
-								kiroku.value[kiroku_index.value] = Number(kiroku.value[kiroku_index.value].toString() + '.' + e.target.innerHTML.toString())
+							if(rm_mode.value && kiroku_index.value === 0){
+								console_log('RM-MODE')
+								get_rm_weight(e.target.innerHTML.toString())
 							}else{
-								kiroku.value[kiroku_index.value] = Number(kiroku.value[kiroku_index.value].toString() + e.target.innerHTML.toString())
+								if(kiroku.value[kiroku_index.value]==''){
+									kiroku.value[kiroku_index.value] = e.target.innerHTML.toString()
+								}else if(before_val==='.'){
+									kiroku.value[kiroku_index.value] = Number(kiroku.value[kiroku_index.value].toString() + '.' + e.target.innerHTML.toString())
+								}else{
+									kiroku.value[kiroku_index.value] = Number(kiroku.value[kiroku_index.value].toString() + e.target.innerHTML.toString())
+								}
+								before_val='-'
 							}
-							before_val='-'
 						}else{
 							console_log('else')
 							kiroku_index.value=''
 							keybord_show.value=false
 						}
 					}
+
+					const get_rm_weight = (p_rm) =>{
+						if(rm_mode.value){
+							axios.get(`ajax_get_RM_weight.php?shu=${shu.value}&rep=${p_rm}`)
+							.then((response)=>{
+								console_log(response.data)
+								if(response.data.MSG){
+									alert(response.data.MSG)
+								}else{
+									kiroku.value[0] = response.data.rm_weight
+								}
+							})
+						}
+					}
+
 					const keybord_close = () =>{keybord_show.value=false}
 					const input_select = ref([['form-control','form-control-sm',''],['form-control','form-control-sm',''],['form-control','form-control-sm',''],['form-control','form-control-sm','']])
 					watch([kiroku_index],()=>{
@@ -1038,6 +1062,8 @@
 						shumoku,
 						shumoku_wt,
 						shumoku_us,
+						rm_mode,
+						zero_ten,
 						keydown,
 						kiroku,
 						keybord_show,

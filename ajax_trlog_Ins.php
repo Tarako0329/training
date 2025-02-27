@@ -22,7 +22,8 @@ if(isset($_SESSION['USER_ID'])){
 }
 
 //種目追加欄が空白の場合はリストの種目,種目追加欄が記入されてる場合は種目追加欄の種目
-$shu = ($_POST["shu2"] == "")? $_POST["shu1"]:$_POST["shu2"];
+//$shu = ($_POST["shu2"] == "")? $_POST["shu1"]:$_POST["shu2"];
+$shu = $_POST["shu1"];
 $rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
 $cal = ($_POST["cal"] == "")?0:$_POST["cal"];
 $type = (!empty($_POST["jiju"]))?"2":$_POST["typ"];
