@@ -31,8 +31,8 @@
       $stmt->bindValue(2, $_POST["ymd"], PDO::PARAM_STR);
       $stmt->bindValue(3, $_POST["weight"], PDO::PARAM_STR);
       $stmt->bindValue(4, $_POST["sibo"], PDO::PARAM_STR);
-      $stmt->bindValue(5, $_POST["yobi1"], PDO::PARAM_STR);
-      $stmt->bindValue(6, $_POST["yobi2"], PDO::PARAM_STR);
+      $stmt->bindValue(5, "", PDO::PARAM_STR);
+      $stmt->bindValue(6, "", PDO::PARAM_STR);
       $stmt->bindValue(7, $_POST["memo"], PDO::PARAM_STR);
       $stmt->execute();
       $pdo_h->commit();
