@@ -31,11 +31,11 @@
     $_SESSION['USER_ID'] = $id;
     //リダイレクト
     header("HTTP/1.1 301 Moved Permanently");
-    header("Location: TOP.php");
+    header("Location: index.php?logoff=sinkitouroku");
     exit();
   }
    
-  //ログイン失敗
+  //不正アクセス
   //リダイレクト
   header("HTTP/1.1 301 Moved Permanently");
   header("Location: index.php");

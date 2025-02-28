@@ -12,6 +12,11 @@ if($logoff==="out"){
 	$_SESSION = [];
 	setCookie("token", '', -1, "/", "", true, true);
 	$msg='ログオフしました';
+}else if($logoff==="sinkitouroku"){
+	delete_old_token($_COOKIE['token']);
+	$_SESSION = [];
+	setCookie("token", '', -1, "/", "", true, true);
+	$msg='登録完了しました。IDとパスワードを入力しログインしてください。';
 }else if (isset($_COOKIE['token'])) {
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: logincheck.php");
