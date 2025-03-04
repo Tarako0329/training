@@ -99,7 +99,7 @@
 					</div>
 				</div>
 			</header>
-			<main class='container p-0' style='height:calc(100vh - 115px);'>
+			<main v-show='background_show' class='container p-0' style='height:calc(100vh - 115px);'>
 				<div class='row position-relative' style='height:100%;'>
 					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 ' style='height:100%;'>
 						<div style='overflow-y:scroll;height:100%;width:100%;padding-bottom:170px;' id='tr_log_area'>
@@ -540,14 +540,17 @@
 			createApp({
 				setup(){
 					const lock_trlog_area = () =>{
-						document.getElementById('tr_log_area').style.overflowY = 'hidden'
-						document.getElementById('tr_log_area').style.pointerEvents = 'none'
+						//document.getElementById('tr_log_area').style.overflowY = 'hidden'
+						//document.getElementById('tr_log_area').style.pointerEvents = 'none'
+						background_show.value=false
 					}
 					const unlock_trlog_area = () =>{
-						document.getElementById('tr_log_area').style.overflowY = 'scroll'
-						document.getElementById('tr_log_area').style.pointerEvents = 'auto'
+						//document.getElementById('tr_log_area').style.overflowY = 'scroll'
+						//document.getElementById('tr_log_area').style.pointerEvents = 'auto'
+						background_show.value=true
 					}
 
+					const background_show = ref(true)
 					const kintore_log = ref([])
 					const shumoku = ref([])
 					const max_log = ref([])
@@ -870,6 +873,7 @@
 							kiroku.value[0] = ""
 						}
 					})
+
 					const OnSubmit = (e) =>{
 						console_log(`OnSubmit`)
 						console_log(e.currentTarget.elements['shu1'].value)
@@ -961,7 +965,6 @@
 						})
 					}
 					
-
 					const draggingItem = ref(null);
 					const dragIndex = ref(null);
 
@@ -1096,6 +1099,7 @@
 						setting1,
 						lock_trlog_area,
 						unlock_trlog_area,
+						background_show,
 					}
 				}
 			}).mount('#logger');

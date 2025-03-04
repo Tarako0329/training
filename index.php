@@ -21,6 +21,8 @@ if($logoff==="out"){
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: logincheck.php");
 	//exit();
+}else{
+	$msg=$_SESSION["msg"];
 }
 ?>
 <!DOCTYPE html>
@@ -38,7 +40,7 @@ if($logoff==="out"){
 			<IMG src="img/kanban.png" style="width:300px;">
 		</DIV>
 		<MAIN id='main'>
-			<div v-if='msg!==""'  class='alert alert-warning' role="alert">{{msg}}</div>
+			<div v-if='msg!==""'  class='alert alert-warning text-center' role="alert">{{msg}}</div>
 			<FORM method="post" action="logincheck.php" style='margin-top:30px;'>
 				<DIV style='text-align: center;'>
 					<div style='display:flex; justify-content:center;'>
