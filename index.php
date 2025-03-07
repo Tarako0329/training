@@ -22,7 +22,7 @@ if($logoff==="out"){
 	header("Location: logincheck.php");
 	//exit();
 }else{
-	$msg=$_SESSION["msg"];
+	$msg=(!empty($_SESSION["msg"]))?$_SESSION["msg"]:"";
 }
 ?>
 <!DOCTYPE html>

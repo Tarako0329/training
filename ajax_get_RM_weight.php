@@ -22,7 +22,8 @@
 	$shu = $_GET["shu"];
 	$rep = $_GET["rep"];
 	//マックス
-	$sql = "SELECT id,shu,MAX(max_weight) as MAX_W FROM `tr_log_max_record` where id=:id and shu=:shu and ymd >= DATE_SUB(CURDATE(),INTERVAL 3 MONTH) group by id,shu";
+	//$sql = "SELECT 'a',MAX(IFNULL(max_weight,0)) as MAX_W FROM `tr_log_max_record` where id=:id and shu=:shu and ymd >= DATE_SUB(CURDATE(),INTERVAL 3 MONTH) group by id,shu";
+	$sql = "SELECT IFNULL(MAX(max_weight),0) as MAX_W FROM `tr_log_max_record` where id=:id and shu=:shu and ymd >= DATE_SUB(CURDATE(),INTERVAL 3 MONTH)" ;
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue("id", $id, PDO::PARAM_STR);
 	$result->bindValue("shu", $shu, PDO::PARAM_STR);
