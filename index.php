@@ -32,7 +32,7 @@ if($logoff==="out"){
 		<?php
 			require "header.php";
 		?>
-		<script src="https://accounts.google.com/gsi/client" async defer></script>
+		<script src="https://accounts.google.com/gsi/client" ></script>
 		<meta name="description" content="【完全無料】シンプルを極めたトレーニング記録WEBアプリ！自分用のオリジナルメニューのみで、記録時のメニュー選択もスムーズに！Volume/Maxも自動計算！グラフ化で成長具合も！">
 	</HEAD>
 	<!--ログイン画面-->
@@ -174,6 +174,21 @@ if($logoff==="out"){
   		   console.log("Image URL: " + responsePayload.picture);
   		   console.log("Email: " + responsePayload.email);
   		}
+			function decodeJwtResponse(token) {
+        var base64Url = token.split(".")[1];
+        var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        var jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map(function (c) {
+              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join("")
+        );
+
+        return JSON.parse(jsonPayload);
+      }
+
 
 		</script>
 		<script>//Vus.js
