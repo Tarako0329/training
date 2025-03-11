@@ -3,7 +3,8 @@
   //require "functions.php";
   //トランザクション処理
   //log_writer2("\$POST",$_POST,"lv3");
-  if($_POST["btn"] == "ユーザー登録"){
+  
+	if($_POST["btn"] == "ユーザー登録"){
     //新規ユーザ登録画面の「登録」ボタン
 		$id = ($_POST["id2"]);
 		$sql = "select * from users where ((id)=?)";

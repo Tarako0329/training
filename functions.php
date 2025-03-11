@@ -179,7 +179,8 @@ function delete_old_token($token) {
 function get_token() {
   $TOKEN_LENGTH = 16;//16*2=32桁
   $bytes = openssl_random_pseudo_bytes($TOKEN_LENGTH);
-  return bin2hex($bytes);
+	$_SESSION["token"] = bin2hex($bytes);
+  return $_SESSION["token"];
 }
 
 // =========================================================

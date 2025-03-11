@@ -25,6 +25,8 @@ if($logoff==="out"){
 }else{
 	$msg=(!empty($_SESSION["msg"]))?$_SESSION["msg"]:"";
 }
+
+$token=get_token();
 ?>
 <!DOCTYPE html>
 <HTML>
@@ -53,24 +55,26 @@ if($logoff==="out"){
 						<label for="pass" class="form-label" style='width:100px;text-align:right;'>パスワード：</label>
 						<INPUT type="password" required='required' class='form-control' id="pass" name="pass" maxlength="100" style='max-width:200px;'>
 					</div>
-					<button type="submit" class='btn btn-primary'style='margin-top:30px;'>
-						ＧＯ！！
-					</button>
-				</DIV>
-				<INPUT type="hidden" name="auto" value="true">
-				<div id="g_id_onload"
-				     data-client_id="<?php echo GOOGLE_AUTH;?>"
-				     
-						 data-callback="handleCredentialResponse"
-				     data-auto_prompt="false">
-				</div>
-				<div class="g_id_signin"
+					<div class='position-relative mt-3 mb-3'>
+						<button type="submit" class='btn btn-primary mb-3' style='width:110px' id='GO'>ＧＯ！！</button>
+						<div class="g_id_signin" style='width:200px;margin:auto;'
 				     data-type="standard"
 				     data-size="large"
 				     data-theme="outline"
-				     data-text="sign_in_with"
+				     data-text="continue_with"
 				     data-shape="rectangular"
 				     data-logo_alignment="left">
+						</div>
+					</div>
+				</DIV>
+				<div class='text-center mb-2'>
+					<a href="pbPolicy.php">＜プライバシーポリシー＞</a>
+				</div>
+				<INPUT type="hidden" name="login_type" id='login_type'>
+				<div id="g_id_onload"
+				     data-client_id="<?php echo GOOGLE_AUTH;?>"
+						 data-callback="handleCredentialResponse"
+				     data-auto_prompt="false">
 				</div>
 			</FORM>
 
@@ -85,6 +89,7 @@ if($logoff==="out"){
 						<div id='collapseOne' class='accordion-collapse collapse' data-bs-parent='#recording'>
 							<div class='accordion-body'>
 								<div class='row'>
+									<div class='col-12'>Googleアカウントでの登録は [Googleで続ける] から登録</div>
 									<div class='col-1 col-md-0' ></div>
 									<div class='col-10 col-md-7' >
 										<FORM method="post" action="recording.php">
@@ -163,16 +168,31 @@ if($logoff==="out"){
 				}
 			}
 			function handleCredentialResponse(response) {
-  		   // decodeJwtResponse() is a custom function defined by you
-  		   // to decode the credential response.
-  		   const responsePayload = decodeJwtResponse(response.credential);
+  			// decodeJwtResponse() is a custom function defined by you
+  			// to decode the credential response.
+  			const responsePayload = decodeJwtResponse(response.credential);
+				
+  			console_log(responsePayload);
+				
+				const form = new FormData()
+				form.append("ID",responsePayload.sub)
+				form.append("name",responsePayload.given_name)
+				form.append("token","<?php echo $token;?>")
+				axios.post('recording_ajax.php',form, {headers: {'Content-Type': 'multipart/form-data'}})
+				.then((response)=>{
+					console_log(response)
+					document.getElementById("login_type").value="google"
+					document.getElementById("id").value=responsePayload.sub
+					document.getElementById("pass").value=responsePayload.sub
+					document.getElementById("GO").click()
+				})
+				.catch((error)=>{
+					alert(error)
+				})
+				.finally(()=>{
+				
+				})
 
-  		   console.log("ID: " + responsePayload.sub);
-  		   console.log('Full Name: ' + responsePayload.name);
-  		   console.log('Given Name: ' + responsePayload.given_name);
-  		   console.log('Family Name: ' + responsePayload.family_name);
-  		   console.log("Image URL: " + responsePayload.picture);
-  		   console.log("Email: " + responsePayload.email);
   		}
 			function decodeJwtResponse(token) {
         var base64Url = token.split(".")[1];
