@@ -67,8 +67,11 @@ $token=get_token();
 						</div>
 					</div>
 				</DIV>
-				<div class='text-center mb-2'>
+				<div class='text-center mb-2 fs-5'>
 					<a href="pbPolicy.php">＜プライバシーポリシー＞</a>
+				</div>
+				<div class='text-center mb-2 fs-5'>
+					<a href="kiyaku.php">＜利用規約＞</a>
 				</div>
 				<INPUT type="hidden" name="login_type" id='login_type'>
 				<div id="g_id_onload"
