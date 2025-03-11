@@ -1,5 +1,6 @@
 <?php
 require "config.php";
+define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 $time = microtime();
 $parts = explode(" ", $time);
 //$current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
@@ -31,6 +32,7 @@ if($logoff==="out"){
 		<?php
 			require "header.php";
 		?>
+		<script src="https://accounts.google.com/gsi/client" async defer></script>
 		<meta name="description" content="【完全無料】シンプルを極めたトレーニング記録WEBアプリ！自分用のオリジナルメニューのみで、記録時のメニュー選択もスムーズに！Volume/Maxも自動計算！グラフ化で成長具合も！">
 	</HEAD>
 	<!--ログイン画面-->
@@ -56,6 +58,20 @@ if($logoff==="out"){
 					</button>
 				</DIV>
 				<INPUT type="hidden" name="auto" value="true">
+				<div id="g_id_onload"
+				     data-client_id="<?php echo GOOGLE_AUTH;?>"
+				     
+						 data-callback="handleCredentialResponse"
+				     data-auto_prompt="false">
+				</div>
+				<div class="g_id_signin"
+				     data-type="standard"
+				     data-size="large"
+				     data-theme="outline"
+				     data-text="sign_in_with"
+				     data-shape="rectangular"
+				     data-logo_alignment="left">
+				</div>
 			</FORM>
 
 			<div class='accordion' id="recording">
@@ -146,6 +162,19 @@ if($logoff==="out"){
 					e.preventDefault();
 				}
 			}
+			function handleCredentialResponse(response) {
+  		   // decodeJwtResponse() is a custom function defined by you
+  		   // to decode the credential response.
+  		   const responsePayload = decodeJwtResponse(response.credential);
+
+  		   console.log("ID: " + responsePayload.sub);
+  		   console.log('Full Name: ' + responsePayload.name);
+  		   console.log('Given Name: ' + responsePayload.given_name);
+  		   console.log('Family Name: ' + responsePayload.family_name);
+  		   console.log("Image URL: " + responsePayload.picture);
+  		   console.log("Email: " + responsePayload.email);
+  		}
+
 		</script>
 		<script>//Vus.js
 			const { createApp, ref, onMounted, computed, VueCookies,watch } = Vue;

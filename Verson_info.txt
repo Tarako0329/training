@@ -76,7 +76,8 @@ ver1.18.7:有酸素グラフ改良/他-commited
 ver1.19.0:UI改良-commited
 ver1.19.1:RM重量設定機能追加-commited
 ver1.19.2:スマホだとModalオープン時も背後が反応する問題-commited
-ver1.19.3:php warning潰し
+ver1.19.3:php warning潰し-commited
+ver1.20.0:google_longin実装テスト
 
 
 【Issues】

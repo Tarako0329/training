@@ -11,8 +11,11 @@
 		$id = $_SESSION['USER_ID'];
 		decho ("クッキー:".$id);
 	}else{
-		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: index.php");
+		//header("HTTP/1.1 301 Moved Permanently");
+		//header("Location: index.php");
+		log_writer2("POST",$_POST,"lv3");
+		log_writer2("GET",$_GET,"lv3");
+		echo "きたよ";
 		exit();
 	}
 	$msg="";
