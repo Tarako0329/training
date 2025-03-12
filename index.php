@@ -36,7 +36,7 @@ $token=get_token();
 		<?php
 			require "header.php";
 		?>
-		<script src="https://accounts.google.com/gsi/client" ></script>
+		<script src="https://accounts.google.com/gsi/client" ></script><!--google login api-->
 		<meta name="description" content="【完全無料】シンプルを極めたトレーニング記録WEBアプリ！自分用のオリジナルメニューのみで、記録時のメニュー選択もスムーズに！Volume/Maxも自動計算！グラフ化で成長具合も！">
 	</HEAD>
 	<!--ログイン画面-->

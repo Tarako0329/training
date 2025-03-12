@@ -62,6 +62,7 @@
 		<?php
 		require "header.php";
 		?>
+		
 		<TITLE>肉体改造ネットワーク</TITLE>
 	</HEAD>
 	
@@ -85,6 +86,7 @@
         	  </a>
         	  <ul class="dropdown-menu">
 							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#user_info'>ユーザー情報</a></li>
+							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#pwa_info'>インストール手順</a></li>
         	    <li><a class="dropdown-item" href="index.php?logoff=out">ログオフ</a></li>
         	  </ul>
         	</div>
@@ -243,6 +245,9 @@
 				</div>
 			</footer>
 			<!--↑footerArea -->
+			<!--↓インストールモーダル-->
+			<?php require "install_modal.php";?>
+
 			<!--↓ユーザ情報モーダル-->
 			<div class='modal fade' id='user_info' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
@@ -290,7 +295,7 @@
 									<div class='col-1' ></div>
 								</div>
 								<div class='modal-footer'>
-									<button type='button' style='width:90px;font-size:13px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='ts_modal_close'>キャンセル</button>
+									<button type='button' style='width:90px;font-size:13px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" id=''>キャンセル</button>
 									<button type='submit' style='width:90px;' name='btn' value='update' class="btn btn-primary mbtn" data-bs-dismiss="modal" >更新</button>
 								</div>
 						</FORM>
@@ -1087,7 +1092,8 @@
 						if (window.matchMedia('(display-mode: standalone)').matches) {
 							// PWAとして起動された場合の処理
 						} else {
-							alert('ブラウザとして起動されました');
+							//alert('ブラウザとして起動されました');
+							document.getElementById("pwa_info_btn").click()
 						}
 
 					})
