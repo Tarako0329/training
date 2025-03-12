@@ -1,6 +1,6 @@
 <?php
   //ファビコンパス
-	$icon="img/favicon-32x32.png";
+	$icon="img/mstile2-150x150.png";
   /*
     JSで起動時に実行
   	if (window.matchMedia('(display-mode: standalone)').matches) {
