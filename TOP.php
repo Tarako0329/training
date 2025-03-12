@@ -52,6 +52,7 @@
 	}
 
 	$user_name = ($row[0]["name"]);
+	$token=get_token();
 	//echo "ログインＯＫ<BR>";
 	//}
 ?>
@@ -83,7 +84,7 @@
         	    <i class="bi bi-list fs-1"></i>
         	  </a>
         	  <ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="#">ユーザー情報</a></li>
+							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#user_info'>ユーザー情報</a></li>
         	    <li><a class="dropdown-item" href="index.php?logoff=out">ログオフ</a></li>
         	  </ul>
         	</div>
@@ -242,6 +243,61 @@
 				</div>
 			</footer>
 			<!--↑footerArea -->
+			<!--↓ユーザ情報モーダル-->
+			<div class='modal fade' id='user_info' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
+				<div class='modal-dialog  modal-dialog-centered'>
+					<div class='modal-content edit' style=''>
+						<FORM method="post" action="user_update.php">
+							<div class='modal-header'>
+	        			<h5 class="modal-title">ユーザー情報設定</h5>
+  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class='modal-body container'>
+								<div class='row'>
+									<div class='col-1 col-md-0' ></div>
+										<div class='col-10 ' >
+											<div class='mb-2'>
+												<p style='font-size:20px'>ＩＤ：<?php echo $row[0]["id"];?></p>
+											</div>
+											<div v-if="'google'!=='<?php echo $row[0]["user_type"];?>'" class='mb-2'>
+												<label for='pass'>パスワード</label>
+												<INPUT id='pass' type="password" class='form-control form-select-sm' name="pass" maxlength="100" style='' placeholder="変更時のみ入力">
+											</div>
+											<div class='mb-2'>
+												<label for='fname'>名前</label>
+												<INPUT id='fname' required='required' type="text" class='form-control form-select-sm' name="fname" maxlength="100" style='' value="<?php echo $row[0]["name"];?>">
+											</div>
+											<div class='mb-2'>
+												<label for='height'><span style='color:yellow;'>※</span>身長(cm)</label>
+												<INPUT id='height' type="number" class='form-control form-select-sm' step="1" name="height" maxlength="10" style='' value="<?php echo $row[0]["height"];?>">
+											</div>
+											<div class='mb-2'>
+												<label for='birthday'><span style='color:yellow;'>※</span>生年月日</label>
+												<INPUT id='birthday' required='required' type="date" class='form-control form-select-sm' name="birthday" value="<?php echo $row[0]["birthday"];?>">
+											</div>
+											<div class='mb-2'>
+												<label for='sex'><span style='color:yellow;'>※</span>性別</label>
+												<SELECT size="1" id='sex' name="sex" class='form-select form-select-sm' style=''  value="<?php echo $row[0]["sex"];?>">
+													<OPTION value="1">男</OPTION>
+													<OPTION value="0">女</OPTION>
+												</SELECT>
+											</div>
+											<div><span style='color:yellow;'>※</span>：パスワード再設定に利用。(Googleログイン除く)</div>
+											<input type="hidden" name='token' value="<?php echo $token;?>">
+											<input type="hidden" name='id' value="<?php echo $row[0]["id"];?>">
+										</div>
+									</div>
+									<div class='col-1' ></div>
+								</div>
+								<div class='modal-footer'>
+									<button type='button' style='width:90px;font-size:13px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='ts_modal_close'>キャンセル</button>
+									<button type='submit' style='width:90px;' name='btn' value='update' class="btn btn-primary mbtn" data-bs-dismiss="modal" >更新</button>
+								</div>
+						</FORM>
+					</div>
+				</div>
+			</div>
+
 			<!--↓体組織系記録モーダル-->
 			<div class='modal fade' id='taisosiki' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
@@ -300,26 +356,15 @@
 							</div>
 							<div class='modal-body container'>
 								<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
-									<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
-									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
+									<label for='ymd2' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
+									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd2' name='ymd' v-model="ymd" required='required'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
-									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
-									<!--<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu' >
-										<template v-for='(list,index) in shumoku_us' :key='list.sort'>
-											<option :value='`${list.shu}`'>{{list.shu}}</option>
-										</template>
-									</select>-->
+									<label class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
 								</div>
-								<!--<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
-									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
-									<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力' autocomplete="off">
-								</div>-->
-
 								<div class='row' style='margin:1px 20px;'>
 								<nav class="navbar bg-body-tertiary p-0 " style='border-radius:4px;'>
 								  <div class="container-fluid p-0 ">
-								    <!--<a class="navbar-brand" href="#"></a>-->
 								    <button class="navbar-toggler ps-2 pt-2 pb-2 d-flex" type="button" style='height:100%;width:100%;border-radius:0;font-size:14px;color:black;' 
 										data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation" id='us_select'>
 								      <span class='text-start' style="width:90%;">{{shu_us}}</span><span class='text-end' style="width:10%;">▼</span>
@@ -346,16 +391,16 @@
 									<input type='text' @focus='keydown' class="form-control form-control-sm" id='rep' name='rep' :value='kiroku[1]'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
-									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>距離(ｍ)</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='rep2' name='rep2' :value='kiroku[3]'>
+									<label for='kyori' class="form-label" style='padding-left:0;margin-bottom:1px;'>距離(ｍ)</label>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='kyori' name='rep2' :value='kiroku[3]'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='cal' class="form-label" style='padding-left:0;margin-bottom:1px;'>カロリー(Kcal)</label>
 									<input type='text' @focus='keydown' class="form-control form-control-sm" id='cal' name='cal' :value='kiroku[0]'> <!--cal を weightで代用-->
 								</div>
 								<div class='row' style='margin:1px 20px;'>
-									<label for='memo' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo' name='memo' :value='memo'>
+									<label for='memo2' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo2' name='memo' :value='memo'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='condition' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
@@ -394,29 +439,15 @@
 							</div>
 							<div class='modal-body container'>
 								<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
-									<label for='ymd' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
-									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd' name='ymd' v-model="ymd" required='required'>
+									<label for='ymd3' class="form-label" style='padding-left:0;margin-bottom:1px;'>日付</label>
+									<input type='date' @focus='keydown' class="form-control form-control-sm" id='ymd3' name='ymd' v-model="ymd" required='required'>
 								</div>
-
-
 								<div class='row' style='margin:1px 20px;'>
-									<label for='shu1' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
-									<!--<select id='shu1' @focus='keydown' class="form-select form-select-sm" name='shu1' v-model='shu'>
-										<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
-											<option :value='`${list.shu}`'>{{list.shu}}</option>
-										</template>
-									</select>-->
+									<label class="form-label" style='padding-left:0;margin-bottom:1px;'>種目</label>
 								</div>
-
-								<!--<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
-									<label for='shu2' class="form-label" style='padding-left:0;margin-bottom:1px;'>種目追加</label>
-									<input type='text' @change='add_shumoku_wt' class="form-control form-control-sm" id='shu2' name='shu2' placeholder='リストにない場合は手入力' autocomplete="off">
-								</div>-->
-
 								<div class='row' style='margin:1px 20px;'>
 								<nav class="navbar bg-body-tertiary p-0 " style='border-radius:4px;'>
 								  <div class="container-fluid p-0 ">
-								    <!--<a class="navbar-brand" href="#"></a>-->
 								    <button class="navbar-toggler ps-2 pt-2 pb-2 d-flex" type="button" style='height:100%;width:100%;border-radius:0;font-size:14px;color:black;' 
 										data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation" id='tr_select'>
 								      <span class='text-start' style="width:90%;">{{shu}}</span><span class='text-end' style="width:10%;">▼</span>
@@ -510,12 +541,12 @@
 								</div>
 
 								<div class='row' style='margin:1px 20px;'>
-									<label for='memo' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo' name='memo' :value="memo">
+									<label for='memo3' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo3' name='memo' :value="memo">
 								</div>
 								<div class='row' style='margin:1px 20px;'>
-									<label for='condition' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='condition' name='condition' value='' placeholder='好調・寝不足・調整日など'>
+									<label for='condition2' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='condition2' name='condition' value='' placeholder='好調・寝不足・調整日など'>
 								</div>
 							</div>
 							<div class='modal-footer'>
@@ -543,13 +574,9 @@
 			createApp({
 				setup(){
 					const lock_trlog_area = () =>{
-						//document.getElementById('tr_log_area').style.overflowY = 'hidden'
-						//document.getElementById('tr_log_area').style.pointerEvents = 'none'
 						background_show.value=false
 					}
 					const unlock_trlog_area = () =>{
-						//document.getElementById('tr_log_area').style.overflowY = 'scroll'
-						//document.getElementById('tr_log_area').style.pointerEvents = 'auto'
 						background_show.value=true
 					}
 
@@ -1057,6 +1084,11 @@
 						  console.log('モーダルが閉じました');
 							unlock_trlog_area()
 						});
+						if (window.matchMedia('(display-mode: standalone)').matches) {
+							// PWAとして起動された場合の処理
+						} else {
+							alert('ブラウザとして起動されました');
+						}
 
 					})
 

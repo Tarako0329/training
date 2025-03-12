@@ -20,7 +20,7 @@
 			exit();
 		}
 		$pass = passEx($_POST["pass2"],$id);
-		$sql = "insert into users(id,pass,name,sex,height,birthday) values (?,?,?,?,?,?)";
+		$sql = "insert into users(id,pass,name,sex,height,birthday,user_type) values (?,?,?,?,?,?,'ipass')";
 		$stmt = $pdo_h->prepare($sql);
 		$stmt->bindValue(1, $id, PDO::PARAM_STR);
 		$stmt->bindValue(2, $pass, PDO::PARAM_STR);

@@ -17,5 +17,23 @@
     "background_color": "#ffffff",
     "display": "standalone",
     "scope": "/",
-    "start_url": "/"
+    "start_url": "/index.php",
+    "description":"トレーニングを記録しよう！トレーニング記録アプリをインストール♪",
+    "id":"/index.php",
+    "screenshots": [
+        {
+            "src": "img/mani_scsho_narrow.png",
+            "sizes": "498x787",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "ホーム画面サンプル"
+        },
+        {
+            "src": "img/mani_scsho_wide.png",
+            "sizes": "1144x806",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "ホーム画面サンプル"
+        }
+      ]
 }

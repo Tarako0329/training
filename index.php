@@ -7,15 +7,17 @@ $parts = explode(" ", $time);
 //log_writer2("index",$current_time_with_microseconds,"lv1");
 
 $logoff = (!empty($_GET["logoff"]))?$_GET["logoff"]:"";
+
+
 $msg="";
 if($logoff==="out"){
 	delete_old_token($_COOKIE['token']);
-	$_SESSION = [];
+	$_SESSION["USER_ID"] = "";
 	setCookie("token", '', -1, "/", "", true, true);
 	$msg='ログオフしました';
 }else if($logoff==="sinkitouroku"){
 	delete_old_token($_COOKIE['token']);
-	$_SESSION = [];
+	$_SESSION["USER_ID"] = "";
 	setCookie("token", '', -1, "/", "", true, true);
 	$msg='登録完了しました。IDとパスワードを入力しログインしてください。';
 }else if (isset($_COOKIE['token'])) {
@@ -40,13 +42,13 @@ $token=get_token();
 	<!--ログイン画面-->
 	<TITLE>肉体改造ネットワーク</TITLE>
 	<BODY>
-		<DIV class='text-center'>
+		<div class='text-center'>
 			<IMG src="img/kanban.png" style="width:300px;">
-		</DIV>
+		</div>
 		<MAIN id='main'>
 			<div v-if='msg!==""'  class='alert alert-warning text-center' role="alert">{{msg}}</div>
 			<FORM method="post" action="logincheck.php" style='margin-top:30px;'>
-				<DIV style='text-align: center;'>
+				<div style='text-align: center;'>
 					<div style='display:flex; justify-content:center;'>
 						<label for="id" class="form-label" style='width:100px;text-align:right;'>ＩＤ：</label>
 						<INPUT type="text" required='required' class='form-control' id="id" name="id" maxlength="100" style='ime-mode:disabled;max-width:200px;'>
@@ -66,7 +68,7 @@ $token=get_token();
 				     data-logo_alignment="left">
 						</div>
 					</div>
-				</DIV>
+				</div>
 				<div class='text-center mb-2 fs-5'>
 					<a href="pbPolicy.php">＜プライバシーポリシー＞</a>
 				</div>
@@ -96,18 +98,18 @@ $token=get_token();
 									<div class='col-1 col-md-0' ></div>
 									<div class='col-10 col-md-7' >
 										<FORM method="post" action="recording.php">
-											<DIV>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="100" style='ime-mode:disabled;'></DIV>
-											<DIV>パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="100" style=''></DIV>
-											<DIV>名前：<INPUT required='required' type="text" class='form-control' name="fname" maxlength="100" style=''></DIV>
-											<DIV><span style='color:red;'>*</span>身長(cm)：<INPUT type="number" class='form-control' step="1" name="height" maxlength="10" style=''></DIV>
-											<DIV><span style='color:red;'>*</span>生年月日：<INPUT required='required' type="date" class='form-control' name="birthday" maxlength="10" style=''></DIV>
-											<DIV><span style='color:red;'>*</span>性別：
+											<div>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="100" style='ime-mode:disabled;'></div>
+											<div>パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="100" style=''></div>
+											<div>名前：<INPUT required='required' type="text" class='form-control' name="fname" maxlength="100" style=''></div>
+											<div><span style='color:red;'>*</span>身長(cm)：<INPUT type="number" class='form-control' step="1" name="height" maxlength="10" style=''></div>
+											<div><span style='color:red;'>*</span>生年月日：<INPUT required='required' type="date" class='form-control' name="birthday" maxlength="10" style=''></div>
+											<div><span style='color:red;'>*</span>性別：
 												<SELECT size="1" name="sex" class='form-select' style=''>
 												<OPTION value="1">男</OPTION>
 												<OPTION value="0">女</OPTION>
 												</SELECT>
-											</DIV>
-											<DIV>(<span style='color:red;'>*</span>) パスワードを忘れた際の再設定に利用します。</DIV>
+											</div>
+											<div>(<span style='color:red;'>*</span>) パスワードを忘れた際の再設定に利用します。</div>
 											<div class='text-center' style='margin-top:5px;margin-top:20px;'>
 												<button class='btn btn-primary' type='submit' name="btn" value="ユーザー登録">ユーザー登録</button>
 											</div>
@@ -130,22 +132,22 @@ $token=get_token();
 									<div class='col-1 col-md-0' ></div>
 									<div class='col-10 col-md-7' >
 										<FORM method="post" action="passreset.php">
-											<DIV>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="100" style='ime-mode:disabled;'></DIV>
-											<DIV>新パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="100" style=''></DIV>
-											<DIV>登録時の身長(cm)：<INPUT required='required' type="number" step="1" class='form-control' name="fname" maxlength="10" style=''></DIV>
-											<DIV>
+											<div>ＩＤ：<INPUT required='required' type="text" class='form-control' name="id2" maxlength="100" style='ime-mode:disabled;'></div>
+											<div>新パスワード：<INPUT required='required' type="password" class='form-control' name="pass2" maxlength="100" style=''></div>
+											<div>登録時の身長(cm)：<INPUT required='required' type="number" step="1" class='form-control' name="fname" maxlength="10" style=''></div>
+											<div>
 												生年月日：
 												<INPUT type="date" class='form-control' name="birthday" maxlength="10" style='' aria-labelledby="HelpBlock">
 												<div id="HelpBlock" class="form-text">
 													2023/11/17に追加した項目です。それ以前に登録した方は空白のままにしてください。
 												</div>
-											</DIV>
-											<DIV>登録時の性別：
+											</div>
+											<div>登録時の性別：
 												<SELECT size="1" name="sex" class='form-select' style=''>
 												<OPTION value="1">男</OPTION>
 												<OPTION value="0">女</OPTION>
 												</SELECT>
-											</DIV>
+											</div>
 											<div class='text-center' style='margin-top:5px;margin-top:20px;'>
 												<button class='btn btn-primary' type='submit' name="btn" value="パスワード更新">パスワード更新</button>
 											</div>
@@ -211,7 +213,6 @@ $token=get_token();
 
         return JSON.parse(jsonPayload);
       }
-
 
 		</script>
 		<script>//Vus.js

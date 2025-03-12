@@ -19,7 +19,7 @@
 			//$_SESSION['USER_ID'] = $id;
 		}else{
 			$pass = passEx($id,$id);
-			$sql = "insert into users(id,pass,name) values (?,?,?)";
+			$sql = "insert into users(id,pass,name,user_type) values (?,?,?,'google')";
 			$stmt = $pdo_h->prepare($sql);
 			$stmt->bindValue(1, $id, PDO::PARAM_STR);
 			$stmt->bindValue(2, $pass, PDO::PARAM_STR);
