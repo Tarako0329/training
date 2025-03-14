@@ -65,7 +65,7 @@
 							  <li>
 							    <p class='mb-1 mt-2'>インストール完了</p>
 							    <p>ホーム画面にアプリケーションのアイコンが追加されます。</p>
-							    <img src="<?php echo $icon;?>" alt="ホーム画面に追加されたアイコン">
+							    <div style='width:80px;'><img src="<?php echo $icon;?>" alt="ホーム画面に追加されたアイコン" style='width:100%;'></div>
 							  </li>
 							</ol>
 						</div>
@@ -82,7 +82,7 @@
 							  <li>
 							    <p class='mb-1 mt-3'>インストール完了</p>
 							    <p>ホーム画面にアプリケーションのアイコンが追加されます。</p>
-									<img src="<?php echo $icon;?>" alt="ホーム画面に追加されたアイコン">
+									<div style='width:80px;'><img src="<?php echo $icon;?>" alt="ホーム画面に追加されたアイコン" style='width:100%;'></div>
 							  </li>
 							</ol>
 						</div>
