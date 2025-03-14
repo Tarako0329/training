@@ -75,12 +75,30 @@ $token=get_token();
 				<div class='text-center mb-2 fs-5'>
 					<a href="kiyaku.php">＜利用規約＞</a>
 				</div>
-				<INPUT type="hidden" name="login_type" id='login_type'>
-				<div id="g_id_onload"
-				     data-client_id="<?php echo GOOGLE_AUTH;?>"
-						 data-callback="handleCredentialResponse"
-				     data-auto_prompt="false">
 				</div>
+				<div class='accordion' id="recording">
+					<div style='padding-top:5px;font-size:1.0rem;font-weight:700;top: 156px;height:75px;'>
+						<div class='accordion-item'><!--ユーザー登録-->		
+							<h2 class='accordion-header'>
+							<button type='button' class='accordion-button collapsed' style='font-size:1.0rem;' data-bs-toggle='collapse' data-bs-target='#collapseOne3' aria-expanded='false' aria-controls='collapseOne'>
+								アプリ詳細はコチラ
+							</button>
+							</h2>
+							<div id='collapseOne3' class='accordion-collapse collapse' data-bs-parent='#recording'>
+							<div class='accordion-body'>
+								<div class='row'>
+									<div class='col-12'>
+										<div style='width:100%;height:50%;' id='Vmanager'>
+											<iframe src="https://site.greeen-sys.com/%e8%82%89%e4%bd%93%e6%94%b9%e9%80%a0%e3%83%8d%e3%83%83%e3%83%88%e3%83%af%e3%83%bc%e3%82%af/" width="100%" height="100%" id='Vmanager-frame'></iframe>
+										</div>
+									</div>
+								</div>
+    					</div>
+    					</div>
+						</div><!--ユーザー登録-->		
+					</div>
+				</div>
+			</div>
 			</FORM>
 
 			<div class='accordion' id="recording">
