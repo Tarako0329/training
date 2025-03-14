@@ -107,7 +107,7 @@ $token=get_token();
 						<div class='accordion-body'>
 							<div class='row'>
 								<div class='col-12'>
-									<div style='width:100%;height:50%;' id='Vmanager'>
+									<div style='width:100%;height:500px;' id='Vmanager'>
 										<iframe src="https://site.greeen-sys.com/%e8%82%89%e4%bd%93%e6%94%b9%e9%80%a0%e3%83%8d%e3%83%83%e3%83%88%e3%83%af%e3%83%bc%e3%82%af/" width="100%" height="100%" id='Vmanager-frame'></iframe>
 									</div>
 								</div>
