@@ -81,6 +81,7 @@ ver1.20.0:google_longin実装テスト-commited
 ver1.20.1:ユーザ情報設定/pwaインストール補助
   ALTER TABLE `users` ADD `user_type` VARCHAR(20) NOT NULL AFTER `birthday`;
 ver1.20.2:pwaインストール補助
+ver1.20.3:pwaインストール補助
 
 
 【Issues】

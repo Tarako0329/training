@@ -1093,7 +1093,18 @@
 							// PWAとして起動された場合の処理
 						} else {
 							//alert('ブラウザとして起動されました');
-							document.getElementById("pwa_info_btn").click()
+							const userAgent = navigator.userAgent;
+				  		if (
+				  		  userAgent.indexOf('Windows') !== -1 ||
+				  		  userAgent.indexOf('Macintosh') !== -1 ||
+				  		  userAgent.indexOf('Linux') !== -1
+				  		) {
+				  		  // パソコン.なにもしない
+				  		} else {
+				  		  // パソコン以外。インストールを勧める
+								document.getElementById("pwa_info_btn").click()
+				  		}
+						
 						}
 
 					})

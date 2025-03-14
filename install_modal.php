@@ -7,7 +7,18 @@
 			// PWAとして起動された場合の処理
 		} else {
 			//alert('ブラウザとして起動されました');
-			document.getElementById("pwa_info_btn").click()
+			const userAgent = navigator.userAgent;
+  		if (
+  		  userAgent.indexOf('Windows') !== -1 ||
+  		  userAgent.indexOf('Macintosh') !== -1 ||
+  		  userAgent.indexOf('Linux') !== -1
+  		) {
+  		  // パソコン.なにもしない
+  		} else {
+  		  // パソコン以外。インストールを勧める
+				document.getElementById("pwa_info_btn").click()
+  		}
+
 		}
   */
 ?>
@@ -21,6 +32,12 @@
     			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class='modal-body container'>
+					<div class="row">
+						<div class='col-12 fs-6'>
+							<p class='mb-1'>ご登録ありがとうございます。</p>
+							<p>下記手順でインストールすることで、アプリケーション風に利用可能となります。(ブラウザでも利用可能です)</p>
+						</div>
+					</div>
 					<ul class="nav nav-underline">
 					  <li class="nav-item">
 					    <a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#iphone">iPhone/Safari</a>
@@ -31,21 +48,22 @@
 					</ul>
 					<div class='tab-content'>
 						<div class='row ps-3 pt-3 tab-pane active' style='font-size:12px;' id='iphone'>
+							<p>当アプリはPWAという技術を使い、APPストアを介さずにアプリケーション風に利用可能となってます。</p>
 							<ol>
 							  <li>
-							    <p class='mb-1'>共有ボタンをタップ</p>
-							    <p>画面下部にある共有ボタン<i class="bi bi-box-arrow-up ms-1 me-1 fs-5"></i>をタップします。</p>
+							    <p class='mb-0'>共有ボタンをタップ</p>
+							    <p class='mb-0'>画面下部にある共有ボタン<i class="bi bi-box-arrow-up ms-1 me-1 fs-5"></i>をタップします。</p>
 							  </li>
 							  <li>
-							    <p class='mb-1 mt-3'>ホーム画面に追加をタップ</p>
-							    <p>表示されたメニューから「ホーム画面に追加<i class="bi bi-plus-square ms-2 me-1 fs-5"></i>」をタップします。</p>
+							    <p class='mb-0 mt-2'>ホーム画面に追加をタップ</p>
+							    <p class='mb-0'>表示されたメニューから「ホーム画面に追加<i class="bi bi-plus-square ms-2 me-1 fs-5"></i>」をタップします。</p>
 							  </li>
 							  <li>
-							    <p class='mb-1 mt-3'>追加をタップ</p>
-							    <p>サイト名とアイコンを確認し、「追加」をタップします。</p>
+							    <p class='mb-1 mt-2'>追加をタップ</p>
+							    <p class='mb-0'>サイト名とアイコンを確認し、「追加」をタップします。</p>
 							  </li>
 							  <li>
-							    <p class='mb-1 mt-3'>インストール完了</p>
+							    <p class='mb-1 mt-2'>インストール完了</p>
 							    <p>ホーム画面にアプリケーションのアイコンが追加されます。</p>
 							    <img src="<?php echo $icon;?>" alt="ホーム画面に追加されたアイコン">
 							  </li>
