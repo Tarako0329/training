@@ -38,6 +38,11 @@ $token=get_token();
 		?>
 		<script src="https://accounts.google.com/gsi/client" ></script><!--google login api-->
 		<meta name="description" content="【完全無料】シンプルを極めたトレーニング記録WEBアプリ！自分用のオリジナルメニューのみで、記録時のメニュー選択もスムーズに！Volume/Maxも自動計算！グラフ化で成長具合も！">
+		<style>
+			p{
+				margin-bottom: 3px;
+			}
+		</style>
 	</HEAD>
 	<!--ログイン画面-->
 	<TITLE>肉体改造ネットワーク</TITLE>
@@ -45,7 +50,7 @@ $token=get_token();
 		<div class='text-center'>
 			<IMG src="img/kanban.png" style="width:300px;">
 		</div>
-		<MAIN id='main'>
+		<MAIN class='container' id='main'>
 			<div v-if='msg!==""'  class='alert alert-warning text-center' role="alert">{{msg}}</div>
 			<FORM method="post" action="logincheck.php" style='margin-top:30px;'>
 				<div style='text-align: center;'>
@@ -67,42 +72,50 @@ $token=get_token();
 				     data-shape="rectangular"
 				     data-logo_alignment="left">
 						</div>
+						<INPUT type="hidden" name="login_type" id='login_type'>
+						<div id="g_id_onload"
+						     data-client_id="<?php echo GOOGLE_AUTH;?>"
+								 data-callback="handleCredentialResponse"
+						     data-auto_prompt="false">
+						</div>
 					</div>
 				</div>
-				<div class='text-center mb-2 fs-5'>
-					<a href="pbPolicy.php">＜プライバシーポリシー＞</a>
-				</div>
-				<div class='text-center mb-2 fs-5'>
-					<a href="kiyaku.php">＜利用規約＞</a>
-				</div>
-				</div>
-				<div class='accordion' id="recording">
-					<div style='padding-top:5px;font-size:1.0rem;font-weight:700;top: 156px;height:75px;'>
-						<div class='accordion-item'><!--ユーザー登録-->		
-							<h2 class='accordion-header'>
-							<button type='button' class='accordion-button collapsed' style='font-size:1.0rem;' data-bs-toggle='collapse' data-bs-target='#collapseOne3' aria-expanded='false' aria-controls='collapseOne'>
-								アプリ詳細はコチラ
-							</button>
-							</h2>
-							<div id='collapseOne3' class='accordion-collapse collapse' data-bs-parent='#recording'>
-							<div class='accordion-body'>
-								<div class='row'>
-									<div class='col-12'>
-										<div style='width:100%;height:50%;' id='Vmanager'>
-											<iframe src="https://site.greeen-sys.com/%e8%82%89%e4%bd%93%e6%94%b9%e9%80%a0%e3%83%8d%e3%83%83%e3%83%88%e3%83%af%e3%83%bc%e3%82%af/" width="100%" height="100%" id='Vmanager-frame'></iframe>
-										</div>
-									</div>
-								</div>
-    					</div>
-    					</div>
-						</div><!--ユーザー登録-->		
+			</FORM>
+			<div class='row'>
+				<div class='col-12 ps-3 pe-3 text-center'>
+					<p>トレーニング内容を記録・分析するアプリケーションです。</p>
+					<p>シンプル操作設計で簡単にトレーニングを記録。</p>
+					<p>完全無料・広告一切なし</p>
+					<div class='text-center mb-2 fs-5'>
+						<a href="pbPolicy.php">＜プライバシーポリシー＞</a>
+					</div>
+					<div class='text-center mb-2 fs-5'>
+						<a href="kiyaku.php">＜利用規約＞</a>
 					</div>
 				</div>
 			</div>
-			</FORM>
 
 			<div class='accordion' id="recording">
 				<div style='padding-top:5px;font-size:1.0rem;font-weight:700;top: 156px;height:75px;'>
+					<div class='accordion-item'><!--アプリ詳細-->		
+						<h2 class='accordion-header'>
+						<button type='button' class='accordion-button collapsed' style='font-size:1.0rem;' data-bs-toggle='collapse' data-bs-target='#collapseOne3' aria-expanded='false' aria-controls='collapseOne'>
+							アプリ詳細はコチラ
+						</button>
+						</h2>
+						<div id='collapseOne3' class='accordion-collapse collapse' data-bs-parent='#app_info'>
+						<div class='accordion-body'>
+							<div class='row'>
+								<div class='col-12'>
+									<div style='width:100%;height:50%;' id='Vmanager'>
+										<iframe src="https://site.greeen-sys.com/%e8%82%89%e4%bd%93%e6%94%b9%e9%80%a0%e3%83%8d%e3%83%83%e3%83%88%e3%83%af%e3%83%bc%e3%82%af/" width="100%" height="100%" id='Vmanager-frame'></iframe>
+									</div>
+								</div>
+							</div>
+    				</div>
+    				</div>
+					</div><!--アプリ詳細-->		
+
 					<div class='accordion-item'><!--ユーザー登録-->		
 						<h2 class='accordion-header'>
 							<button type='button' class='accordion-button collapsed' style='font-size:1.0rem;' data-bs-toggle='collapse' data-bs-target='#collapseOne' aria-expanded='false' aria-controls='collapseOne'>
