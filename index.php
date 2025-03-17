@@ -94,10 +94,10 @@ $token=get_token();
 					</div>
 				</div>
 			</div>
-
-			<div class='accordion' id="recording">
+			<!--アプリ詳細-->		
+			<!--<div class='accordion' id="recording">
 				<div style='padding-top:5px;font-size:1.0rem;font-weight:700;top: 156px;height:75px;'>
-					<div class='accordion-item'><!--アプリ詳細-->		
+					<div class='accordion-item'>
 						<h2 class='accordion-header'>
 						<button type='button' class='accordion-button collapsed' style='font-size:1.0rem;' data-bs-toggle='collapse' data-bs-target='#collapseOne3' aria-expanded='false' aria-controls='collapseOne'>
 							アプリ詳細はコチラ
@@ -114,8 +114,8 @@ $token=get_token();
 							</div>
     				</div>
     				</div>
-					</div><!--アプリ詳細-->		
-
+					</div>-->
+					<!--アプリ詳細-->		
 					<div class='accordion-item'><!--ユーザー登録-->		
 						<h2 class='accordion-header'>
 							<button type='button' class='accordion-button collapsed' style='font-size:1.0rem;' data-bs-toggle='collapse' data-bs-target='#collapseOne' aria-expanded='false' aria-controls='collapseOne'>
