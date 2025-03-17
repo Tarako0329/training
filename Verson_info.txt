@@ -82,6 +82,7 @@ ver1.20.1:ユーザ情報設定/pwaインストール補助
   ALTER TABLE `users` ADD `user_type` VARCHAR(20) NOT NULL AFTER `birthday`;
 ver1.20.2:pwaインストール補助
 ver1.20.3:pwaインストール補助
+ver1.20.4:pwaインストール補助微調整
 
 
 【Issues】

@@ -23,7 +23,7 @@ body {
 }
 .mbtn{/*モーダルフッタボタン*/
 	width:130px;
-	height: 45px;
+	/*height: 45px;*/
 	font-size:16px;
 }
 .selected{
