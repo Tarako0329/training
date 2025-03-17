@@ -25,8 +25,8 @@
 <meta property='og:locale' content='ja_JP' />
 <meta property='og:title' content='『トレーニングを記録しよう』' />
 <meta property='og:type' content='website' />
-<meta property='og:url' content='https://green-island.mixh.jp/training_test/index.php' />
-<meta property='og:image' content='http://green-island.mixh.jp/training_test/img/koukoku.png' />
+<meta property='og:url' content='https://muscle.greeen-sys.com/' />
+<meta property='og:image' content='https://muscle.greeen-sys.com/img/koukoku.png' />
 <meta property='og:site_name' content='肉体改造ネットワーク' />
 <meta property='article:author' content='https://www.facebook.com/greengreenmidori'>
 <meta property='og:description' content='筋トレ記録・解析ＷＥＢアプリ' />
