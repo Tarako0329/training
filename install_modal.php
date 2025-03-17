@@ -1,6 +1,11 @@
 <?php
   //ファビコンパス
-	$icon="img/mstile2-150x150.png";
+	//$icon="img/mstile2-150x150.png";
+	if(empty($icon)){
+		echo "<script>alert('install_modal.php でエラー。\$icon変数にファビコンのパスをセットしてください。')</script>";
+		exit();
+		//throw new Exception("0 で割ることはできません。");
+	}
   /*
     JSで起動時に実行
   	if (window.matchMedia('(display-mode: standalone)').matches) {

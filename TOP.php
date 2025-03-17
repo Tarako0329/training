@@ -246,7 +246,11 @@
 			</footer>
 			<!--↑footerArea -->
 			<!--↓インストールモーダル-->
-			<?php require "install_modal.php";?>
+			
+			<?php 
+			$icon="img/mstile2-150x150.png";
+			require "install_modal.php";
+			?>
 
 			<!--↓ユーザ情報モーダル-->
 			<div class='modal fade' id='user_info' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
