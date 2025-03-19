@@ -51,6 +51,10 @@
 		exit();
 	}
 
+	if($row[0]["user_type"]==="google"){
+		setCookie("user_type", 'google', time()+60*60*24*365, "/", "", true, true);
+	}
+
 	$user_name = ($row[0]["name"]);
 	$token=get_token();
 	//echo "ログインＯＫ<BR>";

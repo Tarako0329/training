@@ -28,6 +28,12 @@ if($logoff==="out"){
 	$msg=(!empty($_SESSION["msg"]))?$_SESSION["msg"]:"";
 }
 
+if($_COOKIE["user_type"]==="google"){
+	$g_login="signin_with";
+}else{
+	$g_login="signup_with";
+}
+
 $token=get_token();
 ?>
 <!DOCTYPE html>
@@ -68,7 +74,7 @@ $token=get_token();
 				     data-type="standard"
 				     data-size="large"
 				     data-theme="outline"
-				     data-text="continue_with"
+				     data-text="<?php echo $g_login;?>"
 				     data-shape="rectangular"
 				     data-logo_alignment="left">
 						</div>
