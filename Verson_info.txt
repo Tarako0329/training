@@ -78,20 +78,20 @@ ver1.19.1:RM重量設定機能追加-commited
 ver1.19.2:スマホだとModalオープン時も背後が反応する問題-commited
 ver1.19.3:php warning潰し-commited
 ver1.20.0:google_longin実装テスト-commited
-ver1.20.1:ユーザ情報設定/pwaインストール補助
+ver1.20.1:ユーザ情報設定/pwaインストール補助-commited
   ALTER TABLE `users` ADD `user_type` VARCHAR(20) NOT NULL AFTER `birthday`;
-ver1.20.2:pwaインストール補助
-ver1.20.3:pwaインストール補助
-ver1.20.4:pwaインストール補助微調整
-ver1.20.5:google_longin微調整
+ver1.20.2:pwaインストール補助-commited
+ver1.20.3:pwaインストール補助-commited
+ver1.20.4:pwaインストール補助微調整-commited
+ver1.20.5:google_longin微調整-commited
 
 
 【Issues】
 目標設定機能-体組織
 Excel・スプレッドシート取込
-ユーザ情報更新
 
 【完了】
+ユーザ情報更新
 筋トレ重量設定でRM計算
 体組織・平均で推移表示
 BIG3マックス表示（３か月・１年・ALL）
