@@ -19,14 +19,14 @@
 	$alert_status = "";
 
 	//履歴取得
-	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3
+	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,TIME_FORMAT(insdatetime, '%H:%i') as jikoku
 	,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd,log.typ) as total
 	,RANK() OVER(PARTITION BY log.id,log.ymd,shu,log.typ order by jun ) as setjun 
 	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = :id order by log.ymd desc,jun LIMIT :limit";
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue('id', $id, PDO::PARAM_STR);
 	//$result->bindValue(2, date("Y-m-d",strtotime("-13 month")), PDO::PARAM_STR);
-	$result->bindValue('limit', 500, PDO::PARAM_INT);
+	$result->bindValue('limit', 300, PDO::PARAM_INT);
 	$result->execute();
 	$kintore_log = $result->fetchAll(PDO::FETCH_ASSOC);
 	$result = null;

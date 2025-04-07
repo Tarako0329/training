@@ -136,19 +136,20 @@
 									</div>
 									<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
 										<div class='row m-0 lst accordion-body'>
-											<div v-if="list.typ==='0'" class='col-12' style='padding:0  0 6px;display:flex;height:100%;'><!--ウェイト-->
-												<div style='width: 20px;'>{{list.setjun}}</div>
-												<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
-												<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
-												<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
-												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-												<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
-												<button type='button' class='icn-btn' style='' 
-													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
-													<i class='bi bi-pencil'></i>
-												</button>
-											</div>
-											<div v-if="list.typ==='2'" class='col-12' style='padding:0  0 6px;display:flex;height:100%;'><!--nonウェイト-->
+											<div class='col-12' style='padding:0;display:flex;'><!--ウェイト-->
+												<template v-if="list.typ==='0'" >
+													<div style='width: 20px;'>{{list.setjun}}</div>
+													<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
+													<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+													<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
+													<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
+													<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+													<button type='button' class='icn-btn' style='' 
+														@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
+														<i class='bi bi-pencil'></i>
+													</button>
+												</template>
+												<template v-if="list.typ==='2'">
 												<div style='width: 20px;'>{{list.setjun}}</div>
 												<div class='text-end' style='width: 70px;padding:0;'>自重</div>
 												<div v-if="list.tani==='0'"       class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
@@ -159,18 +160,22 @@
 													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
 													<i class='bi bi-pencil'></i>
 												</button>
-											</div>
-											<div v-if="list.typ==='1'" class='col-12' style='padding:0  0 6px;display:flex;height:100%;'><!--有酸素-->
+												</template>
+												<template v-if="list.typ==='1'">
 												<div style='width: 20px;'>{{list.setjun}}</div>
 												<div class='text-end' style='width: 50px;padding-right:0;'>{{list.rep}}分</div>	
 												<div class='text-end' style='width: 70px;padding:0;'>{{list.rep2}}ｍ</div>
-		
 												<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
 												<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 												<button type='button' class='icn-btn' style='' 
 													@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ,"usanso")'>
 													<i class='bi bi-pencil'></i>
 												</button>
+												</template>
+											</div>
+											<div class='col-12' style='padding:0;display:flex;font-size:12px;'><!--時刻-->
+												<div style='width: 20px;'></div>
+												<div class='text-start' style='padding:0;'>記録時刻[{{list.jikoku}}]</div>
 											</div>
 										</div>
 									</div>
