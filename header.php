@@ -55,26 +55,26 @@
 <meta name="msapplication-TileColor" content="#2b5797">-->
 <meta name="theme-color" content="#ffffff">
 <!-- Bootstrap5 CSS -->
-<link href="https:/cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <!-- Bootstrap Javascript -->
-<script src="https:/cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <!-- bootstrap-icons -->
-<link rel="stylesheet" href="https:/cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <!-- オリジナル CSS -->
 <link rel="stylesheet" type="text/css" href="css/st_sheet.css?<?php echo $time; ?>">
 <!-- Vue.js -->
-<script src="https:/cdn.jsdelivr.net/npm/vue@3.4.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@3.4.4"></script>
 <!--ajaxライブラリ-->
-<script src="https:/cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
 <script>axios.defaults.baseURL = "<?php echo ROOT_URL;?>";</script>
 
 <meta property='og:locale' content='ja_JP' />
 <meta property='og:title' content='『トレーニングを記録しよう』' />
 <meta property='og:type' content='website' />
-<meta property='og:url' content='https:/muscle.greeen-sys.com/' />
-<meta property='og:image' content='https:/muscle.greeen-sys.com/img/koukoku.png' />
+<meta property='og:url' content='https://muscle.greeen-sys.com/' />
+<meta property='og:image' content='https://muscle.greeen-sys.com/img/koukoku.png' />
 <meta property='og:site_name' content='肉体改造ネットワーク' />
-<meta property='article:author' content='https:/www.facebook.com/greengreenmidori'>
+<meta property='article:author' content='https://www.facebook.com/greengreenmidori'>
 <meta property='og:description' content='筋トレ記録・解析ＷＥＢアプリ' />
 <meta property='fb:admins' content='100000504600659' />
 <script>
