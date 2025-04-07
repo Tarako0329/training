@@ -174,8 +174,8 @@
 												</template>
 											</div>
 											<div class='col-12' style='padding:0;display:flex;font-size:12px;'><!--時刻-->
+												<div class='text-start ps-1' style='margin-top:-5px;'>記録 [{{list.jikoku}}]</div>
 												<div style='width: 20px;'></div>
-												<div class='text-start' style='padding:0;'>記録時刻[{{list.jikoku}}]</div>
 											</div>
 										</div>
 									</div>
