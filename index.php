@@ -26,6 +26,7 @@ if($logoff==="out"){
 	//exit();
 }else{
 	$msg=(!empty($_SESSION["msg"]))?$_SESSION["msg"]:"";
+	$_SESSION["msg"]="";
 }
 
 if($_COOKIE["user_type"]==="google"){
@@ -54,7 +55,8 @@ $token=get_token();
 	<TITLE>肉体改造ネットワーク</TITLE>
 	<BODY>
 		<div class='text-center'>
-			<IMG src="img/kanban.png" style="width:300px;">
+			<!--<IMG src="img/kanban.png" style="width:300px;">-->
+			<IMG src="img/kanban2.png" style="width:300px;">
 		</div>
 		<MAIN class='container' id='main'>
 			<div v-if='msg!==""'  class='alert alert-warning text-center' role="alert">{{msg}}</div>
