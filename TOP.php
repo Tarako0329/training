@@ -18,15 +18,25 @@
 		echo "きたよ";
 		exit();
 	}
-	$msg="";
-	$shu="";
-	if(isset($_GET["msg"])==="error"){
+	//$msg="";
+	//$shu="";
+	/*if(isset($_GET["msg"])==="error"){
 		$msg=$_GET["msg"];
+	}*/
+	$logoff=!empty($_GET["logoff"])?$_GET["logoff"]:"";
+
+	if($logoff === "out"){
+		delete_old_token($_COOKIE['token']);
+		setCookie("token", '', -1, "/", "", true, true);
+		$_SESSION=[];
+		$_SESSION["msg"] = "ログオフしました";
+		header("HTTP/1.1 301 Moved Permanently");
+		header("Location: index.php");
+		exit();
 	}
-	$shu=!empty($_GET["shu"])?$_GET["shu"]:"%";
 
 	$now = date('Y-m-d');
-	$week = [
+	/*$week = [
 	  '日', //0
 	  '月', //1
 	  '火', //2
@@ -34,9 +44,9 @@
 	  '木', //4
 	  '金', //5
 	  '土', //6
-	];
+	];*/
 
-	unset($sql);
+	//unset($sql);
 
 	$sql = "select * from users where ((id)=?)";
 	$stmt = $pdo_h->prepare( $sql );
@@ -91,7 +101,7 @@
         	  <ul class="dropdown-menu">
 							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#user_info'>ユーザー情報</a></li>
 							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#pwa_info'>インストール手順</a></li>
-        	    <li><a class="dropdown-item" href="index.php?logoff=out">ログオフ</a></li>
+        	    <li><a class="dropdown-item" href="TOP.php?logoff=out">ログオフ</a></li>
         	  </ul>
         	</div>
 					<div class="nav-item dropdown position-absolute start-50 top-50 translate-middle" style=''>

@@ -10,9 +10,9 @@ $logoff = (!empty($_GET["logoff"]))?$_GET["logoff"]:"";
 
 
 $msg="";
-if($logoff==="out"){
+if($_SESSION["msg"] === "ログオフしました"){
 	delete_old_token($_COOKIE['token']);
-	$_SESSION["USER_ID"] = "";
+	$_SESSION = [];
 	setCookie("token", '', -1, "/", "", true, true);
 	$msg='ログオフしました';
 }else if($logoff==="sinkitouroku"){

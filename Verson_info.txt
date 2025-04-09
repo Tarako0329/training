@@ -84,7 +84,8 @@ ver1.20.2:pwaインストール補助-commited
 ver1.20.3:pwaインストール補助-commited
 ver1.20.4:pwaインストール補助微調整-commited
 ver1.20.5:google_longin微調整-commited
-ver1.20.6:記録時刻表示
+ver1.20.6:記録時刻表示-commited
+ver1.20.7:ログオフロジック変更
 
 
 
