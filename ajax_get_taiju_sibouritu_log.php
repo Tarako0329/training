@@ -57,13 +57,15 @@ $sql = "SELECT
 	,round(avg(weight)-(avg(weight)*avg(taisibou)/100),1) as josibou
 	,MIN(DATEDIFF(now(),ymd)) as beforedate
 	,MIN(TIMESTAMPDIFF(MONTH, ymd, CURDATE())) as label_bk
-	,IF(MIN(TIMESTAMPDIFF(MONTH, ymd, CURDATE()))=0,'今月'
-		,CONCAT(MIN(TIMESTAMPDIFF(MONTH, ymd, CURDATE())),'ヶ月前',
+	,CONCAT(
+		IF(((YEAR(CURDATE()) - YEAR(MIN(ymd))) * 12 + (MONTH(CURDATE()) - MONTH(MIN(ymd)))) = 0
+			,'今月'
+			,CONCAT(((YEAR(CURDATE()) - YEAR(MIN(ymd))) * 12 + (MONTH(CURDATE()) - MONTH(MIN(ymd)))),'ヶ月前')),
 		CASE
-		WHEN right(ymd,2) <= 10 THEN '上旬'
+			WHEN right(ymd,2) <= 10 THEN '上旬'
 	    WHEN right(ymd,2) <= 20 THEN '中旬'
 	    WHEN right(ymd,2) <= 31 THEN '下旬'
-	END)) as label
+	END) as label
 	FROM `taisosiki`
 	where id=?
 	group by id,left(ymd,7) 
