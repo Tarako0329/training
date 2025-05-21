@@ -267,7 +267,7 @@
 			<!--↓インストールモーダル-->
 			
 			<?php 
-			$icon="img/mstile2-150x150.png";
+			$icon="img/icon-128x128.png";
 			require "install_modal.php";
 			?>
 

@@ -87,6 +87,7 @@ ver1.20.5:google_longin微調整-commited
 ver1.20.6:記録時刻表示-commited
 ver1.20.7:ログオフロジック変更-commited
 ver1.20.8:グラフのタッチポイントエリア拡大-commited
+ver1.20.8:グラフの改善
 
 
 
