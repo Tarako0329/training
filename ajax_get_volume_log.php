@@ -106,7 +106,7 @@ if($tani==="month"){
 		ORDER BY TEMP.ymd";
 }
 
-$graph_title = "『".$shu."のﾄﾚｰﾆﾝｸﾞ量推移』";
+$graph_title = "のﾄﾚｰﾆﾝｸﾞ量推移";
 
 $result = $pdo_h->prepare( $sql );
 if($tani==="month"){
@@ -179,17 +179,17 @@ if($gtype==="hikaku"){//前年比
 	$glabel1="今年";
 	$glabel2="前年";
 	$subtitle = "各月の総Volと最大Vol";
-	$graph_title .= "（前年比較）";
+	//$graph_title .= "（前年比較）";
 }else if($gtype==="all"){//全期間
 	$glabel1="1日最大Vol";
 	$glabel2=($tani==="month")?"月間総Vol":"1日Vol";
 	$subtitle = "全期間対象のVolume推移";
-	$graph_title .= "（全期間）";
+	//$graph_title .= "（全期間）";
 }else if($gtype==="12M"){//直近１年
 	$glabel1="1日最大Vol";
 	$glabel2=($tani==="month")?"月間総Vol":"1日Vol";
 	$subtitle = "直近１年のVolume推移";
-	$graph_title .= "（直近１年）";
+	//$graph_title .= "（直近１年）";
 }
 
 if($min_val===0 || $min_val <= 500){

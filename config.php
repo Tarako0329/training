@@ -4,7 +4,7 @@ session_start();
 date_default_timezone_set('Asia/Tokyo');
 require "./vendor/autoload.php";
 require "functions.php";
-$time="ver1.20.9";
+$time="ver1.21.0";
 
 //.envの取得
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);

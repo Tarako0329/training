@@ -141,7 +141,8 @@ if($tani==="month"){
 
 }
 
-$graph_title = "『".$shu."のＭＡＸ推移』";
+//$graph_title = "『".$shu."のＭＡＸ推移』";
+$graph_title = "のＭＡＸ推移";
 
 $typ=1;
 

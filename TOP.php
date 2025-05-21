@@ -18,11 +18,7 @@
 		echo "きたよ";
 		exit();
 	}
-	//$msg="";
-	//$shu="";
-	/*if(isset($_GET["msg"])==="error"){
-		$msg=$_GET["msg"];
-	}*/
+
 	$logoff=!empty($_GET["logoff"])?$_GET["logoff"]:"";
 
 	if($logoff === "out"){
@@ -36,17 +32,6 @@
 	}
 
 	$now = date('Y-m-d');
-	/*$week = [
-	  '日', //0
-	  '月', //1
-	  '火', //2
-	  '水', //3
-	  '木', //4
-	  '金', //5
-	  '土', //6
-	];*/
-
-	//unset($sql);
 
 	$sql = "select * from users where ((id)=?)";
 	$stmt = $pdo_h->prepare( $sql );

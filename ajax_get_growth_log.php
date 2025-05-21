@@ -79,7 +79,7 @@ $dataset_work=[];
 $sql = "select ymd,DATEDIFF(?,ymd) as beforedate,ROW_NUMBER() OVER(order by ymd) as No,sum(weight*rep*sets) as weight ";
 $sql .= "from tr_log where id = ? and shu = ? and ymd between DATE_SUB(?,INTERVAL 4 MONTH) and ? group by ymd,shu,id ";
 $sql .= "order by ymd";
-$graph_title = "『".$shu."MAX更新前のVolume推移』";
+$graph_title = "MAX更新前のVolume推移";
 $subtitle="最初のMAX更新日4ヵ月前から";
 
 $result = $pdo_h->prepare( $sql );

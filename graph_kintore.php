@@ -19,7 +19,6 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 }	
 
 //トレーニングデータから直近3か月分の継続を確認したらデフォルトを月計とする
-//$sql='SELECT MAX(DATEDIFF(now(),ymd)) as before_date FROM tr_log WHERE id=:id and shu=:shu GROUP BY id,shu';
 $sql='SELECT left(ymd,7) FROM `tr_log` WHERE id=:id and shu=:shu  and DATEDIFF(now(),ymd) < 93 group by left(ymd,7)';
 $result = $pdo_h->prepare( $sql );
 $result->bindValue('id', $id, PDO::PARAM_STR);
@@ -33,6 +32,14 @@ if(count($data) < 3){
 }else{
 	$tani = "month";
 }
+
+//種目の取得
+//全種目
+$sql = "select typ,shu,max(insdatetime) as sort from tr_log where id = :id and typ=0 group by shu ,typ order by sort desc, typ";
+$result = $pdo_h->prepare( $sql );
+$result->bindValue("id", $id, PDO::PARAM_STR);
+$result->execute();
+$shumoku_list = $result->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -50,7 +57,13 @@ if(count($data) < 3){
 			<div class='container'>
 			<div class='row' style='height:100%;'>
 				<div class='col-12' style='justify-content: center;height: auto;max-height:60px;position:relative;'>
-					<p class="graph-title">{{graph_title}}</p>
+					<p class="graph-title">
+						<select class="form-select form-select-sm" v-model='shu' style="width: 150px;display:inline-block;">
+							<template v-for='(list,index) in shu_list' :key='list.shu' >
+								<option :value='list.shu'>{{list.shu}}</option>
+							</template>
+						</select>
+						{{graph_title}}</p>
 					<p v-show='graph_subtitle!==""' style='color:darkgrey;font-size:12px;'>{{graph_subtitle}}</p>
 				</div>
 				<div class='col-12 text-end' style='margin-top:-10px;'>
@@ -176,6 +189,7 @@ if(count($data) < 3){
 				const g_shu = ref('max')	//max,volume,growth
 				const tani = ref('<?php echo $tani;?>') //day or month
 				const shu = ref('<?php echo $shu;?>')	//トレーニング種目
+				const shu_list = ref(<?php echo json_encode($shumoku_list, true);?>)	//トレーニング種目
 				const graph_title = ref('')
 				const graph_subtitle = ref('')
 				let datasets = []
@@ -186,7 +200,7 @@ if(count($data) < 3){
 				let y2_min = 0
 				let y1_max = null
 
-				watch([gtype,g_shu,tani],()=>{
+				watch([gtype,g_shu,tani,shu],()=>{
 					if(tani.value==="day" && gtype.value==="hikaku"){
 						gtype.value = "12M"
 					}
@@ -656,6 +670,8 @@ if(count($data) < 3){
 					}
 				})
 				return{
+					shu,
+					shu_list,
 					kintore_log,
 					graph_title,
 					graph_subtitle,
