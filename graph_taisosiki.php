@@ -201,6 +201,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									//,stepped: 'middle'
 									,borderWidth: 2
 									, pointRadius:1
+									,pointHitRadius: 10 // Added for larger touch area
 									//,type:'bar'
 									,yAxisID:"y1"
 								})
@@ -212,41 +213,18 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									//,fill:true
 									//,stepped: 'middle'
 									,borderWidth: 2
-									, pointRadius:1
+									,pointRadius:1
+									,pointHitRadius: 10 // Added for larger touch area
 									//,type:'bar'
 									,yAxisID:"y2"
 								})
-								/*color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
-								datasets.push({
-									'label':response.data.glabel1
-									,'data':response.data.graph_data3
-									,'backgroundColor':  color3 + opacity1
-									,borderColor:  color3 + opacity1
-									//,fill:true
-									//,stepped: 'middle'
-									,borderWidth: 4
-									, pointRadius:2
-									//,type:'bar'
-								})
-								datasets.push({
-									'label':response.data.glabel2
-									,'data':response.data.graph_data4
-									,'backgroundColor':  color4 + opacity1
-									,borderColor:  color4 + opacity1
-									//,fill:true
-									//,stepped: 'middle'
-									,borderWidth: 4
-									, pointRadius:2
-									//,type:'bar'
-								})*/
-
-
 							}else if(gtype.value==='all'){
 								color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
 								datasets.push({
 									'label':response.data.glabel1
 									,'data':response.data.graph_data1
-									, pointRadius:1
+									,pointRadius:1
+									,pointHitRadius: 10 // Added for larger touch area
 									,'backgroundColor': color
 									,borderColor: color
 									,borderWidth: 2
@@ -262,7 +240,8 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 									,borderColor: color
 									//,fill:true
 									,borderWidth: 2
-									//, pointRadius:1
+									,pointRadius:1
+									,pointHitRadius: 10 // Added for larger touch area
 									//,type:'bar'
 									,yAxisID:"y2"
 								})

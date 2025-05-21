@@ -46,78 +46,78 @@ if(count($data) < 3){
 </HEAD>
 <BODY class='graph'>
 	<div id='app'>
-	<div id="headerArea2">
-		<div class='container'>
-		<div class='row' style='height:100%;'>
-			<div class='col-12' style='justify-content: center;height: auto;max-height:60px;position:relative;'>
-				<p class="graph-title">{{graph_title}}</p>
-				<p v-show='graph_subtitle!==""' style='color:darkgrey;font-size:12px;'>{{graph_subtitle}}</p>
-			</div>
-			<div class='col-12 text-end' style='margin-top:-10px;'>
-				<a href="#" data-bs-toggle='modal' data-bs-target='#mokuhyou' style='font-size:12px;'>{{mokuhyou_disp}}</a>
-			</div>
-			<div class='col-12' id="graph" style='height:250px;margin-bottom:5px;position:relative;max-width:900px;'>
-				<canvas id="myChart"></canvas>
-			</div>
-			
-			<div class='d-flex align-items-center justify-content-center' style='width: 100%;height:40px;'>
-				<div class='text-end' style='width:40%;max-width:200px;'>
-					<select v-model='g_shu' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
-						<option value='max'>MAX記録</option>
-						<option value='volume'>トレーニング量</option>
-						<option value='growth'>MAX更新前</option>
-					</select>
+		<div id="headerArea2">
+			<div class='container'>
+			<div class='row' style='height:100%;'>
+				<div class='col-12' style='justify-content: center;height: auto;max-height:60px;position:relative;'>
+					<p class="graph-title">{{graph_title}}</p>
+					<p v-show='graph_subtitle!==""' style='color:darkgrey;font-size:12px;'>{{graph_subtitle}}</p>
 				</div>
-				<div class='text-center' style='width:25%;max-width:200px;'>
-					<select v-model='tani' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
-						<option value='day'>日毎</option>
-						<option value='month'>月毎</option>
-					</select>
+				<div class='col-12 text-end' style='margin-top:-10px;'>
+					<a href="#" data-bs-toggle='modal' data-bs-target='#mokuhyou' style='font-size:12px;'>{{mokuhyou_disp}}</a>
 				</div>
-				<div class='text-start' style='width:35%;max-width:200px;'>
-					<select v-show='g_shu!=="growth"' v-model='gtype' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
-						<option value='12M'>直近12ヵ月</option>
-						<option value='all'>全期間</option>
-						<option v-show='tani==="month"' value='hikaku'>前年比較</option>
-					</select>
+				<div class='col-12' id="graph" style='height:250px;margin-bottom:5px;position:relative;max-width:900px;'>
+					<canvas id="myChart"></canvas>
 				</div>
-			</div>
-		</div>
-	</div>
-	</div>
-	<main class='container ps-0 pe-0' style='height:calc(100vh - 372px);overflow-y: scroll;padding-bottom:90px;'>
-		<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
-			<div >
-				<div v-if='String(list.jun)==="0"' class='row m-0 shu accordion-header'>
-					<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd}${list.shu}`' 
-					aria-expanded='false' aria-controls='collapseOne' >
-						{{list.ymd}} {{(list.head_wt)}} kg
-					</button>
-				</div>
-				<div v-if='String(list.jun)!=="0"'  :id='`collapseOne${list.ymd}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
-					<div class='row m-0 lst accordion-body'>
-						<div class='col-12' style='padding:0  0 6px;display:flex;height:100%;overflow: hidden;'>
-							<div style='width: 20px;'>{{list.No - 1}}</div>
-							<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
-							<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
-							<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
-							<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-							<div class='' style='padding:0 0 0 10px;width:calc(100vw - 210px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
-						</div>
+
+				<div class='d-flex align-items-center justify-content-center' style='width: 100%;height:40px;'>
+					<div class='text-end' style='width:40%;max-width:200px;'>
+						<select v-model='g_shu' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
+							<option value='max'>MAX記録</option>
+							<option value='volume'>トレーニング量</option>
+							<option value='growth'>MAX更新前</option>
+						</select>
+					</div>
+					<div class='text-center' style='width:25%;max-width:200px;'>
+						<select v-model='tani' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
+							<option value='day'>日毎</option>
+							<option value='month'>月毎</option>
+						</select>
+					</div>
+					<div class='text-start' style='width:35%;max-width:200px;'>
+						<select v-show='g_shu!=="growth"' v-model='gtype' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
+							<option value='12M'>直近12ヵ月</option>
+							<option value='all'>全期間</option>
+							<option v-show='tani==="month"' value='hikaku'>前年比較</option>
+						</select>
 					</div>
 				</div>
 			</div>
-		</template>
-	</main>
-	<footer id=""  class='footerArea' >
-		<div class='container hf_color'>
-		<div class='row'>
-			<div class='col-12 text-center'>
-				<a href='TOP.php' class='btn btn-secondary ps-5 pe-5' style = 'margin-top:0.8em;'>戻 る</a>
+		</div>
+		</div>
+		<main class='container ps-0 pe-0' style='height:calc(100vh - 372px);overflow-y: scroll;padding-bottom:90px;'>
+			<template v-for='(list,index) in kintore_log' :key='list.ymd+list.jun'>
+				<div >
+					<div v-if='String(list.jun)==="0"' class='row m-0 shu accordion-header'>
+						<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd}${list.shu}`' 
+						aria-expanded='false' aria-controls='collapseOne' >
+							{{list.ymd}} {{(list.head_wt)}} kg
+						</button>
+					</div>
+					<div v-if='String(list.jun)!=="0"'  :id='`collapseOne${list.ymd}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
+						<div class='row m-0 lst accordion-body'>
+							<div class='col-12' style='padding:0  0 6px;display:flex;height:100%;overflow: hidden;'>
+								<div style='width: 20px;'>{{list.No - 1}}</div>
+								<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
+								<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+								<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
+								<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
+								<div class='' style='padding:0 0 0 10px;width:calc(100vw - 210px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</template>
+		</main>
+		<footer id=""  class='footerArea' >
+			<div class='container hf_color'>
+			<div class='row'>
+				<div class='col-12 text-center'>
+					<a href='TOP.php' class='btn btn-secondary ps-5 pe-5' style = 'margin-top:0.8em;'>戻 る</a>
+				</div>
 			</div>
-		</div>
-		</div>
-	</footer>
+			</div>
+		</footer>
 		<!--↓目標設定モーダル-->
 		<div class='modal fade' id='mokuhyou' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 			<div class='modal-dialog  modal-dialog-centered'>
@@ -243,6 +243,7 @@ if(count($data) < 3){
 									,fill:true
 									,borderWidth: 4
 									,pointRadius:2
+									,pointHitRadius: 10 // Added for larger touch area
 									,segment: {
       						  borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') ,
       						  borderDash: ctx => skipped(ctx, [6, 6]),
@@ -258,6 +259,7 @@ if(count($data) < 3){
 									,fill:true
 									,borderWidth: 2
 									,pointRadius:1
+									,pointHitRadius: 10 // Added for larger touch area
 									,segment: {
       						  borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') ,
       						  borderDash: ctx => skipped(ctx, [6, 6]),
@@ -269,7 +271,8 @@ if(count($data) < 3){
 								datasets.push({
 									'label':response.data.glabel1
 									,'data':response.data.graph_data1
-									, pointRadius:1
+									,pointRadius:1
+									,pointHitRadius: 10 // Added for larger touch area
 									,'backgroundColor': color
 									,borderColor: color
 									,borderWidth: 2
@@ -290,6 +293,7 @@ if(count($data) < 3){
 									,fill:fill_sts
 									,borderWidth: 4
 									,pointRadius:2
+									,pointHitRadius: 10 // Added for larger touch area
 									,segment: {
       						  borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') ,
       						  borderDash: ctx => skipped(ctx, [6, 6]),
