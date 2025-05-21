@@ -24,7 +24,7 @@ $msg="";
 $alert_status="";
 
 //履歴取得
-$sql = "select ROW_NUMBER() OVER(partition by id order by id,ymd) as No,taisosiki.*,round(weight*taisibou/100,1) as sibouryou,round(weight-(weight*taisibou/100),1) as josibou ,DATEDIFF(now(),ymd) as beforedate
+$sql = "SELECT ROW_NUMBER() OVER(partition by id order by id,ymd) as No,taisosiki.*,round(weight*taisibou/100,1) as sibouryou,round(weight-(weight*taisibou/100),1) as josibou ,DATEDIFF(now(),ymd) as beforedate
 from taisosiki where id = ? order by ymd desc ";
 
 $result = $pdo_h->prepare( $sql );
@@ -34,7 +34,7 @@ $taisosiki_log = $result->fetchAll(PDO::FETCH_ASSOC);
 
 
 //BMI算出用に身長取得
-$sql = "select (height/100) as height from users where id = ?";
+$sql = "SELECT (height/100) as height from users where id = ?";
 
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
@@ -56,7 +56,14 @@ $sql = "SELECT
 	,round(avg(weight)*avg(taisibou)/100,1) as sibouryou
 	,round(avg(weight)-(avg(weight)*avg(taisibou)/100),1) as josibou
 	,MIN(DATEDIFF(now(),ymd)) as beforedate
-	,MIN(TIMESTAMPDIFF(MONTH, ymd, CURDATE())) as label
+	,MIN(TIMESTAMPDIFF(MONTH, ymd, CURDATE())) as label_bk
+	,IF(MIN(TIMESTAMPDIFF(MONTH, ymd, CURDATE()))=0,'今月'
+		,CONCAT(MIN(TIMESTAMPDIFF(MONTH, ymd, CURDATE())),'ヶ月前',
+		CASE
+		WHEN right(ymd,2) <= 10 THEN '上旬'
+	    WHEN right(ymd,2) <= 20 THEN '中旬'
+	    WHEN right(ymd,2) <= 31 THEN '下旬'
+	END)) as label
 	FROM `taisosiki`
 	where id=?
 	group by id,left(ymd,7) 
@@ -113,11 +120,11 @@ foreach($dataset_work as $row){
 			$graph_data2[] = $taisibou;	
 			$labels[] = $row["label"];
 
-		}else if($row["beforedate"]<=730){
+		}/*去年との比較はやめた
+		else if($row["beforedate"]<=730){
 			$graph_data3[] = $weight;	
 			$graph_data4[] = $taisibou;	
-			
-		}
+		}*/
 	}else if($gtype==="all"){//全期間
 		$graph_data1[] = $weight;
 		$graph_data2[] = $taisibou;

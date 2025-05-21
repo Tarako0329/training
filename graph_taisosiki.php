@@ -45,7 +45,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 				<div class='text-start' style='width:50%;max-width:200px;'>
 					<select v-model='gtype' class='form-select' style='width:100%;max-width:200px;'>
 						<option value='all'>全期間</option>
-						<option value='year'>前年比較</option>
+						<option value='year'>直近１年</option>
 					</select>
 				</div>
 			</div>
@@ -266,9 +266,14 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 					}else{
 
 					}
+					localStorage.setItem('gtype_ts',gtype.value);
+					localStorage.setItem('shu_ts',shu.value);
 				})
 				onMounted(() => {
 					console_log('onMounted')
+					if(localStorage.getItem('gtype_ts')){gtype.value = localStorage.getItem('gtype_ts')}
+					if(localStorage.getItem('shu_ts')){shu.value = localStorage.getItem('shu_ts')}
+
 					get_taiju_data()
 				})
 
