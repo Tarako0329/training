@@ -145,27 +145,27 @@
 													</button>
 												</template>
 												<template v-if="list.typ==='2'">
-												<div style='width: 20px;'>{{list.setjun}}</div>
-												<div class='text-end' style='width: 70px;padding:0;'>自重</div>
-												<div v-if="list.tani==='0'"       class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
-												<div v-else-if="list.tani==='1'"  class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
-												<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-												<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
-												<button type='button' class='icn-btn' style='' 
-													@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
-													<i class='bi bi-pencil'></i>
-												</button>
-												</template>
-												<template v-if="list.typ==='1'">
-												<div style='width: 20px;'>{{list.setjun}}</div>
-												<div class='text-end' style='width: 50px;padding-right:0;'>{{list.rep}}分</div>	
-												<div class='text-end' style='width: 70px;padding:0;'>{{list.rep2}}ｍ</div>
-												<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
-												<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
-												<button type='button' class='icn-btn' style='' 
-													@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ,"usanso")'>
-													<i class='bi bi-pencil'></i>
-												</button>
+													<div style='width: 20px;'>{{list.setjun}}</div>
+													<div class='text-end' style='width: 70px;padding:0;'>自重</div>
+													<div v-if="list.tani==='0'"       class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+													<div v-else-if="list.tani==='1'"  class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
+													<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
+													<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+													<button type='button' class='icn-btn' style='' 
+														@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
+														<i class='bi bi-pencil'></i>
+													</button>
+													</template>
+													<template v-if="list.typ==='1'">
+													<div style='width: 20px;'>{{list.setjun}}</div>
+													<div class='text-end' style='width: 50px;padding-right:0;'>{{list.rep}}分</div>	
+													<div class='text-end' style='width: 70px;padding:0;'>{{list.rep2}}ｍ</div>
+													<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
+													<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+													<button type='button' class='icn-btn' style='' 
+														@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ,"usanso")'>
+														<i class='bi bi-pencil'></i>
+													</button>
 												</template>
 											</div>
 											<div class='col-12' style='padding:0;display:flex;font-size:12px;'><!--時刻-->
@@ -413,7 +413,8 @@
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='memo2' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo2' name='memo' :value='memo'>
+									<!--<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo2' name='memo' :value='memo'>-->
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo2' name='memo' v-model='memo'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='condition' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
@@ -442,7 +443,7 @@
 			</div>
 
 			<!--↓ウェイト記録モーダル-->
-			<div class='modal fade' id='edit_wt' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true' >
+			<div class='modal fade' id='edit_wt' data-bs-backdrop="static" tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true' >
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
 						<form method = 'post' @submit.prevent='OnSubmit' id='wt'>
@@ -542,7 +543,7 @@
 									<div class='row' style='margin:1px 20px 1px 20px;'>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>{{zero_ten}}</button>
 										<button v-show='rm_mode===false' type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>C</button>
+										<button type='button' class='btn btn-primary input-btn' @click='keydown'>ｸﾘｱ</button>
 									</div>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
 										<button type='button' class='btn btn-primary' style='height:50px;width:50%' @click='keydown' value='-1'>≪</button>
@@ -555,7 +556,8 @@
 
 								<div class='row' style='margin:1px 20px;'>
 									<label for='memo3' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo3' name='memo' :value="memo">
+									<!--<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo3' name='memo' :value="memo">-->
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo3' name='memo' v-model="memo">
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='condition2' class="form-label" style='padding-left:0;margin-bottom:1px;'>今日のコンディション</label>
@@ -587,9 +589,11 @@
 			createApp({
 				setup(){
 					const lock_trlog_area = () =>{
+						console_log('lock_trlog_area')
 						background_show.value=false
 					}
 					const unlock_trlog_area = () =>{
+						console_log('unlock_trlog_area')
 						background_show.value=true
 					}
 
@@ -620,6 +624,7 @@
 					const filter = ref('%')
 
 					const week = (date) =>{
+						console_log('week')
 						const WeekChars = [ "(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)" ];
 						let dObj = new Date( date );
 						let wDay = dObj.getDay();
@@ -637,6 +642,7 @@
 					})
 					const disp_area = ref(false)
 					watch(disp_area,()=>{
+						console_log('watch(disp_area')
 						document.getElementById('migi_area').classList.toggle('col-12')
 						document.getElementById('migi_area').classList.toggle('d-none')
 						document.getElementById('migi_area').classList.toggle('d-sm-block')
@@ -709,12 +715,13 @@
 					let before_val = '-'
 					const zero_ten = computed(()=>{if(rm_mode.value){return '10'}else{return '0'}})
 					const keydown = (e) => {//電卓ボタンの処理
+						console_log('keydown')
 						console_log('target.value=' + e.target.value)
 						console_log('target.innerHTML=' + e.target.innerHTML)
-						if(e.target.innerHTML==="C"){//クリア
+						if(e.target.innerHTML==="ｸﾘｱ"){//クリア
 							kiroku.value[kiroku_index.value] = 0
 							before_val='-'
-							console_log('c')
+							console_log('ｸﾘｱ')
 						}else if(e.target.value==='-1'){//フォーカス戻る
 							console_log('<')
 							if(kiroku_index.value===0){return}
@@ -761,6 +768,7 @@
 					}
 
 					const get_rm_weight = (p_rm) =>{
+						console_log('get_rm_weight')
 						if(rm_mode.value){
 							axios.get(`ajax_get_RM_weight.php?shu=${shu.value}&rep=${p_rm}`)
 							.then((response)=>{
@@ -798,6 +806,7 @@
 					const memo = ref('')
 
 					const set_shumoku =(p_shu,p_type) =>{
+						console_log('set_shumoku')
 						if(p_type==="wt"){
 							shu.value = p_shu
 							document.getElementById('tr_select').click()
@@ -884,6 +893,7 @@
 
 					//let new_shu
 					const add_shumoku = (p_type,p_id) =>{
+						console_log('add_shumoku')
 						/*
 						console_log(`add_shumoku_wt e:${e.target.value}`)
 						shumoku_wt.value.unshift({shu:e.target.value,sort:''})
@@ -1012,6 +1022,7 @@
 					const dragIndex = ref(null);
 
 					const move_recorde = (p_index) =>{//マウス
+						console_log('move_recorde')
 						// 出力テスト
 						if(setting_switch1.value===false){return}
 						//e.preventDefault()
@@ -1048,6 +1059,7 @@
 
 					const setting_switch1 = ref(false)
 					const setting1 = () =>{
+						console_log('setting1')
 						if(setting_switch1.value===false){
 							//alert('項目の表示非表示、ドラッグアンドドロップによる並べ替えを行います')
 							setting_switch1.value=true
@@ -1097,6 +1109,7 @@
 						  console.log('モーダルが閉じました');
 							unlock_trlog_area()
 						});
+
 						if (window.matchMedia('(display-mode: standalone)').matches) {
 							// PWAとして起動された場合の処理
 						} else {
