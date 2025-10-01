@@ -80,5 +80,7 @@
             "form_factor": "wide",
             "label": "ホーム画面サンプル"
         }
-      ]
+      ],
+		"orientation":"landscape",
+		"lang":"ja"
 }
