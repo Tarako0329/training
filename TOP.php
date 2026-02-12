@@ -201,7 +201,7 @@
 									<button class='btn btn-secondary p-1 position-absolute pt-0 pb-0' style='right:16px;' @click='setting1()'><i class="bi bi-gear-wide"></i></button>
 								</div>
 							</div>
-							<div class='p-3 pt-0 ' style='overflow-y: scroll;height:470px;' id='ms_training'>
+							<div class='p-3 pt-0 ' style='overflow-y: scroll;height:calc(100vh - 170px);' id='ms_training'>
 								<table class='table table-sm caption-top' style='table-layout: fixed;'>
 									<thead class='table-dark sticky-top'>
 										<tr>
