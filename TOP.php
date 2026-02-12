@@ -63,7 +63,7 @@
 		?>
 		<STYLE>
 			button:active {
-			  /*background-color: red !important;*/
+			  background-color: red !important;
 			}
 			button, .btn {
 			  /* 1. タップ時のデフォルトのグレーの網掛けを消す（反応をクリアにする） */
