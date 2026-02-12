@@ -61,7 +61,11 @@
 		<?php
 		require "header.php";
 		?>
-		
+		<STYLE>
+			button:active {
+			  background-color: red !important;
+			}
+		</STYLE>
 		<TITLE>肉体改造ネットワーク</TITLE>
 	</HEAD>
 	
@@ -1001,6 +1005,11 @@
 									MODAL_INST = new bootstrap.Modal(MODAL, {
 		    						backdrop: 'true' // backdropをstaticに設定
 	  							})
+								}
+								if(jiju.value===true){
+									kiroku.value[0] = "1"
+								}else{
+									kiroku.value[0] = ""
 								}
 
 							}else{
