@@ -2,7 +2,7 @@
 	// 設定ファイルインクルード【開発中】
 	require "config.php";
 
-	//$time=date("YmdHis");
+	$time=date("YmdHis");
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
@@ -89,10 +89,16 @@
 							<p class='mb-1'>ようこそ 
 							<?php echo $user_name;?> さん</p>
 						</div>
-						<div class="toggle_button">
+						<!--<div class="toggle_button">
 						  <input id="toggle" class="toggle_input" type='checkbox' v-model='disp_area' @click=''/>
 						  <label for="toggle" class="toggle_label">
-						</div>
+						</div>-->
+						<div class="toggle_button">
+						  <label class="toggle_label">
+						    <input class="toggle_input" type="checkbox" v-model="disp_area">
+						    <div class="toggle_rail"></div>
+						  </label>
+						</div>					
 					</div>
 					<div class="nav-item dropdown position-absolute end-0 top-0"  style='width:40px;'>
         	  <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
