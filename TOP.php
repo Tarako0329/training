@@ -63,7 +63,18 @@
 		?>
 		<STYLE>
 			button:active {
-			  background-color: red !important;
+			  /*background-color: red !important;*/
+			}
+			button, .btn {
+			  /* 1. タップ時のデフォルトのグレーの網掛けを消す（反応をクリアにする） */
+			  -webkit-tap-highlight-color: transparent;
+
+			  /* 2. ズーム判定を無効にしてタップの反応を最速にする */
+			  touch-image-action: manipulation;
+
+			  /* 3. テキスト選択を防ぐ（連打した時に文字が選択されて重くなるのを防ぐ） */
+			  user-select: none;
+			  -webkit-user-select: none;
 			}
 		</STYLE>
 		<TITLE>肉体改造ネットワーク</TITLE>
@@ -308,7 +319,7 @@
 								</div>
 								<div class='modal-footer'>
 									<button type='button' style='width:90px;font-size:13px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" id=''>キャンセル</button>
-									<button type='submit' style='width:90px;' name='btn' value='update' class="btn btn-primary mbtn" data-bs-dismiss="modal" >更新</button>
+									<button type='submit' style='width:90px;' name='btn' value='update' class="btn btn-primary mbtn" data-bs-dismiss="modal">更新</button>
 								</div>
 						</FORM>
 					</div>
@@ -353,7 +364,7 @@
 							<div class='modal-footer'>
 								<button type='button' style='width:90px;font-size:13px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" id='ts_modal_close'>キャンセル</button>
 								<a href='graph_taisosiki.php' style='width:90px;' class="btn btn-primary mbtn" >履歴</a>
-								<button type='submit' style='width:90px;' name='btn' value='w_ins_bt' class="btn btn-primary mbtn" data-bs-dismiss="modal" >登録</button>
+								<button type='submit' style='width:90px;' name='btn' value='w_ins_bt' class="btn btn-primary mbtn" data-bs-dismiss="modal">登録</button>
 							</div>
 							<input type='hidden' name='hyoji' value='1'>
 							<input type='hidden' name='gtype' value='all'>
@@ -587,7 +598,17 @@
 				</div>
 			</div>
 		</div>
-		
+		<script>
+			// すべてのモーダルに対して有効な設定
+			//閉じるボタンにフォーカスが残るのを防ぐ
+			document.addEventListener('hide.bs.modal', function () {
+			    if (document.activeElement instanceof HTMLElement) {
+			        document.activeElement.blur();
+			    }
+			});
+			// ページ読み込み時に実行される場所に追記
+			document.addEventListener("touchstart", function() {}, true);
+		</script>
 		<script>//Vus.js
 			const { createApp, ref, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
 			createApp({
@@ -842,9 +863,14 @@
 						jiju.value = (typ==="2")?true:false
 
 						MODAL = document.getElementById(modal_id)
+						/*
 						MODAL_INST = new bootstrap.Modal(MODAL, {
     					backdrop: 'static' // backdropをstaticに設定
-  					});
+  					});*/
+						// すでにインスタンスがあるか確認し、なければ作る（二重生成防止）
+						MODAL_INST = bootstrap.Modal.getInstance(MODAL) || new bootstrap.Modal(MODAL, {
+						  backdrop: 'static' // コメント通り「背景クリックで閉じない」にするならこれ
+						});						
 						MODAL_INST.show();
 					}
 					const setCancel = () =>{
@@ -863,10 +889,11 @@
 						mBtnName.value[1] = '閉じる'
 						keybord_show.value=false
 						kiroku_index.value=''
-
+						/*
 						MODAL_INST = new bootstrap.Modal(MODAL, {
-    					backdrop: 'true' // backdropをstaticに設定
+    					backdrop: true // backdropをtrueに設定
   					});
+						*/
 					}
 					const delete_log = (NO,YMD) =>{
 						console_log('delete_log start')
