@@ -14,10 +14,13 @@ define("MAIN_DOMAIN",$_ENV["MAIN_DOMAIN"]);
 define("EXEC_MODE",$_ENV["KANKYO"]);
 if(EXEC_MODE==="local"){
   define("ROOT_URL","http://".MAIN_DOMAIN."/");
-  $time=date('Ymd-His');
 }else{
   define("ROOT_URL","https://".MAIN_DOMAIN."/");
-  
+}
+if(EXEC_MODE==="Product"){
+  $time="2026-02-13";	//リリース日
+}else{
+  $time=date("YmdHis");
 }
 
 

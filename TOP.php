@@ -2,8 +2,6 @@
 	// 設定ファイルインクルード【開発中】
 	require "config.php";
 
-	$time=date("YmdHis");
-
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
 		decho ("session:".$id);
@@ -62,8 +60,8 @@
 		require "header.php";
 		?>
 		<STYLE>
-			button:active {
-			  background-color: red !important;
+			button:active {/*iphoneでのボタン反応を確かめるためのクラス。*/
+			  <?php if(EXEC_MODE!=="Product"){ echo "background-color: red !important;"; }?>
 			}
 			button, .btn {
 			  /* 1. タップ時のデフォルトのグレーの網掛けを消す（反応をクリアにする） */
@@ -89,10 +87,6 @@
 							<p class='mb-1'>ようこそ 
 							<?php echo $user_name;?> さん</p>
 						</div>
-						<!--<div class="toggle_button">
-						  <input id="toggle" class="toggle_input" type='checkbox' v-model='disp_area' @click=''/>
-						  <label for="toggle" class="toggle_label">
-						</div>-->
 						<div class="toggle_button">
 						  <label class="toggle_label">
 						    <input class="toggle_input" type="checkbox" v-model="disp_area">
@@ -434,7 +428,6 @@
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='memo2' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
-									<!--<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo2' name='memo' :value='memo'>-->
 									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo2' name='memo' v-model='memo'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
@@ -577,7 +570,6 @@
 
 								<div class='row' style='margin:1px 20px;'>
 									<label for='memo3' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
-									<!--<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo3' name='memo' :value="memo">-->
 									<input type='text' @focus='keydown' class="form-control form-control-sm" id='memo3' name='memo' v-model="memo">
 								</div>
 								<div class='row' style='margin:1px 20px;'>

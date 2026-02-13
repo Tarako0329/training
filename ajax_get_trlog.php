@@ -19,7 +19,7 @@
 	$alert_status = "";
 
 	//履歴取得
-	$sql = "select log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,TIME_FORMAT(insdatetime, '%H:%i') as jikoku
+	$sql = "SELECT log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,TIME_FORMAT(insdatetime, '%H:%i') as jikoku
 	,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd,log.typ) as total
 	,RANK() OVER(PARTITION BY log.id,log.ymd,shu,log.typ order by jun ) as setjun 
 	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = :id order by log.ymd desc,jun LIMIT :limit";
@@ -34,7 +34,8 @@
 
 	//種目の取得
 	//全種目
-	$sql = "select typ,shu,max(insdatetime) as sort from tr_log where id in (?,'list') group by shu ,typ order by sort desc, typ";
+	//$sql = "SELECT typ,shu,max(insdatetime) as sort from tr_log where id in (?,'list') group by shu ,typ order by sort desc, typ";
+	$sql = "SELECT IF(typ=2,0,typ) as typ,shu,max(insdatetime) as sort from tr_log where id in (?,'list') group by shu ,IF(typ=2,0,typ) order by sort desc, typ";
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue(1, $id, PDO::PARAM_STR);
 	$result->execute();
