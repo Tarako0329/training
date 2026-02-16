@@ -41,7 +41,6 @@
     //ログイン成功
 
     //トークン生成処理
-    //if (($normal_result  == 0 && $auto == true) || $auto_result == 0) {
     if ($normal_result  == 0 || $auto_result == 0) {
 
       //トークンの作成

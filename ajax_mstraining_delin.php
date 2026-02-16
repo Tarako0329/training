@@ -1,5 +1,11 @@
 <?php
+declare(strict_types=1);
 require "config.php";
+require_once "database.php";
+
+$db = new Database();
+$pdo_h = $db->connect();
+
 //トランザクション処理
 log_writer2("\$POST",$_POST,"lv3");
 
@@ -20,8 +26,8 @@ if(isset($_SESSION['USER_ID'])){
 	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
 	exit();
 }
-
-
+$status = "success";
+/*
 try{
 	if(!empty($_POST["data"])){
 		//デリイン
@@ -71,4 +77,43 @@ try{
 
 	exit();
 }
+*/
+if(!empty($_POST["data"])){
+	try{
+		$db->begin_tran();
+		$sql = "delete from ms_training where id = :id ";
+		$db->UP_DEL_EXEC($sql,[":id" => $id]);
+
+		foreach(json_decode($_POST["data"],true) as $row){
+			$db->INSERT("ms_training",[
+				"id" => $id,
+				"shu" => $row["shu"],
+				"sort" => $row["sort"],
+				"display_hide1" => ($row["display_hide1"]===true)?"true":"false",
+				"mokuhyou_type" => $row["mokuhyou_type"],
+				"mokuhyou" => $row["mokuhyou"]
+			]);
+		}
+		$db->commit_tran();
+		$msg = "success";
+	}catch(Exception $e){
+		$msg = "catch Exception \$e：".$e." [SQL = ".$sql." ]";
+		$pdo_h->rollBack();
+		$status = "error";
+	}
+}else{
+	$msg = "ノーデータ";
+}
+
+$return_sts = array(
+	"MSG" => $msg
+	,"status" => $status
+);
+header('Content-type: application/json');
+echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
+exit();
+?>
+
+
+
 ?>

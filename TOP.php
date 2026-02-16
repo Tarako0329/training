@@ -1,6 +1,9 @@
 <?php
 	// 設定ファイルインクルード【開発中】
-	require "config.php";
+	require_once "config.php";
+	require_once "database.php";
+
+	$db = new Database();
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
@@ -9,11 +12,12 @@
 		$id = $_SESSION['USER_ID'];
 		decho ("クッキー:".$id);
 	}else{
-		//header("HTTP/1.1 301 Moved Permanently");
-		//header("Location: index.php");
 		log_writer2("POST",$_POST,"lv3");
 		log_writer2("GET",$_GET,"lv3");
-		echo "きたよ";
+		$_SESSION=[];
+		$_SESSION["msg"] = "ログインしてください。";
+		header("HTTP/1.1 301 Moved Permanently");
+		header("Location: index.php");
 		exit();
 	}
 
@@ -30,17 +34,24 @@
 	}
 
 	$now = date('Y-m-d');
-
+	/*
 	$sql = "select * from users where ((id)=?)";
 	$stmt = $pdo_h->prepare( $sql );
 	$stmt->bindValue(1, $id, PDO::PARAM_STR);
 	$stmt->execute();
 	$row_cnt = $stmt->rowCount();
 	$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	*/
 
-	if($row_cnt==0){
-		echo "<P>ＩＤ 又はパスワードが間違っています。</P>";//.$id.$pass;
-		?><a href="index.php"> 戻る</a><?php
+	$sql = "SELECT * from users where id = :id";
+	$row = $db->SELECT($sql,[":id"=>$id]);
+	$row_cnt = count($row);
+
+	if($row_cnt===0){
+		$_SESSION=[];
+		$_SESSION["msg"] = "ＩＤ 又はパスワードが間違っています。";
+		header("HTTP/1.1 301 Moved Permanently");
+		header("Location: index.php");
 		exit();
 	}
 
@@ -50,8 +61,6 @@
 
 	$user_name = ($row[0]["name"]);
 	$token=get_token();
-	//echo "ログインＯＫ<BR>";
-	//}
 ?>
 <!DOCTYPE html>
 <HTML>
@@ -120,8 +129,8 @@
 				</div>
 			</header>
 			<main v-show='background_show' class='container p-0' style='height:calc(100vh - 115px);'>
-				<div class='row position-relative' style='height:100%;'>
-					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 ' style='height:100%;'>
+				<div class='row position-relative m-0' style='height:100%;'>
+					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 p-0' style='height:100%;'>
 						<div style='overflow-y:scroll;height:100%;width:100%;padding-bottom:170px;' id='tr_log_area'>
 							<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun+list.shu'>
 								<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row m-0' style='position:relative'><div class=' ymd'>{{list.ymd}} {{list.condition}}</div></div><!--日付-->
@@ -198,9 +207,15 @@
 							<div class='row m-0 mb-1 mt-1'>
 								<div class='col-12 ps-3 position-relative'>
 									Max記録と記録時のセット
-									<button class='btn btn-secondary p-1 position-absolute pt-0 pb-0' style='right:16px;' @click='setting1()'><i class="bi bi-gear-wide"></i></button>
+									<!--<button class='btn btn-secondary p-1 position-absolute pt-0 pb-0' style='right:16px;' @click='setting1()'><i class="bi bi-gear-wide"></i></button>-->
+									<button class='btn btn-secondary p-1 position-absolute pt-0 pb-0' style='right:16px;' @click='setting1()'>{{kiroku_btn_name}}</button>
+								</div>
+								<div v-show='setting_switch1' class='col-12 ps-3 pe-3'>
+									<p class='mb-0 bg-light'><small>移動：場所変更したい種目の<i class="bi bi-arrow-down-up ms-1 me-1 "></i>をタップし、移動先の<i class="bi bi-box-arrow-in-down-right ms-1 me-1"></i>をタップ</small></p>
+									<p class='mb-0 bg-light'><small>非表示：隠のチェックボックスにチェック</small></p>
 								</div>
 							</div>
+
 							<div class='p-3 pt-0 ' style='overflow-y: scroll;height:calc(100vh - 170px);' id='ms_training'>
 								<table class='table table-sm caption-top' style='table-layout: fixed;'>
 									<thead class='table-dark sticky-top'>
@@ -1092,12 +1107,14 @@
 					}
 
 					const setting_switch1 = ref(false)
+					const kiroku_btn_name = ref('並替')
 					const setting1 = () =>{
 						console_log('setting1')
 						if(setting_switch1.value===false){
 							//alert('項目の表示非表示、ドラッグアンドドロップによる並べ替えを行います')
 							setting_switch1.value=true
 							document.getElementById('ms_training').style.height='100%'
+							kiroku_btn_name.value='完了'
 						}else{
 							if(confirm('編集を終了します。変更内容を保存しますか？')){
 								const form = new FormData()
@@ -1110,7 +1127,7 @@
 									alert(error)
 								})
 								.finally(()=>{
-									
+									kiroku_btn_name.value='並替'
 								})
 							}else{
 								alert('')
@@ -1207,6 +1224,7 @@
 						lock_trlog_area,
 						unlock_trlog_area,
 						background_show,
+						kiroku_btn_name,
 					}
 				}
 			}).mount('#logger');

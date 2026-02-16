@@ -1,7 +1,8 @@
 <META http-equiv='Content-Type' content='text/html; charset=UTF-8'>
 <META http-equiv='Content-Style-Type' content='text/css'>
 <!-- ピンチzoom不可 -->
-<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<!--<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="msapplication-square70x70logo" content="img/site-tile-70x70.png">
 <meta name="msapplication-square150x150logo" content="img/site-tile-150x150.png">
 <meta name="msapplication-wide310x150logo" content="img/site-tile-310x150.png">

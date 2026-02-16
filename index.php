@@ -1,8 +1,8 @@
 <?php
 require "config.php";
 define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
-$time = microtime();
-$parts = explode(" ", $time);
+//$time = microtime();
+//$parts = explode(" ", $time);
 //$current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
 //log_writer2("index",$current_time_with_microseconds,"lv1");
 

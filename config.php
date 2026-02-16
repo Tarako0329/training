@@ -28,8 +28,10 @@ if(EXEC_MODE==="Product"){
 define("DNS","mysql:host=".$_ENV["SV"].";dbname=".$_ENV["DBNAME"].";charset=utf8");
 define("USER_NAME", $_ENV["DBUSER"]);
 define("PASSWORD", $_ENV["PASS"]);
+define("DB_HOST", $_ENV["SV"]);
+define("DB_NAME", $_ENV["DBNAME"]);
 // DBとの接続
-$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());  //CLASS化
 
 define("key","bonBer");
 ?>
