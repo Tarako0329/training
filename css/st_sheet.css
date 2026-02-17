@@ -1,6 +1,13 @@
-/*共通ボタン*/
+/*共通*/
 body {
 	background: #f0fff0;
+}
+a, 
+button, 
+input, 
+textarea, 
+select {
+    touch-action: manipulation;	/*ダブルタップによるズームを無効*/
 }
 .modal-header,.modal-body{
 	padding-top:5px;
@@ -325,4 +332,8 @@ div#headerArea2 {  /*グラフページ用*/
 }
 .btn-outline-primary{
 	--bs-btn-bg:#fff;
+}
+
+.form-control-sm{
+	font-size:16px;
 }
