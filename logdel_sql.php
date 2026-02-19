@@ -1,6 +1,7 @@
 <?php
 require_once "config.php";
 require_once "database.php";
+$db = new Database();
 //トランザクション処理
 
 //結果書き込み
@@ -28,7 +29,6 @@ try{
 	$stmt->execute();
 	$pdo_h->commit();
 	*/
-	$db = new Database();
 	$db->begin_tran();
 	$sql = "DELETE from tr_log where id = :id and ymd = :ymd and jun = :jun";
 	$db->UP_DEL_EXEC($sql,[":id" => $id,":ymd" => $_POST["k_ymd"],":jun" => $_POST["k_jun"]]);
@@ -36,8 +36,8 @@ try{
 
 }catch(Exception $e){
   //$pdo_h->rollBack();
-	$msg = "catch Exception \$e：".$e." [SQL = ".$sql." ]";
-	$db->rollback_tran();
+	$msg = "catch Exception \$e：".$e;
+	$db->rollback_tran($msg);
 
 }
 //ログイン失敗

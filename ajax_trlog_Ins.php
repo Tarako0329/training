@@ -106,18 +106,18 @@ try{
 		}
 	
 		$sql = "UPDATE tr_log set 
-			shu = :shu,
-			jun = :jun,
+			`shu` = :shu,
+			`jun` = :jun,
 			weight = :weight,
-			rep = :rep,
-			rep2 = :rep2,
-			sets = :sets,
-			tani = :tani,
-			cal = :cal,
-			ymd = :ymd,
-			typ = :typ,
-			memo = :memo 
-			where id =:id and ymd = :motoYMD and jun = :NO";
+			`rep` = :rep1,
+			`rep2` = :rep2,
+			`sets` = :sets,
+			`tani` = :tani,
+			`cal` = :cal,
+			`ymd` = :ymd,
+			`typ` = :typ,
+			`memo` = :memo 
+			where `id` =:id and `ymd` = :motoYMD and `jun` = :NO";
 		/*
 		$pdo_h->beginTransaction();
 		$stmt = $pdo_h->prepare($sql);
@@ -142,7 +142,7 @@ try{
 			":shu" => $shu
 			,":jun" => $jun
 			,":weight" => $_POST["weight"]
-			,":rep" => $_POST["rep"]
+			,":rep1" => $_POST["rep"]
 			,":rep2" => $rep2
 			,":sets" => $_POST["sets"]
 			,":tani" => $_POST["tani"]
@@ -231,9 +231,8 @@ try{
 		,"filter" => $shu
 	);
 }catch(Exception $e){
-	$msg = "catch Exception \$e：".$e." [SQL = ".$sql." ]";
-  //$pdo_h->rollBack();
-	$db->rollback_tran();
+	$msg = "catch Exception \$e：".$e;	
+	$db->rollback_tran($msg);
 	log_writer2("\$e",$e,"lv1");
 	$return_sts = array(
 		"MSG" => $msg

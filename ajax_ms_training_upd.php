@@ -57,8 +57,8 @@ try{
 	exit();
 	*/
 }catch(Exception $e){
-	$msg = "catch Exception \$e：".$e." [SQL = ".$sql." ]";
-  $pdo_h->rollBack();
+	$msg = "catch Exception \$e：".$e;
+	$db->rollback_tran($msg);
 	$return_sts = array(
 		"MSG" => $msg
 		,"status" => "error"

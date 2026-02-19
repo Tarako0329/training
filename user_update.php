@@ -45,7 +45,8 @@
 				}
 				$db->commit_tran();
 			}catch(Exception $e){
-				$db->rollback_tran();
+				$msg = "catch Exception \$e：".$e;
+				$db->rollback_tran($msg);
 			}
 		}
 

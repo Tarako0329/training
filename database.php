@@ -10,6 +10,7 @@ class Database {
     private string $charset = 'utf8';
     private ?PDO $pdo = null;
     private string $log = "";
+    private string $sql = "";
 
     public function __construct() {
         // 本来は config.php の定数などを使用します
@@ -55,6 +56,8 @@ class Database {
     }
 
     public function SELECT(string $sql,array $params=[]):array{
+      $this->sql = $sql;
+
       $stmt = $this->connect()->prepare($sql);
       $stmt -> execute($params);
       return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -65,13 +68,17 @@ class Database {
       $placeholders = ':' . implode(', :', array_keys($data));
 
       $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
-      log_writer2("\$sql",$sql,"lv3");
+      
       //$this->logに実行できるSQL文を書き込む
       $log = $sql;
       foreach ($data as $key => $value) {
         $log = str_replace(":".$key, (is_string($value) ? "'$value'" : (string)$value), $log);
       }
+      //$log内の改行コードを半角スペースに変換
+      $log = str_replace(["\r\n", "\r", "\n"], " ", $log);
+      
       $this->log .= $log.";\n";
+      $this->sql = $log;//Exceptionロールバック時用のログ
 
       $stmt = $this->connect()->prepare($sql);
       return $stmt -> execute($data);
@@ -82,7 +89,12 @@ class Database {
       foreach ($data as $key => $value) {
         $log = str_replace($key, (is_string($value) ? "'$value'" : (string)$value), $log);
       }
+      //$log内のタブを削除し改行コードを半角スペースに変換
+      $log = str_replace(["\t"], "", $log);
+      $log = str_replace(["\r\n", "\r", "\n"], " ", $log);
+      //$this->logに実行できるSQL文を書き込む
       $this->log .= $log.";\n";
+      $this->sql = $log;//Exceptionロールバック時用のログ
 
       $stmt = $this->connect()->prepare($sql);
       return $stmt -> execute($data);
@@ -95,15 +107,17 @@ class Database {
     public function commit_tran():void{
       $this->log .= "commit;\n";
       $this->connect()->commit();
-      $this->error_log();
+      $this->exec_log();
     }
-    public function rollback_tran():void{
+    public function rollback_tran(string $msg=""):void{
       $this->log .= "rollback;\n";
+      $this->log .= "/*ERROR SQL:[".$this->sql.";]*/\n";
+      $this->log .= "/*".$msg."*/\n";
       $this->connect()->rollback();
-      $this->error_log();
+      $this->exec_log();
     }
 
-    private function error_log():void{
+    private function exec_log():void{
       //sqllog/日付.sql ファイルに$msgを追記
       $dir = 'sqllog';
       if (!is_dir($dir)) {
@@ -111,6 +125,7 @@ class Database {
       }
       $filename = $dir . '/' . date('Ymd') . '.sql';
       file_put_contents($filename, $this->log . PHP_EOL, FILE_APPEND);
+      $this->log = "";
     }
     
 

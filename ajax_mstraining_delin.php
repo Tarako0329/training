@@ -97,8 +97,9 @@ if(!empty($_POST["data"])){
 		$db->commit_tran();
 		$msg = "success";
 	}catch(Exception $e){
-		$msg = "catch Exception \$e：".$e." [SQL = ".$sql." ]";
-		$pdo_h->rollBack();
+		$msg = "catch Exception \$e：".$e;
+		//$pdo_h->rollBack();
+		$db->rollback_tran($msg);
 		$status = "error";
 	}
 }else{
