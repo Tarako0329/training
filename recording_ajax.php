@@ -1,4 +1,5 @@
 <?php
+	//GoogleAuthで登録した場合
   require_once "config.php";
   require_once "database.php";
   //GoogleAuth新規ユーザ登録用

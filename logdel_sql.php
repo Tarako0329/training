@@ -1,6 +1,6 @@
 <?php
-require "config.php";
-require "database.php";
+require_once "config.php";
+require_once "database.php";
 //トランザクション処理
 
 //結果書き込み

@@ -1,5 +1,5 @@
 <?php
-  require "config.php";
+  require_once "config.php";
   
   //トランザクション処理
   if(isset($_SESSION['USER_ID'])){

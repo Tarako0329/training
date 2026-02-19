@@ -1,7 +1,6 @@
 <?php
 // 設定ファイルインクルード
-require "config.php";
-//require "functions.php";
+require_once "config.php";
 
 $now = date('Y-m-d');
 $id = ($_GET["id"]);
@@ -11,7 +10,7 @@ $pass = ($_GET["pass"]);
 <HTML>
 <HEAD>
 <?php
-	require "header.php";
+	require_once "header.php";
 ?>
 
 <TITLE>肉体改造ネットワーク</TITLE>

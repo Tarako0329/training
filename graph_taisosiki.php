@@ -1,6 +1,6 @@
 <?php
 // 設定ファイルインクルード 
-require "config.php";
+require_once "config.php";
 log_writer2("\$_POST",$_POST,"lv3");
 
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
@@ -17,7 +17,7 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 <HTML>
 <HEAD>
 	<?php
-		require "header.php";
+		require_once "header.php";
 	?>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 	<TITLE>肉体改造ネットワーク</TITLE>

@@ -1,5 +1,8 @@
 <?php
-require "config.php";
+require_once "config.php";
+require_once "database.php";
+$db = new Database();
+
 log_writer2("\$_POST",$_POST,"lv3");
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
@@ -19,16 +22,19 @@ $shu = $_POST["shu"];
 $tani = $_POST["tani"];
 $msg = "";
 $alert_status = "";
+$graph_title = "のﾄﾚｰﾆﾝｸﾞ量推移";
+
 
 //履歴取得
 $sql = "SELECT 
 	ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* 
 	FROM (
-		SELECT 0 as SEQ,id,shu,0 as jun,sum(weight*rep*sets) as weight,0 as rep,0 as tani,0 as rep2,0 as sets,0 as cal,ymd,'' as memo,typ,0 as insdatetime FROM tr_log where id = ? and shu = ? group by ymd,shu 
+		SELECT 0 as SEQ,id,shu,0 as jun,sum(weight*rep*sets) as weight,0 as rep,0 as tani,0 as rep2,0 as sets,0 as cal,ymd,'' as memo,typ,0 as insdatetime FROM tr_log where id = :id1 and shu = :shu1 group by ymd,shu 
 		UNION ALL 
-		SELECT * FROM  tr_log where id = ? and shu = ?) as T 
+		SELECT * FROM  tr_log where id = :id2 and shu = :shu2) as T 
 	order by T.ymd desc,T.jun ";
 
+/*
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
 $result->bindValue(2, $shu, PDO::PARAM_STR);
@@ -36,6 +42,8 @@ $result->bindValue(3, $id, PDO::PARAM_STR);
 $result->bindValue(4, $shu, PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
+*/
+$dataset_work = $db->SELECT($sql,[":id1" => $id,":shu1" => $shu,":id2" => $id,":shu2" => $shu]);
 //log_writer2("\$dataset_work",$dataset_work,"lv3");
 $dataset = [];
 $i=0;
@@ -69,7 +77,7 @@ if($tani==="month"){
 					where
 						id = :id1
 						and shu = :shumoku1
-						and ymd >= '$date'
+						and ymd >= :date1
 					group by id, shu
 				) as A
 			UNION ALL
@@ -89,7 +97,7 @@ if($tani==="month"){
  			group by shu, left(ymd, 7)
  		) as TEMP ON left(cal.date, 7) = TEMP.ym
 		ORDER BY left(cal.date,7)";
-
+	$dataset_work = $db->SELECT($sql,[":id1" => $id,":shumoku1" => $shu,":date1" => $date,":id2" => $id,":shumoku2" => $shu,":shumoku3" => $shu]);
 }else if($tani==="day"){
 	$sql="SELECT
 			TEMP.ymd as ym
@@ -100,14 +108,13 @@ if($tani==="month"){
 		FROM
 			(
 				SELECT shu, ymd, max(total_weight) as max_volume, sum(total_weight) as total_volume FROM 
-					(SELECT shu, ymd, sum(weight*rep*sets) as total_weight FROM `tr_log` where id = :id2 and shu = :shumoku3 and ymd >= '$date' group by shu, ymd) as tmp
+					(SELECT shu, ymd, sum(weight*rep*sets) as total_weight FROM `tr_log` where id = :id2 and shu = :shumoku3 and ymd >= :date1 group by shu, ymd) as tmp
 			 	group by shu, ymd
 		 	) as TEMP
 		ORDER BY TEMP.ymd";
+	$dataset_work = $db->SELECT($sql,[":id2" => $id,":shumoku2" => $shu,":shumoku3" => $shu,":date1" => $date]);
 }
-
-$graph_title = "のﾄﾚｰﾆﾝｸﾞ量推移";
-
+/*
 $result = $pdo_h->prepare( $sql );
 if($tani==="month"){
 	$result->bindValue('id1', $id, PDO::PARAM_STR);
@@ -118,14 +125,10 @@ $result->bindValue('shumoku2', $shu, PDO::PARAM_STR);
 $result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-
-//log_writer2("\$sql",$sql,"lv3");
-//log_writer2("\$id",$id,"lv3");
-//log_writer2("\$shu",$shu,"lv3");
-//log_writer2("\$dataset_work",$dataset_work,"lv3");
+*/
 
 $dataset = [];
-$i=1;
+//$i=1;
 $graph_data_max=[];
 $graph_data_max2=[];
 $graph_data_total=[];
@@ -170,7 +173,7 @@ foreach($dataset_work as $row){
 		exit();
 	}
 	
-	$i++;
+	//$i++;
 }
 
 
@@ -179,17 +182,14 @@ if($gtype==="hikaku"){//前年比
 	$glabel1="今年";
 	$glabel2="前年";
 	$subtitle = "各月の総Volと最大Vol";
-	//$graph_title .= "（前年比較）";
 }else if($gtype==="all"){//全期間
 	$glabel1="1日最大Vol";
 	$glabel2=($tani==="month")?"月間総Vol":"1日Vol";
 	$subtitle = "全期間対象のVolume推移";
-	//$graph_title .= "（全期間）";
 }else if($gtype==="12M"){//直近１年
 	$glabel1="1日最大Vol";
 	$glabel2=($tani==="month")?"月間総Vol":"1日Vol";
 	$subtitle = "直近１年のVolume推移";
-	//$graph_title .= "（直近１年）";
 }
 
 if($min_val===0 || $min_val <= 500){

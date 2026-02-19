@@ -1,5 +1,5 @@
 <?php
-require "config.php";
+require_once "config.php";
 $time = microtime();
 $parts = explode(" ", $time);
 $current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];

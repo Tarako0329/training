@@ -1,6 +1,7 @@
 <?php
-require "config.php";
-//require "functions.php";
+/*廃止。多分
+require_once "config.php";
+//require_once "functions.php";
 //トランザクション処理
 log_writer2("\$POST",$_POST,"lv3");
 
@@ -168,5 +169,5 @@ try{
 }
     //ログイン失敗
     //リダイレクト
-
+*/
 ?>

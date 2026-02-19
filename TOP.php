@@ -2,7 +2,6 @@
 	// 設定ファイルインクルード【開発中】
 	require_once "config.php";
 	require_once "database.php";
-
 	$db = new Database();
 
 	if(isset($_SESSION['USER_ID'])){
@@ -66,7 +65,7 @@
 <HTML>
 	<HEAD>
 		<?php
-		require "header.php";
+		require_once "header.php";
 		?>
 		<STYLE>
 			button:active {/*iphoneでのボタン反応を確かめるためのクラス。*/
@@ -202,7 +201,7 @@
 							</template>
 						</div>
 					</div>
-					<div class='d-none d-sm-block col-md-5 col-lg-6 col-xl-7 ' id='migi_area'>
+					<div class='d-none d-md-block col-md-5 col-lg-6 col-xl-7 ' id='migi_area'>
 						<div style='overflow-y: scroll;height:100vh;padding-bottom:170px;'>
 							<div class='row m-0 mb-1 mt-1'>
 								<div class='col-12 ps-3 position-relative'>
@@ -210,7 +209,7 @@
 									<!--<button class='btn btn-secondary p-1 position-absolute pt-0 pb-0' style='right:16px;' @click='setting1()'><i class="bi bi-gear-wide"></i></button>-->
 									<button class='btn btn-secondary p-1 position-absolute pt-0 pb-0' style='right:16px;' @click='setting1()'>{{kiroku_btn_name}}</button>
 								</div>
-								<div v-show='setting_switch1' class='col-12 ps-3 pe-3'>
+								<div v-show='setting_switch1' class='col-12 ps-3 pe-3 text-primary'>
 									<p class='mb-0 bg-light'><small>移動：場所変更したい種目の<i class="bi bi-arrow-down-up ms-1 me-1 "></i>をタップし、移動先の<i class="bi bi-box-arrow-in-down-right ms-1 me-1"></i>をタップ</small></p>
 									<p class='mb-0 bg-light'><small>非表示：隠のチェックボックスにチェック</small></p>
 								</div>
@@ -283,7 +282,7 @@
 			
 			<?php 
 			$icon="img/icon-128x128.png";
-			require "install_modal.php";
+			require_once "install_modal.php";
 			?>
 
 			<!--↓ユーザ情報モーダル-->
@@ -1133,7 +1132,7 @@
 								alert('')
 							}
 							setting_switch1.value=false
-							document.getElementById('ms_training').style.height='500px'
+							//document.getElementById('ms_training').style.height='500px'
 						}
 					}
 					

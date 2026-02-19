@@ -2,8 +2,8 @@
 session_start();
 // 共通ヘッダー
 date_default_timezone_set('Asia/Tokyo');
-require "./vendor/autoload.php";
-require "functions.php";
+require_once "./vendor/autoload.php";
+require_once "functions.php";
 $time="ver1.21.0";
 
 //.envの取得

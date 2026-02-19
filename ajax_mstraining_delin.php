@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-require "config.php";
+require_once "config.php";
 require_once "database.php";
 
 $db = new Database();
@@ -109,6 +109,7 @@ $return_sts = array(
 	"MSG" => $msg
 	,"status" => $status
 );
+
 header('Content-type: application/json');
 echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
 exit();

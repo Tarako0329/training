@@ -1,5 +1,8 @@
 <?php
-require "config.php";
+require_once "config.php";
+require_once "database.php";
+$db = new Database();
+
 log_writer2("\$_POST",$_POST,"lv3");
 $shu = ($_POST["shu"]);
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
@@ -25,11 +28,11 @@ $alert_status = "";
 $sql = "SELECT 
 	ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu order by T.ymd,T.jun) as No,T.* 
 	FROM (
-		SELECT 0 as SEQ,id,shu,0 as jun,0 as weight,sum(rep) as rep,0 as tani,sum(rep2) as rep2,0 as sets,sum(cal) as cal,ymd,'' as memo,typ,0 as insdatetime FROM tr_log where id = ? and shu = ? group by ymd,shu 
+		SELECT 0 as SEQ,id,shu,0 as jun,0 as weight,sum(rep) as rep,0 as tani,sum(rep2) as rep2,0 as sets,sum(cal) as cal,ymd,'' as memo,typ,0 as insdatetime FROM tr_log where id = :id1 and shu = :shu1 group by ymd,shu 
 		UNION ALL 
-		SELECT * FROM  tr_log where id = ? and shu = ?) as T 
+		SELECT * FROM  tr_log where id = :id2 and shu = :shu2) as T 
 	order by T.ymd desc,T.jun ";
-
+/*
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
 $result->bindValue(2, $shu, PDO::PARAM_STR);
@@ -37,6 +40,9 @@ $result->bindValue(3, $id, PDO::PARAM_STR);
 $result->bindValue(4, $shu, PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
+*/
+$dataset_work = $db->SELECT($sql,[":id1"=>$id,"shu1"=>$shu,"id2"=>$id,"shu2"=>$shu]);
+
 //log_writer2("\$dataset_work",$dataset_work,"lv3");
 $dataset = [];
 $i=0;
@@ -70,7 +76,7 @@ if($tani==="month"){
 					where
 						id = :id1
 						and shu = :shumoku1
-						and ymd >= '$date'
+						and ymd >= :ymd
 					group by id, shu
 				) as A
 			UNION ALL
@@ -91,6 +97,7 @@ if($tani==="month"){
  			group by shu, left(ymd, 7)
  		) as TEMP ON left(cal.date, 7) = TEMP.ym
 		ORDER BY left(cal.date,7)";
+	$dataset_work = $db->SELECT($sql,[":id1"=>$id,"shumoku1"=>$shu,"ymd"=>$date,"id2"=>$id,"shumoku2"=>$shu,"shumoku3"=>$shu]);
 }else if($tani==="day"){
 	$sql = "SELECT 
 			shu
@@ -102,10 +109,12 @@ if($tani==="month"){
 			, sum(cal) as total_cal 
 		FROM tr_log WHERE id=:id2 AND shu=:shumoku3
 		group by shu, ymd";
+	$dataset_work = $db->SELECT($sql,[":id2"=>$id,"shumoku3"=>$shu]);
+
 }
 
 $graph_title = "『".$shu."のﾄﾚｰﾆﾝｸﾞ量推移』";
-
+/*
 $dataset_work =[];
 $result = $pdo_h->prepare( $sql );
 if($tani==="month"){
@@ -118,10 +127,6 @@ $result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
 
-//log_writer2("\$sql",$sql,"lv3");
-//log_writer2("\$id",$id,"lv3");
-//log_writer2("\$shu",$shu,"lv3");
-//log_writer2("\$dataset_work",$dataset_work,"lv3");
 
 $result->closeCursor();
 $result = null;
@@ -129,7 +134,8 @@ $pdo_h = null;
 
 
 $dataset = [];
-$i=1;
+//$i=1;
+*/
 $graph_data_total_km=[];
 $graph_data_total_H=[];
 $graph_data_total_cal=[];
@@ -157,7 +163,7 @@ foreach($dataset_work as $row){
 		exit();
 	}
 	
-	$i++;
+	//$i++;
 }
 
 

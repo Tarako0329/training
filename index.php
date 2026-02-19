@@ -1,5 +1,5 @@
 <?php
-require "config.php";
+require_once "config.php";
 define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 //$time = microtime();
 //$parts = explode(" ", $time);
@@ -41,7 +41,7 @@ $token=get_token();
 <HTML>
 	<HEAD>
 		<?php
-			require "header.php";
+			require_once "header.php";
 		?>
 		<script src="https://accounts.google.com/gsi/client" ></script><!--google login api-->
 		<meta name="description" content="【完全無料】シンプルを極めたトレーニング記録WEBアプリ！自分用のオリジナルメニューのみで、記録時のメニュー選択もスムーズに！Volume/Maxも自動計算！グラフ化で成長具合も！">

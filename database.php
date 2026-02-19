@@ -61,7 +61,7 @@ class Database {
     }
 
     public function INSERT(string $table,array $data=[]):bool{
-      $columns = implode(', ', array_keys($data));  //項目名をカンマ区切りで取得
+      $columns = "`".implode('`, `', array_keys($data))."`";  //項目名をカンマ区切りで取得
       $placeholders = ':' . implode(', :', array_keys($data));
 
       $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
@@ -80,7 +80,7 @@ class Database {
     public function UP_DEL_EXEC(string $sql,array $data=[]):bool{
       $log = $sql;
       foreach ($data as $key => $value) {
-        $log = str_replace($key, (is_string($value) ? "'$value'" : $value), $log);
+        $log = str_replace($key, (is_string($value) ? "'$value'" : (string)$value), $log);
       }
       $this->log .= $log.";\n";
 

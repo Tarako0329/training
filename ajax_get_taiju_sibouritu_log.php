@@ -1,5 +1,8 @@
 <?php
-require "config.php";
+require_once "config.php";
+require_once "database.php";
+
+$db = new Database();
 log_writer2("\$_POST",$_POST,"lv3");
 
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
@@ -25,21 +28,24 @@ $alert_status="";
 
 //履歴取得
 $sql = "SELECT ROW_NUMBER() OVER(partition by id order by id,ymd) as No,taisosiki.*,round(weight*taisibou/100,1) as sibouryou,round(weight-(weight*taisibou/100),1) as josibou ,DATEDIFF(now(),ymd) as beforedate
-from taisosiki where id = ? order by ymd desc ";
-
+from taisosiki where id = :id order by ymd desc ";
+/*
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
 $result->execute();
 $taisosiki_log = $result->fetchAll(PDO::FETCH_ASSOC);
-
+*/
+$taisosiki_log = $db->SELECT($sql,[":id"=>$id]);
 
 //BMI算出用に身長取得
-$sql = "SELECT (height/100) as height from users where id = ?";
-
+$sql = "SELECT (height/100) as height from users where id = :id";
+/*
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
 $result->execute();
 $user = $result->fetchAll(PDO::FETCH_ASSOC);
+*/
+$user = $db->SELECT($sql,[":id"=>$id]);
 
 
 //ぐらふでーた取得
@@ -67,7 +73,7 @@ $sql = "SELECT
 	    WHEN right(ymd,2) <= 31 THEN '下旬'
 	END) as label
 	FROM `taisosiki`
-	where id=?
+	where id=:id
 	group by id,left(ymd,7) 
 	,CASE
 		WHEN right(ymd,2) <= 10 THEN '上'
@@ -75,11 +81,13 @@ $sql = "SELECT
 	    WHEN right(ymd,2) <= 31 THEN '下'
 	END
 	order by ymd ";
-
+/*
 $result = $pdo_h->prepare( $sql );
 $result->bindValue(1, $id, PDO::PARAM_STR);
 $result->execute();
 $dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
+*/
+$dataset_work = $db->SELECT($sql,[":id"=>$id]);
 
 
 if($hyoji == "kinryou"){//骨格筋・脂肪量 の推移
