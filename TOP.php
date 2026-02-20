@@ -33,15 +33,6 @@
 	}
 
 	$now = date('Y-m-d');
-	/*
-	$sql = "select * from users where ((id)=?)";
-	$stmt = $pdo_h->prepare( $sql );
-	$stmt->bindValue(1, $id, PDO::PARAM_STR);
-	$stmt->execute();
-	$row_cnt = $stmt->rowCount();
-	$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-	*/
-
 	$sql = "SELECT * from users where id = :id";
 	$row = $db->SELECT($sql,[":id"=>$id]);
 	$row_cnt = count($row);
@@ -69,18 +60,21 @@
 		?>
 		<STYLE>
 			button:active {/*iphoneでのボタン反応を確かめるためのクラス。*/
-			  <?php if(EXEC_MODE!=="Product"){ echo "background-color: red !important;"; }?>
+				<?php if(EXEC_MODE!=="Product"){ echo "background-color: red !important;"; }?>
 			}
 			button, .btn {
-			  /* 1. タップ時のデフォルトのグレーの網掛けを消す（反応をクリアにする） */
-			  -webkit-tap-highlight-color: transparent;
-
-			  /* 2. ズーム判定を無効にしてタップの反応を最速にする */
-			  touch-image-action: manipulation;
-
-			  /* 3. テキスト選択を防ぐ（連打した時に文字が選択されて重くなるのを防ぐ） */
-			  user-select: none;
-			  -webkit-user-select: none;
+				-webkit-tap-highlight-color: transparent;		/* 1. タップ時のデフォルトのグレーの網掛けを消す（反応をクリアにする） */
+				touch-image-action: manipulation;		/* 2. ズーム判定を無効にしてタップの反応を最速にする */
+				user-select: none;		/* 3. テキスト選択を防ぐ（連打した時に文字が選択されて重くなるのを防ぐ） */
+				-webkit-user-select: none;
+			}
+			/* リストアイテムのトランジション */
+			.list-enter-active {
+				transition: all 0.5s ease-out;
+			}
+			.list-enter-from {
+				opacity: 0;
+				transform: translateY(20px);
 			}
 		</STYLE>
 		<TITLE>肉体改造ネットワーク</TITLE>
@@ -96,22 +90,22 @@
 							<?php echo $user_name;?> さん</p>
 						</div>
 						<div class="toggle_button">
-						  <label class="toggle_label">
-						    <input class="toggle_input" type="checkbox" v-model="disp_area">
-						    <div class="toggle_rail"></div>
-						  </label>
+							<label class="toggle_label">
+								<input class="toggle_input" type="checkbox" v-model="disp_area">
+								<div class="toggle_rail"></div>
+							</label>
 						</div>					
 					</div>
 					<div class="nav-item dropdown position-absolute end-0 top-0"  style='width:40px;'>
-        	  <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        	    <i class="bi bi-list fs-1"></i>
-        	  </a>
-        	  <ul class="dropdown-menu">
+						<a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="bi bi-list fs-1"></i>
+						</a>
+						<ul class="dropdown-menu">
 							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#user_info'>ユーザー情報</a></li>
 							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#pwa_info'>インストール手順</a></li>
-        	    <li><a class="dropdown-item" href="TOP.php?logoff=out">ログオフ</a></li>
-        	  </ul>
-        	</div>
+							<li><a class="dropdown-item" href="TOP.php?logoff=out">ログオフ</a></li>
+						</ul>
+					</div>
 					<div class="nav-item dropdown position-absolute start-50 top-50 translate-middle" style=''>
 						
 						<div class="input-group">
@@ -129,79 +123,82 @@
 			</header>
 			<main v-show='background_show' class='container p-0' style='height:calc(100vh - 115px);'>
 				<div class='row position-relative m-0' style='height:100%;'>
-					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 p-0' style='height:100%;'>
+					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 p-0' style='height:100%;' id="tore_log"><!--トレログエリア-->
 						<div style='overflow-y:scroll;height:100%;width:100%;padding-bottom:170px;' id='tr_log_area'>
-							<template v-for='(list,index) in log_edit' :key='list.ymd+list.jun+list.shu'>
-								<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row m-0' style='position:relative'><div class=' ymd'>{{list.ymd}} {{list.condition}}</div></div><!--日付-->
-		
-								<div class='accordion-item' style='position:relative;'>
-									<div v-if='list.setjun === 1 || (list.shu+list.typ) !== (log_edit[index-1].shu+log_edit[index-1].typ)' class='row m-0 pb-0 shu accordion-header'>
-										<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' :id='`btn_collapseOne${list.ymd3}${list.shu}`'
-											aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
-											{{list.shu}} 
-											<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
-											<template v-if="list.typ==='2'">-Non Weight:{{Number(list.total).toLocaleString()}}回</template>
-										</button>
-										<a v-if="list.typ==='0'" :href='`graph_kintore.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
-											<i class='bi bi-graph-up-arrow' ></i>
-										</a>
-										<a v-if="list.typ==='2'" :href='`graph_kintore.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
-											<i class='bi bi-graph-up-arrow' ></i>
-										</a>
-										<a v-if="list.typ==='1'" :href='`graph_usanso.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
-											<i class='bi bi-graph-up-arrow' ></i>
-										</a>
-									</div>
-									<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
-										<div class='row m-0 lst accordion-body'>
-											<div class='col-12' style='padding:0;display:flex;'><!--ウェイト-->
-												<template v-if="list.typ==='0'" >
-													<div style='width: 20px;'>{{list.setjun}}</div>
-													<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
-													<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
-													<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
-													<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-													<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
-													<button type='button' class='icn-btn' style='' 
-														@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
-														<i class='bi bi-pencil'></i>
-													</button>
-												</template>
-												<template v-if="list.typ==='2'">
-													<div style='width: 20px;'>{{list.setjun}}</div>
-													<div class='text-end' style='width: 70px;padding:0;'>自重</div>
-													<div v-if="list.tani==='0'"       class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
-													<div v-else-if="list.tani==='1'"  class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
-													<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
-													<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
-													<button type='button' class='icn-btn' style='' 
-														@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
-														<i class='bi bi-pencil'></i>
-													</button>
+							<transition-group tag="div" name="list">
+								<div v-for='(list,index) in log_edit' :key='list.ymd+list.jun+list.shu'>
+									<div v-if='index===0 || (index!==0 && list.ymd !== log_edit[index-1].ymd)' class='row m-0' style='position:relative'><div class=' ymd'>{{list.ymd}} {{list.condition}}</div></div><!--日付-->
+			
+									<div class='accordion-item' style='position:relative;'>
+										<div v-if='list.setjun === 1 || (list.shu+list.typ) !== (log_edit[index-1].shu+log_edit[index-1].typ)' class='row m-0 pb-0 shu accordion-header'>
+											<button type='button' class='accordion-button collapsed' data-bs-toggle='collapse' :data-bs-target='`#collapseOne${list.ymd2}${list.shu}`' :id='`btn_collapseOne${list.ymd3}${list.shu}`'
+												aria-expanded='false' aria-controls='collapseOne' style='width: 80%;'>
+												{{list.shu}} 
+												<template v-if="list.typ==='0'">-total:{{Number(list.total).toLocaleString()}}kg</template>
+												<template v-if="list.typ==='2'">-Non Weight:{{Number(list.total).toLocaleString()}}回</template>
+											</button>
+											<a v-if="list.typ==='0'" :href='`graph_kintore.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
+												<i class='bi bi-graph-up-arrow' ></i>
+											</a>
+											<a v-if="list.typ==='2'" :href='`graph_kintore.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
+												<i class='bi bi-graph-up-arrow' ></i>
+											</a>
+											<a v-if="list.typ==='1'" :href='`graph_usanso.php?shu=${list.shu}&hyouji=0&gtype=all`' role='button' class='icn-btn text-center pt-1' >
+												<i class='bi bi-graph-up-arrow' ></i>
+											</a>
+										</div>
+										<div :id='`collapseOne${list.ymd2}${list.shu}`' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
+											<div class='row m-0 lst accordion-body'>
+												<div class='col-12' style='padding:0;display:flex;'><!--ウェイト-->
+													<template v-if="list.typ==='0'" >
+														<div style='width: 20px;'>{{list.setjun}}</div>
+														<div class='text-end' style='width: 70px;padding:0;'>{{list.weight}}kg</div>
+														<div v-if="list.tani==='0'"      class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+														<div v-else-if="list.tani==='1'" class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
+														<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
+														<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+														<button type='button' class='icn-btn' style='' 
+															@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
+															<i class='bi bi-pencil'></i>
+														</button>
 													</template>
-													<template v-if="list.typ==='1'">
-													<div style='width: 20px;'>{{list.setjun}}</div>
-													<div class='text-end' style='width: 50px;padding-right:0;'>{{list.rep}}分</div>	
-													<div class='text-end' style='width: 70px;padding:0;'>{{list.rep2}}ｍ</div>
-													<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
-													<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
-													<button type='button' class='icn-btn' style='' 
-														@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ,"usanso")'>
-														<i class='bi bi-pencil'></i>
-													</button>
-												</template>
-											</div>
-											<div class='col-12' style='padding:0;display:flex;font-size:12px;'><!--時刻-->
-												<div class='text-start ps-1' style='margin-top:-5px;'>記録 [{{list.jikoku}}]</div>
-												<div style='width: 20px;'></div>
+													<template v-if="list.typ==='2'">
+														<div style='width: 20px;'>{{list.setjun}}</div>
+														<div class='text-end' style='width: 70px;padding:0;'>自重</div>
+														<div v-if="list.tani==='0'"       class='text-end' style='width: 60px;padding-right:0;'>{{list.rep}}({{list.rep2}})回</div>
+														<div v-else-if="list.tani==='1'"  class='text-end' style='width: 65px;padding-right:0;'>{{list.rep}}({{list.rep2}})秒</div>
+														<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
+														<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+														<button type='button' class='icn-btn' style='' 
+															@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
+															<i class='bi bi-pencil'></i>
+														</button>
+														</template>
+														<template v-if="list.typ==='1'">
+														<div style='width: 20px;'>{{list.setjun}}</div>
+														<div class='text-end' style='width: 50px;padding-right:0;'>{{list.rep}}分</div>	
+														<div class='text-end' style='width: 70px;padding:0;'>{{list.rep2}}ｍ</div>
+														<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
+														<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
+														<button type='button' class='icn-btn' style='' 
+															@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ,"usanso")'>
+															<i class='bi bi-pencil'></i>
+														</button>
+													</template>
+												</div>
+												<div class='col-12' style='padding:0;display:flex;font-size:12px;'><!--時刻-->
+													<div class='text-start ps-1' style='margin-top:-5px;'>記録 [{{list.jikoku}}]</div>
+													<div style='width: 20px;'></div>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							</template>
+							</transition-group>
+							<div class='text-center' style='height:100px;width:100%;' ref='reloader'>{{reloader_info}} ...</div>
 						</div>
-					</div>
-					<div class='d-none d-md-block col-md-5 col-lg-6 col-xl-7 ' id='migi_area'>
+					</div><!--トレログエリア-->
+					<div class='d-none d-md-block col-md-5 col-lg-6 col-xl-7 ' id='migi_area'><!--MAX確認エリア-->
 						<div style='overflow-y: scroll;height:100vh;padding-bottom:170px;'>
 							<div class='row m-0 mb-1 mt-1'>
 								<div class='col-12 ps-3 position-relative'>
@@ -263,16 +260,16 @@
 								</table>
 							</div>
 						</div>
-					</div>
+					</div><!--MAX確認エリア-->
 				</div>
 			</main>
 			<footer class="footerArea">
 				<div class='container d-flex hf_color p-0'>
 					<div class='row m-0' style='width:100%;'><div class='p-0 col-12 col-md-7 col-lg-6 col-xl-5'>
 						<ul id="menu">
-						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki' @click='lock_trlog_area()'>体組織</a></li><!--@click='lock_trlog_area'-->
-						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'    @click='lock_trlog_area()'>有酸素系</a></li>
-						  <li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'   @click='lock_trlog_area()'>ウェイト</a></li>
+							<li><a href="#" data-bs-toggle='modal' data-bs-target='#taisosiki' @click='lock_trlog_area()'>体組織</a></li><!--@click='lock_trlog_area'-->
+							<li><a href="#" data-bs-toggle='modal' data-bs-target='#usanso'    @click='lock_trlog_area()'>有酸素系</a></li>
+							<li><a href="#" data-bs-toggle='modal' data-bs-target='#edit_wt'   @click='lock_trlog_area()'>ウェイト</a></li>
 						</ul>
 					</div></div>
 				</div>
@@ -291,8 +288,8 @@
 					<div class='modal-content edit' style=''>
 						<FORM method="post" action="user_update.php">
 							<div class='modal-header'>
-	        			<h5 class="modal-title">ユーザー情報設定</h5>
-  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								<h5 class="modal-title">ユーザー情報設定</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class='modal-body container'>
 								<div class='row'>
@@ -346,8 +343,8 @@
 					<div class='modal-content edit' style=''>
 						<form method = 'post' action='taisosiki_ins.php'>
 							<div class='modal-header'>
-	        			<h5 class="modal-title">体組織の記録</h5>
-  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								<h5 class="modal-title">体組織の記録</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class='modal-body container'>
 								<div class='row' style='margin:1px 20px;'>
@@ -393,8 +390,8 @@
 					<div class='modal-content edit' style=''>
 						<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit' id='us'>
 							<div class='modal-header'>
-	        			<h5 class="modal-title">有酸素トレーニング</h5>
-  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
+								<h5 class="modal-title">有酸素トレーニング</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
 							</div>
 							<div class='modal-body container'>
 								<div v-if='keybord_show===false' class='row' style='margin:1px 20px;'>
@@ -406,25 +403,25 @@
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 								<nav class="navbar bg-body-tertiary p-0 " style='border-radius:4px;'>
-								  <div class="container-fluid p-0 ">
-								    <button class="navbar-toggler ps-2 pt-2 pb-2 d-flex" type="button" style='height:100%;width:100%;border-radius:0;font-size:14px;color:black;' 
+									<div class="container-fluid p-0 ">
+										<button class="navbar-toggler ps-2 pt-2 pb-2 d-flex" type="button" style='height:100%;width:100%;border-radius:0;font-size:14px;color:black;' 
 										data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation" id='us_select'>
-								      <span class='text-start' style="width:90%;">{{shu_us}}</span><span class='text-end' style="width:10%;">▼</span>
-								    </button>
-								    <div class="collapse navbar-collapse" id="navbarScroll">
-								      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 200px;">
+											<span class='text-start' style="width:90%;">{{shu_us}}</span><span class='text-end' style="width:10%;">▼</span>
+										</button>
+										<div class="collapse navbar-collapse" id="navbarScroll">
+											<ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 200px;">
 												<template v-for='(list,index) in shumoku_us' :key='list.sort'>
 													<li class="nav-item p-0 ps-3" style='font-size:14px;color:black;'>
-								        	  <a class="nav-link" @click='set_shumoku(list.shu,"us")' role='button'>{{list.shu}}</a>
-								        	</li>
+														<a class="nav-link" @click='set_shumoku(list.shu,"us")' role='button'>{{list.shu}}</a>
+													</li>
 												</template>
 												</ul>
-								      <div class="d-flex" >
-								        <input class="form-control" style='width:80%;border-radius:0;' type="text" placeholder='トレーニング名' autocomplete="off" id='new_us'>
+											<div class="d-flex" >
+												<input class="form-control" style='width:80%;border-radius:0;' type="text" placeholder='トレーニング名' autocomplete="off" id='new_us'>
 												<button type='button' class='btn btn-primary' style='width:20%;border-radius:0;' @click='add_shumoku("us","new_us")'>追加</button>
 											</div>
-								    </div>
-								  </div>
+										</div>
+									</div>
 								</nav>
 								</div>
 
@@ -476,8 +473,8 @@
 					<div class='modal-content edit' style=''>
 						<form method = 'post' @submit.prevent='OnSubmit' id='wt'>
 							<div class='modal-header'>
-	        			<h5 class="modal-title">トレーニング記録</h5>
-  	      			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
+								<h5 class="modal-title">トレーニング記録</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
 							</div>
 							<div class='modal-body container'>
 								<div v-show='keybord_show===false' class='row' style='margin:1px 20px;'>
@@ -489,35 +486,35 @@
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 								<nav class="navbar bg-body-tertiary p-0 " style='border-radius:4px;'>
-								  <div class="container-fluid p-0 ">
-								    <button class="navbar-toggler ps-2 pt-2 pb-2 d-flex" type="button" style='height:100%;width:100%;border-radius:0;font-size:14px;color:black;' 
+									<div class="container-fluid p-0 ">
+										<button class="navbar-toggler ps-2 pt-2 pb-2 d-flex" type="button" style='height:100%;width:100%;border-radius:0;font-size:14px;color:black;' 
 										data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation" id='tr_select'>
-								      <span class='text-start' style="width:90%;">{{shu}}</span><span class='text-end' style="width:10%;">▼</span>
-								    </button>
-								    <div class="collapse navbar-collapse" id="navbarScroll">
-								      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 200px;">
+											<span class='text-start' style="width:90%;">{{shu}}</span><span class='text-end' style="width:10%;">▼</span>
+										</button>
+										<div class="collapse navbar-collapse" id="navbarScroll">
+											<ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 200px;">
 													<!--<li class="nav-item dropdown ps-3">
-								        	  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								        	    胸部
-								        	  </a>
-								        	  <ul class="dropdown-menu">
-								        	    <li><a class="dropdown-item ps-1" href="#">ベンチプレス</a></li>
-								        	    <li><a class="dropdown-item ps-1" href="#">ダンベルプレス</a></li>
-								        	    <li><a class="dropdown-item ps-1" href="#">ダンベルフライ</a></li>
-								        	  </ul>
-								        	</li>-->
+														<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+															胸部
+														</a>
+														<ul class="dropdown-menu">
+															<li><a class="dropdown-item ps-1" href="#">ベンチプレス</a></li>
+															<li><a class="dropdown-item ps-1" href="#">ダンベルプレス</a></li>
+															<li><a class="dropdown-item ps-1" href="#">ダンベルフライ</a></li>
+														</ul>
+													</li>-->
 												<template v-for='(list,index) in shumoku_wt' :key='list.sort'>
 													<li class="nav-item p-0 ps-3" style='font-size:14px;color:black;'>
-								        	  <a class="nav-link" @click='set_shumoku(list.shu,"wt")' role='button'>{{list.shu}}</a>
-								        	</li>
+														<a class="nav-link" @click='set_shumoku(list.shu,"wt")' role='button'>{{list.shu}}</a>
+													</li>
 												</template>
 												</ul>
-								      <div class="d-flex" >
-								        <input class="form-control" style='width:80%;border-radius:0;' type="text" placeholder='トレーニング名' autocomplete="off" id='new_tr'>
+											<div class="d-flex" >
+												<input class="form-control" style='width:80%;border-radius:0;' type="text" placeholder='トレーニング名' autocomplete="off" id='new_tr'>
 												<button type='button' class='btn btn-primary' style='width:20%;border-radius:0;' @click='add_shumoku("wt","new_tr")'>追加</button>
 											</div>
-								    </div>
-								  </div>
+										</div>
+									</div>
 								</nav>
 								</div>
 
@@ -614,15 +611,15 @@
 			// すべてのモーダルに対して有効な設定
 			//閉じるボタンにフォーカスが残るのを防ぐ
 			document.addEventListener('hide.bs.modal', function () {
-			    if (document.activeElement instanceof HTMLElement) {
-			        document.activeElement.blur();
-			    }
+				if (document.activeElement instanceof HTMLElement) {
+					document.activeElement.blur();
+				}
 			});
 			// ページ読み込み時に実行される場所に追記
 			document.addEventListener("touchstart", function() {}, true);
 		</script>
 		<script>//Vus.js
-			const { createApp, ref, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
+			const { createApp, ref,shallowRef, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
 			createApp({
 				setup(){
 					const lock_trlog_area = () =>{
@@ -635,9 +632,12 @@
 					}
 
 					const background_show = ref(true)
-					const kintore_log = ref([])
-					const shumoku = ref([])
-					const max_log = ref([])
+					//const kintore_log = ref([])
+					const kintore_log = shallowRef([])
+					//const shumoku = ref([])
+					const shumoku = shallowRef([])
+					//const max_log = ref([])
+					const max_log = shallowRef([])
 					const max_log_sort = computed(()=>{
 						let temp = max_log.value.sort((a,b)=>{
 							return a.sort-b.sort
@@ -661,7 +661,7 @@
 					const filter = ref('%')
 
 					const week = (date) =>{
-						console_log('week')
+						//console_log('week')
 						const WeekChars = [ "(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)" ];
 						let dObj = new Date( date );
 						let wDay = dObj.getDay();
@@ -698,7 +698,6 @@
 					})
 
 					const get_trlog = async(p,p_shumoku) =>{
-						console_log('start get_trlog')
 						console_log('start get_trlog :: ' + p + '::' + p_shumoku)
 						const response = await axios.post("ajax_get_trlog.php")
 							.catch((error) => {
@@ -727,13 +726,40 @@
 								if(p==='open'){
 									setTimeout(()=>{
 										console_log("アコーディオン開く")
-										//document.getElementById(`btn_collapseOne${ymd.value}${shu.value}`).click()
 										document.getElementById(`btn_collapseOne${ymd.value}${p_shumoku}`).click()
 									}, 1000)
 								}
 							}
 						})
 						console_log('おわり2 get_trlog')
+					}
+
+					const add_trlog = (p_offset) =>{
+						console_log('add_trlog')
+						//axios.postでajax_get_trlog.phpを呼び出す。postでp_offsetを渡す。
+						const formData = new FormData();
+						formData.append('OFFSET', p_offset);
+						axios.post("ajax_get_trlog.php", formData)
+							.then((response) => {
+								if (response.data.kintore_log.length > 0) {
+									const new_logs = response.data.kintore_log;
+									new_logs.forEach((row) => {
+										row.ymd = row.ymd + ' ' + week(row.ymd);
+										//kintore_log.value.push(row);
+									});
+									kintore_log.value = [...kintore_log.value, ...new_logs];
+									
+								}else{
+									console_log(`もうないよ`)
+									reloader_info.value = 'End of Training log'
+								}
+							})
+							.catch((error) => {
+								console_log(`add_trlog ERROR:${error}`);
+							});
+							
+						
+						
 					}
 
 					const kiroku = ref(['','','',0])
@@ -877,11 +903,11 @@
 						MODAL = document.getElementById(modal_id)
 						/*
 						MODAL_INST = new bootstrap.Modal(MODAL, {
-    					backdrop: 'static' // backdropをstaticに設定
-  					});*/
+							backdrop: 'static' // backdropをstaticに設定
+						});*/
 						// すでにインスタンスがあるか確認し、なければ作る（二重生成防止）
 						MODAL_INST = bootstrap.Modal.getInstance(MODAL) || new bootstrap.Modal(MODAL, {
-						  backdrop: 'static' // コメント通り「背景クリックで閉じない」にするならこれ
+							backdrop: 'static' // コメント通り「背景クリックで閉じない」にするならこれ
 						});						
 						MODAL_INST.show();
 					}
@@ -903,8 +929,8 @@
 						kiroku_index.value=''
 						/*
 						MODAL_INST = new bootstrap.Modal(MODAL, {
-    					backdrop: true // backdropをtrueに設定
-  					});
+							backdrop: true // backdropをtrueに設定
+						});
 						*/
 					}
 					const delete_log = (NO,YMD) =>{
@@ -913,25 +939,25 @@
 							return
 						}
 						let form = document.createElement('form');
-    				let numbers = document.createElement('input');
+						let numbers = document.createElement('input');
 						let date = document.createElement('input');
 
-    				form.method = 'POST';
-    				form.action = 'logdel_sql.php';
+						form.method = 'POST';
+						form.action = 'logdel_sql.php';
 						
-    				numbers.type = 'hidden'; //入力フォームが表示されないように
-    				numbers.name = 'k_jun';
-    				numbers.value = NO;
+						numbers.type = 'hidden'; //入力フォームが表示されないように
+						numbers.name = 'k_jun';
+						numbers.value = NO;
 						
-    				date.type = 'hidden'; //入力フォームが表示されないように
-    				date.name = 'k_ymd';
-    				date.value = YMD;
+						date.type = 'hidden'; //入力フォームが表示されないように
+						date.name = 'k_ymd';
+						date.value = YMD;
 
 						form.appendChild(numbers);
 						form.appendChild(date);
-    				document.body.appendChild(form);
+						document.body.appendChild(form);
 						
-    				form.submit();						
+						form.submit();						
 					}
 
 					//let new_shu
@@ -1042,8 +1068,8 @@
 								
 								if(MODAL_INST){
 									MODAL_INST = new bootstrap.Modal(MODAL, {
-		    						backdrop: 'true' // backdropをstaticに設定
-	  							})
+										backdrop: 'true' // backdropをstaticに設定
+									})
 								}
 								if(jiju.value===true){
 									kiroku.value[0] = "1"
@@ -1140,6 +1166,8 @@
 						console_log('onBeforeMount')
 					})
 
+					const reloader = ref(null)
+					const reloader_info = ref('now Loading')
 					onMounted(() => {
 						console_log('onMounted')
 						get_trlog()
@@ -1148,36 +1176,56 @@
 						const Modal_edit_wt = document.getElementById('edit_wt'); // モーダルのIDを取得
 
 						Modal_taisosiki.addEventListener('hidden.bs.modal', function (event) {
-						  console.log('モーダルが閉じました');
+							console.log('モーダルが閉じました');
 							unlock_trlog_area()
 						});
 						Modal_usanso.addEventListener('hidden.bs.modal', function (event) {
-						  console.log('モーダルが閉じました');
+							console.log('モーダルが閉じました');
 							unlock_trlog_area()
 						});
 						Modal_edit_wt.addEventListener('hidden.bs.modal', function (event) {
-						  console.log('モーダルが閉じました');
+							console.log('モーダルが閉じました');
 							unlock_trlog_area()
 						});
 
+						//スマホブラウザで起動された場合、インストールを進めるモーダルを表示する
 						if (window.matchMedia('(display-mode: standalone)').matches) {
 							// PWAとして起動された場合の処理
 						} else {
 							//alert('ブラウザとして起動されました');
 							const userAgent = navigator.userAgent;
-				  		if (
-				  		  userAgent.indexOf('Windows') !== -1 ||
-				  		  userAgent.indexOf('Macintosh') !== -1 ||
-				  		  userAgent.indexOf('Linux') !== -1
-				  		) {
-				  		  // パソコン.なにもしない
-				  		} else {
-				  		  // パソコン以外。インストールを勧める
+							if (
+								userAgent.indexOf('Windows') !== -1 ||
+								userAgent.indexOf('Macintosh') !== -1 ||
+								userAgent.indexOf('Linux') !== -1
+							) {
+								// パソコン.なにもしない
+							} else {
+								// パソコン以外。インストールを勧める
 								document.getElementById("pwa_info_btn").click()
-				  		}
+							}
 						
 						}
 
+						//Intersection Observerを使用し、reloaderが表示されたらadd_trlogを呼び出す
+						let offset = 200;
+						const observer = new IntersectionObserver((entries) => {
+							entries.forEach(entry => {
+								if (entry.isIntersecting) {
+									console_log('IntersectionObserver: reloader is visible');
+									add_trlog(offset);
+									offset += 200;
+								}
+							});
+						}, {
+							root: document.querySelector("#tr_log_area"),
+							rootMargin: '0px',
+							threshold: 0.1
+						});
+
+						if (reloader.value) {
+							observer.observe(reloader.value);
+						}
 					})
 
 					return{
@@ -1224,6 +1272,8 @@
 						unlock_trlog_area,
 						background_show,
 						kiroku_btn_name,
+						reloader,
+						reloader_info,
 					}
 				}
 			}).mount('#logger');

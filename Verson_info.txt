@@ -92,7 +92,8 @@ ver1.21.1:bugfix:メモ欄が勝手に消える。ウェイト記録時に意図
 ver1.21.2:manifest設定変更-commited
 ver1.22.0:自重選択時の挙動変更-commited
 ver1.23.0:ボタン反応遅延対策など-commited
-ver1.24.0:リファクタリング-オブジェクト指向
+ver1.24.0:リファクタリング-オブジェクト指向-commited
+ver1.25.0:無限スクロール実装-commited
 
 
 

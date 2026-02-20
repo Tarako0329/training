@@ -4,7 +4,7 @@ session_start();
 date_default_timezone_set('Asia/Tokyo');
 require_once "./vendor/autoload.php";
 require_once "functions.php";
-$time="ver1.21.0";
+//$time="ver1.21.0";
 
 //.envの取得
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -18,7 +18,7 @@ if(EXEC_MODE==="local"){
   define("ROOT_URL","https://".MAIN_DOMAIN."/");
 }
 if(EXEC_MODE==="Product"){
-  $time="2026-02-13";	//リリース日
+  $time="2026-02-20";	//リリース日
 }else{
   $time=date("YmdHis");
 }

@@ -4,7 +4,7 @@
 	$db = new Database();
 
 	//log_writer2("\$_POST",$_POST,"lv3");
-	//$shu = ($_POST["shu"]);
+	$OFFSET = (int)($_POST["OFFSET"] ?? 0);
 	if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 		$id = $_SESSION['USER_ID'];
 	}else if (check_auto_login($_COOKIE['token'])==0) {
@@ -25,7 +25,7 @@
 	$sql = "SELECT log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,TIME_FORMAT(insdatetime, '%H:%i') as jikoku
 	,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd,log.typ) as total
 	,RANK() OVER(PARTITION BY log.id,log.ymd,shu,log.typ order by jun ) as setjun 
-	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = :id order by log.ymd desc,jun LIMIT :limit";
+	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = :id order by log.ymd desc,jun LIMIT 200 OFFSET :OFFSET";
 	/*
 	$result = $pdo_h->prepare( $sql );
 	$result->bindValue('id', $id, PDO::PARAM_STR);
@@ -35,7 +35,7 @@
 	$result = null;
 	$dataset = null;
 	*/
-	$kintore_log = $db->SELECT($sql,[":id" => $id,":limit" => 300]);
+	$kintore_log = $db->SELECT($sql,[":id" => $id,":OFFSET" => $OFFSET]);
 
 
 	//種目の取得

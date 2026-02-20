@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 class Database {
-    // 接続情報をプロパティとして保持（config.phpから読み込む想定）
+    // 接続情報をプロパティとして保持（.envから読み込む想定）
     private string $host;
     private string $db;
     private string $user;
@@ -49,7 +49,6 @@ class Database {
             $this->pdo = new PDO($dsn, $this->user, $this->pass, $options);
             return $this->pdo;
         } catch (PDOException $e) {
-            // プロの現場ではログに出力し、ユーザーには詳細を見せない
             error_log($e->getMessage());
             throw new Exception("データベース接続に失敗しました。");
         }
