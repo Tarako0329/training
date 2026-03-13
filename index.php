@@ -6,10 +6,12 @@ define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 //$current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
 //log_writer2("index",$current_time_with_microseconds,"lv1");
 
-$logoff = (!empty($_GET["logoff"]))?$_GET["logoff"]:"";
+//$logoff = (!empty($_GET["logoff"]))?$_GET["logoff"]:"";
+$logoff = $_GET["logoff"] ?? "";
 
 
 $msg="";
+$_SESSION["msg"] = $_SESSION["msg"] ?? "";
 if($_SESSION["msg"] === "ログオフしました"){
 	delete_old_token($_COOKIE['token']);
 	$_SESSION = [];
@@ -29,7 +31,7 @@ if($_SESSION["msg"] === "ログオフしました"){
 	$_SESSION["msg"]="";
 }
 
-if($_COOKIE["user_type"]==="google"){
+if(($_COOKIE["user_type"] ?? "")==="google"){
 	$g_login="signin_with";
 }else{
 	$g_login="signup_with";

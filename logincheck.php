@@ -4,9 +4,13 @@
   $db = new Database();	
 
   //パラメーター取得
-  $id = !empty($_POST['id'])?$_POST['id']:0;
+  //$id = !empty($_POST['id'])?$_POST['id']:0;
+  $id = $_POST['id'] ?? 0;
+  $P_login_type = $_POST['login_type'] ?? "";
+  $S_login_type = $_SESSION['login_type'] ?? "";
 
-  if($_SESSION["login_type"]===$_POST["login_type"] && $_POST["login_type"]==="google"){
+  //if($_SESSION["login_type"]===$_POST["login_type"] && $_POST["login_type"]==="google"){
+  if($P_login_type===$S_login_type && $P_login_type==="google"){
     $pass='%';
   }else{
     $pass = passEx(!empty($_POST['pass'])?$_POST['pass']:0,$id);

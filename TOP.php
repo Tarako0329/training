@@ -533,19 +533,19 @@
 										）
 									</div>
 								</div>
-								<div class='row' style='margin:1px 0px 1px 20px;display:flexbox;'><!--重量など記録部分-->
-									<input type='number' :class="input_select[0]" :readonly="keybord_show" style='width:70px;padding:6 6;' @Click='setindex(0)' @touchstart="keybord_show=true" name='weight' v-model="kiroku[0]" required='required'>
+								<div class='row' style='margin:1px 0px 1px 20px;display:flexbox;'><!--重量など記録部分　@touchend="keybord_show=true" -->
+									<input type='number' :class="input_select[0]" :readonly="keybord_show" style='width:70px;padding:6 6;' @Click='setindex(0)' name='weight' v-model="kiroku[0]" required='required'>
 									<span style='padding:8px 0 0 5px;width:40px;'>kg x</span>
-									<input type='number' :class="input_select[1]" :readonly="keybord_show" style='width:50px;padding:6 6;' @Click='setindex(1)' @touchstart="keybord_show=true" name='rep' v-model="kiroku[1]" required='required'>
+									<input type='number' :class="input_select[1]" :readonly="keybord_show" style='width:50px;padding:6 6;' @Click='setindex(1)' @touchend="keybord_show=true" name='rep' v-model="kiroku[1]" required='required'>
 									<select class="form-select form-select-sm" style='width:50px;padding-left:5px;padding-right:15px;margin-left:5px;' name='tani' required='required'>
 										<option value='0' selected>回</option>
 										<option value='1'>秒</option>
 									</select><span style='padding:8px 0 0 5px;width:15px;'>x</span>
-									<input type='number' :class="input_select[2]" :readonly="keybord_show" style='width:40px;padding:6 6;' @Click='setindex(2)' @touchstart="keybord_show=true" name='sets' v-model="kiroku[2]" required='required'><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
+									<input type='number' :class="input_select[2]" :readonly="keybord_show" style='width:40px;padding:6 6;' @Click='setindex(2)' @touchend="keybord_show=true" name='sets' v-model="kiroku[2]" required='required'><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
 								</div>
 								<div class='row ' style='margin:1px 20px;'>
 									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>補助/チート</label>
-									<input type='number' :class="input_select[3]" :readonly="keybord_show" style='width:50px;' id='rep2' @Click='setindex(3)' @touchstart="keybord_show=true" name='rep2' v-model="kiroku[3]">
+									<input type='number' :class="input_select[3]" :readonly="keybord_show" style='width:50px;' id='rep2' @Click='setindex(3)' @touchend="keybord_show=true" name='rep2' v-model="kiroku[3]">
 									
 								</div>
 								
@@ -773,6 +773,12 @@
 					const rm_mode = ref(false)
 					const setindex = (i) =>{
 						console_log(`setindex:${i}`)
+						console_log(event.type)
+						//タップで起動したかどうかを判断
+						if (event.type === 'touchstart') {
+							keybord_show.value = true;
+						}
+						
 						if(i===0 && jiju.value===true){
 							console_log(`自重種目は重量入れない: index=${i} , jiju.value=${jiju.value}`)
 							return 0 //自重種目は重量入れない
