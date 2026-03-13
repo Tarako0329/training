@@ -121,6 +121,7 @@
 					</div>
 				</div>
 			</header>
+			<?php if(EXEC_MODE!=="Product"){ echo "<div style='position:fixed;top:50px;left:10px;font-size:0.7em;' class='text-danger'>{{debug_msg}}</div>";}?>
 			<main v-show='background_show' class='container p-0' style='height:calc(100vh - 115px);'>
 				<div class='row position-relative m-0' style='height:100%;'>
 					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 p-0' style='height:100%;' id="tore_log"><!--トレログエリア-->
@@ -471,7 +472,7 @@
 			<div class='modal fade' id='edit_wt' data-bs-backdrop="static" tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true' >
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
-						<form method = 'post' @submit.prevent='OnSubmit' id='wt'>
+						<form method = 'post' @submit.prevent='OnSubmit' id='wt' @touchstart="checkTouchedElement">
 							<div class='modal-header'>
 								<h5 class="modal-title">トレーニング記録</h5>
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
@@ -550,7 +551,7 @@
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
 										<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
-										<a href='#' onclick="alert('RM数を入力してください。直近3カ月のMAX重量から適切な重量を逆算してセットします。')" class='m-0 p-0 ps-2' style='position: absolute; left: 33%; top: -57px;height:30px;color:#fff;width:120px;font-size:12px;'><i class="bi bi-question-square me-1"></i>RM換算とは</a>
+										<a href='#' onclick="alert('RM数を入力してください。直近3カ月で記録したMAX重量から適切な重量を逆算してセットします。')" class='m-0 p-0 ps-2' style='position: absolute; left: 33%; top: -57px;height:30px;color:#fff;width:120px;font-size:12px;'><i class="bi bi-question-square me-1"></i>RM換算とは</a>
 										<input type='checkbox'  autocomplete="off"  class="btn-check" id='rm_mode' v-model='rm_mode'>
 										<label for='rm_mode' class='btn btn-outline-success input-btn' style='position: absolute; right: 33%; top: -32px;height:30px;color:#fff;' >RM換算</label>
 										<button type='button' class='btn btn-secondary input-btn' style='position: absolute; right: 3px; top: -32px;height:30px;' @click='keybord_close()'>Ｘ</button>
@@ -677,6 +678,7 @@
 							})
 						}
 					})
+					
 					const disp_area = ref(false)
 					watch(disp_area,()=>{
 						console_log('watch(disp_area')
@@ -1161,7 +1163,31 @@
 							//document.getElementById('ms_training').style.height='500px'
 						}
 					}
-					
+
+					//タッチイベントのリスナーを追加（デバッグ用）
+					const debug_msg = ref('')
+					const checkTouchedElement = (event) => {
+						// 指が触れた最初のポイントを取得
+						const touch = event.touches[0];
+						// その座標(x, y)の真下にある要素を取得
+						const element = document.elementFromPoint(touch.clientX, touch.clientY);
+						if (element) {
+							console.log("タッチした要素:", element);
+							console.log("タグ名:", element.tagName);
+							console.log("クラス名:", element.className);
+							console.log("テキスト内容:", element.innerText);
+
+							debug_msg.value = "Touched: " + element.outerHTML + "Text: " +element.innerText;
+							// 視覚的に分かりやすくするために、一瞬だけ枠線をつける
+							const originalBorder = element.style.border;
+							element.style.border = '2px solid blue';
+							setTimeout(() => {
+								element.style.border = originalBorder;
+							}, 300);
+						}
+					};
+
+
 					onBeforeMount(()=>{
 						console_log('onBeforeMount')
 					})
@@ -1274,6 +1300,8 @@
 						kiroku_btn_name,
 						reloader,
 						reloader_info,
+						checkTouchedElement,
+						debug_msg,
 					}
 				}
 			}).mount('#logger');
@@ -1288,6 +1316,7 @@
 					e.preventDefault();
 				}
 			}
+			/*
 			window.onload = function() {
 				axios.get("ajax_timestamper.php?point=TOP.js_loaded")
 				.catch((error) => {
@@ -1298,15 +1327,17 @@
 					console_log('おわり ajax_timestamper')
 				})
 			};
-
+			*/
 		</script>
 	</BODY>
 </HTML>
 
 <?php
+/*
 	$pdo_h = null;
 	$time = microtime();
 	$parts = explode(" ", $time);
 	$current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
 	log_writer2("TOP.php end",$current_time_with_microseconds,"lv1");
-	?>
+	*/
+?>

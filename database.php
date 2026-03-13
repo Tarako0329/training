@@ -31,7 +31,7 @@ class Database {
     /**
      * PDOインスタンスを取得する（シングルトンパターンに近い形）
      */
-    public function connect(): PDO {
+    private function connect(): PDO {
         if ($this->pdo !== null) {
             return $this->pdo;
         }
@@ -55,7 +55,12 @@ class Database {
     }
 
     public function SELECT(string $sql,array $params=[]):array{
-      $this->sql = $sql;
+      /*
+      引数サンプル
+      $sql = "select * from A where col = :col";
+      $params = ["col" => "test"]
+      */
+      $this->sql = $sql;  //Exceptionロールバックログ用にロールバック前に投げたSQLを記録
 
       $stmt = $this->connect()->prepare($sql);
       $stmt -> execute($params);
@@ -63,6 +68,11 @@ class Database {
     }
 
     public function INSERT(string $table,array $data=[]):bool{
+      /*
+      引数サンプル
+      $table = "TableName";
+      $params = ["col" => "test"]
+      */
       $columns = "`".implode('`, `', array_keys($data))."`";  //項目名をカンマ区切りで取得
       $placeholders = ':' . implode(', :', array_keys($data));
 
@@ -77,24 +87,32 @@ class Database {
       $log = str_replace(["\r\n", "\r", "\n"], " ", $log);
       
       $this->log .= $log.";\n";
-      $this->sql = $log;//Exceptionロールバック時用のログ
+      $this->sql = $log;  //Exceptionロールバックログ用にロールバック前に投げたSQLを記録
 
       $stmt = $this->connect()->prepare($sql);
       return $stmt -> execute($data);
     }
 
     public function UP_DEL_EXEC(string $sql,array $data=[]):bool{
+      /*
+      引数サンプル
+      $sql = "Update TableName set col1 = :col1 where col2 = :col2";
+      $data = ["col1" => "test","col2" => "test"]
+      */
+      //ログ用SQLの作成
       $log = $sql;
-      foreach ($data as $key => $value) {
+      foreach ($data as $key => $value) { //":key" を "value" に変換
+        //keyが":"から始まってない場合は先頭に":"を付与する
+        $key = (strpos($key, ':') !== 0)?':'. $key:$key;
         $log = str_replace($key, (is_string($value) ? "'$value'" : (string)$value), $log);
       }
-      //$log内のタブを削除し改行コードを半角スペースに変換
-      $log = str_replace(["\t"], "", $log);
-      $log = str_replace(["\r\n", "\r", "\n"], " ", $log);
-      //$this->logに実行できるSQL文を書き込む
-      $this->log .= $log.";\n";
-      $this->sql = $log;//Exceptionロールバック時用のログ
+      $log = str_replace(["\t"], "", $log);                 //$log内のタブを削除
+      $log = str_replace(["\r\n", "\r", "\n"], " ", $log);  //$log内の改行コードを半角スペースに変換
+      
+      $this->log .= $log.";\n"; //$this->logに実行できるSQL文を書き込む
+      $this->sql = $sql;        //Exceptionロールバックログ用にロールバック前に投げたSQLを記録
 
+      //SQL実行
       $stmt = $this->connect()->prepare($sql);
       return $stmt -> execute($data);
     }
