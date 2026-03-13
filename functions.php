@@ -191,5 +191,17 @@ function get_pdo_options() {
                PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,   //sqlの複文禁止 "select * from hoge;delete from hoge"みたいなの
                PDO::ATTR_EMULATE_PREPARES => false);        //同上
 }
+function get_device_type() {
+    $ua = $_SERVER['HTTP_USER_AGENT'];
+
+    if (strpos($ua, 'iPhone') !== false || (strpos($ua, 'Android') !== false && strpos($ua, 'Mobile') !== false)) {
+        return 'モバイル';
+    } elseif (strpos($ua, 'iPad') !== false || strpos($ua, 'Android') !== false) {
+        return 'タブレット';
+    } else {
+        return 'PC';
+    }
+}
+
 
 ?>

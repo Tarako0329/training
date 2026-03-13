@@ -1,5 +1,5 @@
 <?php
-	// 設定ファイルインクルード【開発中】
+	// 設定ファイルインクルード
 	require_once "config.php";
 	require_once "database.php";
 	$db = new Database();
@@ -49,8 +49,11 @@
 		setCookie("user_type", 'google', time()+60*60*24*365, "/", "", true, true);
 	}
 
+	$device = get_device_type();
 	$user_name = ($row[0]["name"]);
 	$token=get_token();
+
+	log_writer2("アクセス端末","USER_ID:".$id." DEVICE:".$device." USER_NAME:".$user_name,"lv1");
 ?>
 <!DOCTYPE html>
 <HTML>
