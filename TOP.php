@@ -1194,6 +1194,13 @@
 						}
 					};
 
+					const info_readed = () =>{
+						if(window.localStorage){
+							localStorage.setItem('info_readed','true')
+							alert('右上のメニューアイコン[三]から「インストール手順」を選択すると、再度確認できます。')
+						}
+					}
+					const install_info = ref('')
 
 					onBeforeMount(()=>{
 						console_log('onBeforeMount')
@@ -1221,33 +1228,41 @@
 							unlock_trlog_area()
 						});
 
-						//スマホブラウザで起動された場合、インストールを進めるモーダルを表示する
-						if (window.matchMedia('(display-mode: standalone)').matches) {
-							// PWAとして起動された場合の処理
-						} else {
-							//alert('ブラウザとして起動されました');
-							const userAgent = navigator.userAgent;
-							if (
-								userAgent.indexOf('Windows') !== -1 ||
-								userAgent.indexOf('Macintosh') !== -1 ||
-								userAgent.indexOf('Linux') !== -1
+							
+						const userAgent = navigator.userAgent;
+						if (
+							userAgent.indexOf('Windows') !== -1 ||
+							userAgent.indexOf('Macintosh') !== -1 ||
+							userAgent.indexOf('Linux') !== -1
 							) {
-								// パソコン.なにもしない
-							} else {
-								// パソコン以外。インストールを勧める
+							// パソコン。スマートフォンでも利用できる案内を表示
+							install_info.value = '<div class="col-8"><p class="mb-0">スマートフォンからも利用できます。</p><p class="mb-1">QRコードからアクセスしてください。</p></div><div class="col-4"><img src="img/qr_code.png" alt="QRコード"></div><hr>'
+						} else {
+							//スマホブラウザで起動された場合、インストールを進めるモーダルを表示する
+							if (window.matchMedia('(display-mode: standalone)').matches) {
+								// スマホでPWAとして起動された場合の処理
+								if(window.localStorage){
+									localStorage.setItem('info_readed','true')	//モーダルは表示しない
+								}
+							}else {
+								// スマホでブラウザ起動された場合の処理
+								//document.getElementById("pwa_info_btn").click()
+							}
+						}
+						//localStorageにinfo_readedがなければ、インストールを進めるモーダルを表示する
+						if(window.localStorage){
+							if(!localStorage.getItem('info_readed')){
 								document.getElementById("pwa_info_btn").click()
 							}
-						
 						}
-
 						//Intersection Observerを使用し、reloaderが表示されたらadd_trlogを呼び出す
-						let offset = 200;
+						let offset = 300;
 						const observer = new IntersectionObserver((entries) => {
 							entries.forEach(entry => {
 								if (entry.isIntersecting) {
 									console_log('IntersectionObserver: reloader is visible');
 									add_trlog(offset);
-									offset += 200;
+									offset += 300;
 								}
 							});
 						}, {
@@ -1309,6 +1324,8 @@
 						reloader_info,
 						checkTouchedElement,
 						debug_msg,
+						info_readed,
+						install_info,
 					}
 				}
 			}).mount('#logger');

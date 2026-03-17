@@ -37,6 +37,7 @@
     			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class='modal-body container'>
+					<div class="row mb-1" v-html="install_info"></div>
 					<div class="row">
 						<div class='col-12 fs-6'>
 							<p class='mb-1' style='font-size:14px;'>下記手順でインストールすることで、アプリケーション風に利用可能となります。(ブラウザでも利用可能)</p>
@@ -93,7 +94,7 @@
 					</div>
 				</div>
 				<div class='modal-footer'>
-					<button type='button' class="btn btn-sm btn-secondary mbtn" data-bs-dismiss="modal">閉じる</button>
+					<button type='button' class="btn btn-sm btn-secondary mbtn" data-bs-dismiss="modal" @click='info_readed()'>確認した</button>
 				</div>
 		</div>
 	</div>
