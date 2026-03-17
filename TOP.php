@@ -124,7 +124,7 @@
 					</div>
 				</div>
 			</header>
-			<?php if(EXEC_MODE!=="Product"){ echo "<div style='position:fixed;top:50px;left:10px;font-size:0.7em;' class='text-danger'>{{debug_msg}}</div>";}?>
+			<?php if(EXEC_MODE!=="Product"){ echo "<div style='position:fixed;top:50px;left:10px;font-size:0.7em;z-index:1100;height:60px;border:solid 0.5px;' class='text-danger'>{{debug_msg}}</div>";}?>
 			<main v-show='background_show' class='container p-0' style='height:calc(100vh - 115px);'>
 				<div class='row position-relative m-0' style='height:100%;'>
 					<div v-show='disp_area===false' class='col-12 col-md-7 col-lg-6 col-xl-5 p-0' style='height:100%;' id="tore_log"><!--トレログエリア-->
@@ -534,49 +534,49 @@
 									</div>
 								</div>
 								<div class='row' style='margin:1px 0px 1px 20px;display:flexbox;'><!--重量など記録部分　@touchend="keybord_show=true" -->
-									<input type='number' :class="input_select[0]" :readonly="keybord_show" style='width:70px;padding:6 6;' @Click='setindex(0)' name='weight' v-model="kiroku[0]" required='required'>
+									<input type='number' :class="input_select[0]" :readonly="keybord_show" style='width:70px;padding:6 6;' @Click.prevent='setindex(0)' @touchstart.prevent="setindex(0)" name='weight' v-model="kiroku[0]" required='required'>
 									<span style='padding:8px 0 0 5px;width:40px;'>kg x</span>
-									<input type='number' :class="input_select[1]" :readonly="keybord_show" style='width:50px;padding:6 6;' @Click='setindex(1)' @touchend="keybord_show=true" name='rep' v-model="kiroku[1]" required='required'>
+									<input type='number' :class="input_select[1]" :readonly="keybord_show" style='width:50px;padding:6 6;' @Click.prevent='setindex(1)' @touchstart.prevent="setindex(1)" name='rep' v-model="kiroku[1]" required='required'>
 									<select class="form-select form-select-sm" style='width:50px;padding-left:5px;padding-right:15px;margin-left:5px;' name='tani' required='required'>
 										<option value='0' selected>回</option>
 										<option value='1'>秒</option>
 									</select><span style='padding:8px 0 0 5px;width:15px;'>x</span>
-									<input type='number' :class="input_select[2]" :readonly="keybord_show" style='width:40px;padding:6 6;' @Click='setindex(2)' @touchend="keybord_show=true" name='sets' v-model="kiroku[2]" required='required'><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
+									<input type='number' :class="input_select[2]" :readonly="keybord_show" style='width:40px;padding:6 6;' @Click.prevent='setindex(2)' @touchstart.prevent="setindex(2)" name='sets' v-model="kiroku[2]" required='required'><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
 								</div>
 								<div class='row ' style='margin:1px 20px;'>
 									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>補助/チート</label>
-									<input type='number' :class="input_select[3]" :readonly="keybord_show" style='width:50px;' id='rep2' @Click='setindex(3)' @touchend="keybord_show=true" name='rep2' v-model="kiroku[3]">
+									<input type='number' :class="input_select[3]" :readonly="keybord_show" style='width:50px;' id='rep2' @Click.prevent='setindex(3)' @touchstart.prevent="setindex(3)" name='rep2' v-model="kiroku[3]">
 									
 								</div>
 								
 								<div v-show='keybord_show'>
 									<div class='row' style='margin:15px 20px 1px 20px;position:relative;'>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>1</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>2</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>3</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>1</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>2</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>3</button>
 										<a href='#' onclick="alert('RM数を入力してください。直近3カ月で記録したMAX重量から適切な重量を逆算してセットします。')" class='m-0 p-0 ps-2' style='position: absolute; left: 33%; top: -57px;height:30px;color:#fff;width:120px;font-size:12px;'><i class="bi bi-question-square me-1"></i>RM換算とは</a>
 										<input type='checkbox'  autocomplete="off"  class="btn-check" id='rm_mode' v-model='rm_mode'>
 										<label for='rm_mode' class='btn btn-outline-success input-btn' style='position: absolute; right: 33%; top: -32px;height:30px;color:#fff;' >RM換算</label>
 										<button type='button' class='btn btn-secondary input-btn' style='position: absolute; right: 3px; top: -32px;height:30px;' @click='keybord_close()'>Ｘ</button>
 									</div>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>4</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>5</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>6</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>4</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>5</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>6</button>
 									</div>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>7</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>8</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>9</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>7</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>8</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>9</button>
 									</div>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>{{zero_ten}}</button>
-										<button v-show='rm_mode===false' type='button' class='btn btn-primary input-btn' @click='keydown'>.</button>
-										<button type='button' class='btn btn-primary input-btn' @click='keydown'>ｸﾘｱ</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>{{zero_ten}}</button>
+										<button v-show='rm_mode===false' type='button' class='btn btn-primary input-btn' @touchstart='keydown'>.</button>
+										<button type='button' class='btn btn-primary input-btn' @touchstart='keydown'>ｸﾘｱ</button>
 									</div>
 									<div class='row' style='margin:1px 20px 1px 20px;'>
-										<button type='button' class='btn btn-primary' style='height:50px;width:50%' @click='keydown' value='-1'>≪</button>
-										<button type='button' class='btn btn-primary' style='height:50px;width:50%' @click='keydown' value='1'>≫</button>
+										<button type='button' class='btn btn-primary' style='height:50px;width:50%' @touchstart='keydown' value='-1'>≪</button>
+										<button type='button' class='btn btn-primary' style='height:50px;width:50%' @touchstart='keydown' value='1'>≫</button>
 									</div>
 								</div>
 								
@@ -762,9 +762,6 @@
 							.catch((error) => {
 								console_log(`add_trlog ERROR:${error}`);
 							});
-							
-						
-						
 					}
 
 					const kiroku = ref(['','','',0])
@@ -774,6 +771,7 @@
 					const setindex = (i) =>{
 						console_log(`setindex:${i}`)
 						console_log(event.type)
+						//alert(event.type)
 						//タップで起動したかどうかを判断
 						if (event.type === 'touchstart') {
 							keybord_show.value = true;
