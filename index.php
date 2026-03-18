@@ -11,14 +11,15 @@ $logoff = $_GET["logoff"] ?? "";
 
 
 $msg="";
+$cookie_token = $_COOKIE['token'] ?? "";
 $_SESSION["msg"] = $_SESSION["msg"] ?? "";
 if($_SESSION["msg"] === "ログオフしました"){
-	delete_old_token($_COOKIE['token']);
+	delete_old_token($cookie_token);
 	$_SESSION = [];
 	setCookie("token", '', -1, "/", "", true, true);
 	$msg='ログオフしました';
 }else if($logoff==="sinkitouroku"){
-	delete_old_token($_COOKIE['token']);
+	delete_old_token($cookie_token);
 	$_SESSION["USER_ID"] = "";
 	setCookie("token", '', -1, "/", "", true, true);
 	$msg='登録完了しました。IDとパスワードを入力しログインしてください。';

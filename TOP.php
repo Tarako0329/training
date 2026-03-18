@@ -3,11 +3,12 @@
 	require_once "config.php";
 	//require_once "database.php";
 	//$db = new Database();
+	$cookie_token = $_COOKIE['token'] ?? "";
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
 		decho ("session:".$id);
-	}else if (check_auto_login($_COOKIE['token'])==0) {
+	}else if (check_auto_login($cookie_token)==0) {
 		$id = $_SESSION['USER_ID'];
 		decho ("クッキー:".$id);
 	}else{
@@ -23,7 +24,7 @@
 	$logoff=!empty($_GET["logoff"])?$_GET["logoff"]:"";
 
 	if($logoff === "out"){
-		delete_old_token($_COOKIE['token']);
+		delete_old_token($cookie_token);
 		setCookie("token", '', -1, "/", "", true, true);
 		$_SESSION=[];
 		$_SESSION["msg"] = "ログオフしました";

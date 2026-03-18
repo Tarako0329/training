@@ -3,7 +3,7 @@ require_once "config.php";
 //require_once "database.php";
 //$db = new Database();	
 
-log_writer2("\$_POST",$_POST,"lv3");
+//log_writer2("\$_POST",$_POST,"lv3");
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
 }else if (check_auto_login($_COOKIE['token'])==0) {
@@ -135,7 +135,7 @@ if($tani==="month"){
 	exit();
 }
 
-log_writer2("\$dataset_work",$dataset_work,"lv3");
+//log_writer2("\$dataset_work",$dataset_work,"lv3");
 
 $dataset = [];
 //$i=1;
@@ -153,23 +153,23 @@ foreach($dataset_work AS $row){
 	if($gtype==="hikaku"){//直近1年
 		if($row["beforedate"]<=365){
 			if($weight<>"NaN"){
-				$min_val = ($min_val>$weight)?$weight:$min_val;
-				$max_val = ($max_val<$weight)?$weight:$max_val;
+				$min_val = (int)(($min_val>$weight)?$weight:$min_val);
+				$max_val = (int)(($max_val<$weight)?$weight:$max_val);
 			}
 			$labels[] = substr($row["ym"],-2);
 			$graph_data[] = $weight;
 		}else if($row["beforedate"]<=730){
 			if($weight<>"NaN"){
-				$min_val = ($min_val>$weight)?$weight:$min_val;
-				$max_val = ($max_val<$weight)?$weight:$max_val;
+				$min_val = (int)(($min_val>$weight)?$weight:$min_val);
+				$max_val = (int)(($max_val<$weight)?$weight:$max_val);
 			}
 			$graph_data2[] = $weight;	
 		}
 	}else if($gtype==="12M"){//直近１年（月集計の場合はyyyymm、日ごとの場合はN日前）
 		if($row["beforedate"]<=365){
 			if($weight<>"NaN"){
-				$min_val = ($min_val>$weight)?$weight:$min_val;
-				$max_val = ($max_val<$weight)?$weight:$max_val;
+				$min_val = (int)(($min_val>$weight)?$weight:$min_val);
+				$max_val = (int)(($max_val<$weight)?$weight:$max_val);
 			}
 			$labels[] = ($tani==="month")?substr($row["ym"],-2):$row["beforedate"];
 			$graph_data[] = $weight;
@@ -178,8 +178,8 @@ foreach($dataset_work AS $row){
 		}
 	}else if($gtype==="all"){//全期間
 		if($weight<>"NaN"){
-			$min_val = ($min_val>$weight)?$weight:$min_val;
-			$max_val = ($max_val<$weight)?$weight:$max_val;
+			$min_val = (int)(($min_val>$weight)?$weight:$min_val);
+			$max_val = (int)(($max_val<$weight)?$weight:$max_val);
 		}
 		$labels[] = ($tani==="month")?$row["ym"]:$row["beforedate"];
 		$graph_data[] = $weight;
