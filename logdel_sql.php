@@ -1,7 +1,7 @@
 <?php
 require_once "config.php";
-require_once "database.php";
-$db = new Database();
+//require_once "database.php";
+//$db = new Database();
 //トランザクション処理
 
 //結果書き込み
@@ -19,23 +19,12 @@ if(isset($_SESSION['USER_ID'])){
 
 
 try{
-	/*
-  $pdo_h->beginTransaction();
-	$sql = "delete from tr_log where id =? and ymd = ? and jun = ?";
-	$stmt = $pdo_h->prepare($sql);
-	$stmt->bindValue(1, $id, PDO::PARAM_STR);
-	$stmt->bindValue(2, $_POST["k_ymd"], PDO::PARAM_STR);
-	$stmt->bindValue(3, $_POST["k_jun"], PDO::PARAM_STR);
-	$stmt->execute();
-	$pdo_h->commit();
-	*/
 	$db->begin_tran();
 	$sql = "DELETE from tr_log where id = :id and ymd = :ymd and jun = :jun";
 	$db->UP_DEL_EXEC($sql,[":id" => $id,":ymd" => $_POST["k_ymd"],":jun" => $_POST["k_jun"]]);
 	$db->commit_tran();
 
 }catch(Exception $e){
-  //$pdo_h->rollBack();
 	$msg = "catch Exception \$e：".$e;
 	$db->rollback_tran($msg);
 

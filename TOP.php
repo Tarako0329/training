@@ -1,8 +1,8 @@
 <?php
 	// 設定ファイルインクルード
 	require_once "config.php";
-	require_once "database.php";
-	$db = new Database();
+	//require_once "database.php";
+	//$db = new Database();
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
@@ -1210,7 +1210,7 @@
 					const reloader_info = ref('now Loading')
 					onMounted(() => {
 						console_log('onMounted')
-						get_trlog()
+						//get_trlog()
 						const Modal_taisosiki = document.getElementById('taisosiki'); // モーダルのIDを取得
 						const Modal_usanso = document.getElementById('usanso'); // モーダルのIDを取得
 						const Modal_edit_wt = document.getElementById('edit_wt'); // モーダルのIDを取得
@@ -1256,12 +1256,16 @@
 							}
 						}
 						//Intersection Observerを使用し、reloaderが表示されたらadd_trlogを呼び出す
-						let offset = 300;
+						let offset = 0;
 						const observer = new IntersectionObserver((entries) => {
 							entries.forEach(entry => {
 								if (entry.isIntersecting) {
 									console_log('IntersectionObserver: reloader is visible');
-									add_trlog(offset);
+									if(offset===0){
+										get_trlog()
+									}else{
+										add_trlog(offset);
+									}
 									offset += 300;
 								}
 							});

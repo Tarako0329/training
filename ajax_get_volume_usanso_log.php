@@ -1,7 +1,7 @@
 <?php
 require_once "config.php";
-require_once "database.php";
-$db = new Database();
+//require_once "database.php";
+//$db = new Database();
 
 log_writer2("\$_POST",$_POST,"lv3");
 $shu = ($_POST["shu"]);
@@ -32,15 +32,6 @@ $sql = "SELECT
 		UNION ALL 
 		SELECT * FROM  tr_log where id = :id2 and shu = :shu2) as T 
 	order by T.ymd desc,T.jun ";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
-$result->bindValue(3, $id, PDO::PARAM_STR);
-$result->bindValue(4, $shu, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $dataset_work = $db->SELECT($sql,[":id1"=>$id,"shu1"=>$shu,"id2"=>$id,"shu2"=>$shu]);
 
 //log_writer2("\$dataset_work",$dataset_work,"lv3");
@@ -114,28 +105,6 @@ if($tani==="month"){
 }
 
 $graph_title = "『".$shu."のﾄﾚｰﾆﾝｸﾞ量推移』";
-/*
-$dataset_work =[];
-$result = $pdo_h->prepare( $sql );
-if($tani==="month"){
-	$result->bindValue('id1', $id, PDO::PARAM_STR);
-	$result->bindValue('shumoku1', $shu, PDO::PARAM_STR);
-	$result->bindValue('shumoku2', $shu, PDO::PARAM_STR);
-}
-$result->bindValue('id2', $id, PDO::PARAM_STR);
-$result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-
-
-$result->closeCursor();
-$result = null;
-$pdo_h = null;
-
-
-$dataset = [];
-//$i=1;
-*/
 $graph_data_total_km=[];
 $graph_data_total_H=[];
 $graph_data_total_cal=[];

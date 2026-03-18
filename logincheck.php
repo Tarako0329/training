@@ -1,15 +1,14 @@
 <?php
   require_once "config.php";
-  require_once "database.php";
-  $db = new Database();	
+  use classes\Security\Security;
+  //require_once "database.php";
+  //$db = new Database();	
 
   //パラメーター取得
-  //$id = !empty($_POST['id'])?$_POST['id']:0;
   $id = $_POST['id'] ?? 0;
   $P_login_type = $_POST['login_type'] ?? "";
   $S_login_type = $_SESSION['login_type'] ?? "";
 
-  //if($_SESSION["login_type"]===$_POST["login_type"] && $_POST["login_type"]==="google"){
   if($P_login_type===$S_login_type && $P_login_type==="google"){
     $pass='%';
   }else{
@@ -25,7 +24,8 @@
  
   //簡易ログイン
   if (empty($cookie_token)) {
-   if (check_user($id, $pass) == 0) {
+   //if (check_user($id, $pass) == 0) {
+   if (check_user($id, $pass) || $pass === "%") {
       $normal_result = 0;
     }else{
       $_SESSION["msg"]='ＩＤ 又はパスワードが間違っています。';
@@ -73,27 +73,24 @@
 //---------------------------------------------------------------------------//
 // ログイン処理
 //---------------------------------------------------------------------------//
-function check_user($id, $pass) {
+function check_user(string $id="-1", string $pass=""):bool {
 	//$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options()); 
-
-  $db = new Database();	
-	$sql = "SELECT * from users where id = :id and pass like :pass";
-  //$sql = "SELECT * from users where id = :id";
-  /*
-	$stmt = $pdo_h->prepare($sql);
-	$stmt->bindValue(1, $id, PDO::PARAM_STR);
-	$stmt->bindValue(2, $pass, PDO::PARAM_STR);
-	$stmt->execute();
-	$row_cnt = $stmt->rowCount();
-	//$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  */
-  $row = $db->SELECT($sql,[":id" => $id,"pass" => $pass]);
-  $row_cnt = count($row);
   
+  $sequrity = new Security($id,key);
+  $db = new Database();	
+	//$sql = "SELECT * from users where id = :id and pass like :pass";
+  //$row = $db->SELECT($sql,[":id" => $id,"pass" => $pass]);
+	$sql = "SELECT * from users where id = :id ";
+  $row = $db->SELECT($sql,[":id" => $id]);
+  //$row_cnt = count($row);
+  
+  return $sequrity->verifyPassword($pass, $row[0]['pass']);
+  /*
   if($row_cnt===0){
     return 1;
   }
   return 0;
+  */
 }
 
  

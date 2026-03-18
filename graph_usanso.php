@@ -1,8 +1,8 @@
 <?php
 // 設定ファイルインクルード
 require_once "config.php";
-require_once "database.php";
-$db = new Database();	
+//require_once "database.php";
+//$db = new Database();	
 
 log_writer2("\$_GET",$_GET,"lv3");
 //トレーニング種別
@@ -22,13 +22,6 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 
 //トレーニングデータから直近3か月分の継続を確認したらデフォルトを月計とする
 $sql='SELECT left(ymd,7) FROM `tr_log` WHERE id=:id and shu=:shu  and DATEDIFF(now(),ymd) < 93 group by left(ymd,7)';
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue('id', $id, PDO::PARAM_STR);
-$result->bindValue('shu', $shu, PDO::PARAM_STR);
-$result->execute();
-$data = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $data = $db->SELECT($sql,[':id' => $id, ':shu' => $shu]);
 
 if(count($data) < 3){
@@ -350,9 +343,7 @@ if(count($data) < 3){
 						mokuhyou_par.value = (Number(mokuhyou_kg.value)/Number(taijuu.value)*Number(100))
 					}else if(mokuhyou_type.value==='par'){
 						mokuhyou_kg.value = Number(taijuu.value) * Number(mokuhyou_par.value) / Number(100)
-						//mokuhyou_kg.value = Math.round(Number(mokuhyou_kg.value))
 					}
-					//create_graph(document.getElementById('myChart'))
 					
 				})
 
@@ -371,7 +362,6 @@ if(count($data) < 3){
 						.then((response) => {
 							console_log(response.data)
 							get_max_data()
-							//create_graph(document.getElementById('myChart'))
 						})
 						.catch((error) => {
 							console_log(`set_mokuhyou ERROR:${error}`)

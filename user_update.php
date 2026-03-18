@@ -1,7 +1,7 @@
 <?php
   require_once "config.php";
- 	require_once "database.php";
-	$db = new Database();
+ 	//require_once "database.php";
+	//$db = new Database();
 
   //トランザクション処理
   //log_writer2("\$POST",$_POST,"lv3");
@@ -23,25 +23,10 @@
 				$db->begin_tran();
 				$sql = "UPDATE users set `name`=:name,sex=:sex,height=:height,birthday=:birthday where id=:id";
 				$db->UP_DEL_EXEC($sql,[":name"=>$_POST['fname'],":sex"=>$_POST['sex'],":height"=>$_POST['height'],":birthday"=>$_POST['birthday'],":id"=>$_POST['id']]);
-				/*
-				$stmt = $pdo_h->prepare($sql);
-				$stmt->bindValue("name", $_POST['fname'], PDO::PARAM_STR);
-				$stmt->bindValue("sex", $_POST['sex'], PDO::PARAM_STR);
-				$stmt->bindValue("height", $_POST['height'], PDO::PARAM_STR);
-				$stmt->bindValue("birthday", $_POST['birthday'], PDO::PARAM_STR);
-				$stmt->bindValue("id", $_POST['id'], PDO::PARAM_STR);
-				$stmt->execute();
-				*/
 				if(!empty($_POST["pass"])){
 					$pass = passEx($_POST['pass'],$id);
 					$sql = "UPDATE users set pass=:pass where id=:id";
 					$db->UP_DEL_EXEC($sql,[":pass"=>$pass,":id"=>$id]);
-					/*
-					$stmt = $pdo_h->prepare($sql);
-					$stmt->bindValue("pass",$pass , PDO::PARAM_STR);
-					$stmt->bindValue("id", $id, PDO::PARAM_STR);
-					$stmt->execute();
-					*/
 				}
 				$db->commit_tran();
 			}catch(Exception $e){
@@ -60,5 +45,4 @@
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: index.php?logoff=out");
 	exit();
-exit();
 ?>

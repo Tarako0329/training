@@ -1,8 +1,8 @@
 <?php
 // 設定ファイルインクルード
 require_once "config.php";
-require_once "database.php";
-$db = new Database();	
+//require_once "database.php";
+//$db = new Database();	
 
 log_writer2("\$_GET",$_GET,"lv3");
 $now = date('Y-m-d');
@@ -23,13 +23,6 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 
 //トレーニングデータから直近3か月分の継続を確認したらデフォルトを月計とする
 $sql='SELECT left(ymd,7) FROM `tr_log` WHERE id=:id and shu=:shu  and DATEDIFF(now(),ymd) < 93 group by left(ymd,7)';
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue('id', $id, PDO::PARAM_STR);
-$result->bindValue('shu', $shu, PDO::PARAM_STR);
-$result->execute();
-$data = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $data = $db->SELECT($sql,["id" => $id,"shu" => $shu]);
 
 if(count($data) < 3){
@@ -42,12 +35,6 @@ if(count($data) < 3){
 //種目の取得
 //全種目
 $sql = "select typ,shu,max(insdatetime) as sort from tr_log where id = :id and typ=0 group by shu ,typ order by sort desc, typ";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue("id", $id, PDO::PARAM_STR);
-$result->execute();
-$shumoku_list = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $shumoku_list = $db->SELECT($sql,["id" => $id]);
 
 ?>
@@ -655,7 +642,6 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 						.then((response) => {
 							console_log(response.data)
 							get_max_data()
-							//create_graph(document.getElementById('myChart'))
 						})
 						.catch((error) => {
 							console_log(`set_mokuhyou ERROR:${error}`)

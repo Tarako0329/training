@@ -1,7 +1,7 @@
 <?php
 require_once "config.php";
-require_once "database.php";
-$db = new Database();
+//require_once "database.php";
+//$db = new Database();
 
 //トランザクション処理
 log_writer2("\$POST",$_POST,"lv3");
@@ -35,44 +35,8 @@ try{
 
 	if(empty($_POST["NO"])){
 		$sql = "SELECT max(jun) as junban from tr_log where ymd = :ymd and id = :id;";
-		/*
-			$result = $pdo_h->prepare($sql);
-			$result->bindValue(1, $_POST["ymd"], PDO::PARAM_STR);
-			$result->bindValue(2, $id, PDO::PARAM_STR);
-			$result->execute();
-			$row_cnt = $result->rowCount();
-			$row = $result->fetchAll(PDO::FETCH_ASSOC);
-		*/
 		$row = $db->SELECT($sql,[":ymd" => $_POST["ymd"],":id" => $id]);
-		//$row_cnt = count($row);
-		/*
-			$jun=1;
-			if($row_cnt!==0){
-				$jun=$row[0]["junban"]+1;
-			}
-		*/
 		$jun = empty($row[0]["junban"])?1:$row[0]["junban"]+1;
-
-		/*
-			$sql = "INSERT into tr_log(id,shu,jun,weight,rep,tani,rep2,sets,cal,ymd,memo,typ) values(?,?,?,?,?,?,?,?,?,?,?,?)";
-
-			$pdo_h->beginTransaction();
-			$stmt = $pdo_h->prepare($sql);
-			$stmt->bindValue(1, $id, PDO::PARAM_STR);
-			$stmt->bindValue(2, $shu, PDO::PARAM_STR);
-			$stmt->bindValue(3, $jun, PDO::PARAM_INT);
-			$stmt->bindValue(4, $_POST["weight"], PDO::PARAM_INT);
-			$stmt->bindValue(5, $_POST["rep"], PDO::PARAM_INT);
-			$stmt->bindValue(6, $_POST["tani"], PDO::PARAM_STR);
-			$stmt->bindValue(7, $rep2, PDO::PARAM_STR);
-			$stmt->bindValue(8, $_POST["sets"], PDO::PARAM_INT);
-			$stmt->bindValue(9, $cal, PDO::PARAM_INT);
-			$stmt->bindValue(10, $_POST["ymd"], PDO::PARAM_STR);
-			$stmt->bindValue(11, $_POST["memo"], PDO::PARAM_STR);
-			$stmt->bindValue(12, $type, PDO::PARAM_STR);
-			$stmt->execute();
-		*/
-		
 		$db->INSERT("tr_log",[
 			"id" => $id
 			,"shu" => $shu
@@ -88,16 +52,7 @@ try{
 			,"typ" => $type]);
 	}else{
 		$sql = "SELECT max(jun) as junban from tr_log where  ymd = :ymd and id = :id;";
-		/*
-		$result = $pdo_h->prepare($sql);
-		$result->bindValue(1, $_POST["ymd"], PDO::PARAM_STR);
-		$result->bindValue(2, $id, PDO::PARAM_STR);
-		$result->execute();
-		$row_cnt = $result->rowCount();
-		$row = $result->fetchAll(PDO::FETCH_ASSOC);
-		*/
 		$row = $db->SELECT($sql,[":ymd" => $_POST["ymd"],":id" => $id]);
-
 		
 		if($_POST["motoYMD"] == $_POST["ymd"]){//日付の変更がない場合は元の順番で更新
 			$jun=$_POST["NO"];
@@ -108,7 +63,7 @@ try{
 		$sql = "UPDATE tr_log set 
 			`shu` = :shu,
 			`jun` = :jun,
-			weight = :weight,
+			`weight` = :weight,
 			`rep` = :rep1,
 			`rep2` = :rep2,
 			`sets` = :sets,
@@ -118,25 +73,6 @@ try{
 			`typ` = :typ,
 			`memo` = :memo 
 			where `id` =:id and `ymd` = :motoYMD and `jun` = :NO";
-		/*
-		$pdo_h->beginTransaction();
-		$stmt = $pdo_h->prepare($sql);
-		$stmt->bindValue("shu", $shu, PDO::PARAM_STR);
-		$stmt->bindValue("jun", $jun, PDO::PARAM_INT);
-		$stmt->bindValue("weight", $_POST["weight"], PDO::PARAM_INT);
-		$stmt->bindValue("rep", $_POST["rep"], PDO::PARAM_INT);
-		$stmt->bindValue("rep2", $rep2, PDO::PARAM_INT);
-		$stmt->bindValue("sets", $_POST["sets"], PDO::PARAM_INT);
-		$stmt->bindValue("tani", $_POST["tani"], PDO::PARAM_INT);
-		$stmt->bindValue("cal", $cal, PDO::PARAM_INT);
-		$stmt->bindValue("ymd", $_POST["ymd"], PDO::PARAM_STR);
-		$stmt->bindValue("typ", $type, PDO::PARAM_INT);
-		$stmt->bindValue("memo", $_POST["memo"], PDO::PARAM_STR);
-		$stmt->bindValue("id", $id, PDO::PARAM_STR);
-		$stmt->bindValue("motoYMD", $_POST["motoYMD"], PDO::PARAM_STR);
-		$stmt->bindValue("NO", $_POST["NO"], PDO::PARAM_INT);
-		$stmt->execute();
-		*/
 		
 		$db->UP_DEL_EXEC($sql,[
 			":shu" => $shu
@@ -158,50 +94,20 @@ try{
 	if(!empty($_POST["condition"])){
 		//デリイン
 		$sql = "DELETE from tr_condition where id = :id and ymd = :ymd";
-		/*
-			$stmt = $pdo_h->prepare($sql);
-			$stmt->bindValue(1, $id, PDO::PARAM_STR);
-			$stmt->bindValue(2, $_POST["ymd"], PDO::PARAM_STR);
-			$stmt->execute();
-		*/
 		$db->UP_DEL_EXEC($sql,[":id" => $id,":ymd" => $_POST["ymd"]]);
 
-		/*
-			$sql = "INSERT into tr_condition values(?,?,?)";
-			$stmt = $pdo_h->prepare($sql);
-			$stmt->bindValue(1, $id, PDO::PARAM_STR);
-			$stmt->bindValue(2, $_POST["ymd"], PDO::PARAM_STR);
-			$stmt->bindValue(3, $_POST["condition"], PDO::PARAM_STR);
-			$stmt->execute();
-		*/
 		$db->INSERT("tr_condition",["id" => $id,"ymd"=>$_POST["ymd"],"condition"=>$_POST["condition"]]);
-	
 	}
 
 
 	//種目マスタ追加
 	$sql = "SELECT shu,count(*) as cnt from ms_training where id = :id and shu = :shu";
-	/*
-		$result = $pdo_h->prepare($sql);
-		$result->bindValue("id", $id, PDO::PARAM_STR);
-		$result->bindValue("shu", $shu, PDO::PARAM_STR);
-		$result->execute();
-		$row = $result->fetchAll(PDO::FETCH_ASSOC);
-	*/
 	$row = $db->SELECT($sql,[":id" => $id,":shu" => $shu]);
-	
 
 	if($row[0]["shu"]==$shu){
 		//skip
 	}else{
 		$sql = "SELECT max(sort)+1 as next from ms_training where id = :id and sort < 100 group by id;";
-		/*
-		$result = $pdo_h->prepare($sql);
-		$result->bindValue("id", $id, PDO::PARAM_STR);
-		$result->execute();
-		$row_cnt = $result->rowCount();
-		$row = $result->fetchAll(PDO::FETCH_ASSOC);
-		*/
 		$row = $db->SELECT($sql,[":id" => $id]);
 		$row_cnt = count($row);
 	
@@ -210,14 +116,6 @@ try{
 		}else{
 			$next = $row[0]["next"];
 		}
-	
-		/*
-		$sql = 'INSERT INTO ms_training(id,shu,sort) VALUES(:id,:shu,'.$next.')';
-		$stmt = $pdo_h->prepare($sql);
-		$stmt->bindValue(1, $id, PDO::PARAM_STR);
-		$stmt->bindValue(2, $shu, PDO::PARAM_STR);
-		$stmt->execute();
-		*/
 		$db->INSERT("ms_training",["id" => $id,"shu"=>$shu,"sort"=>$next]);
 	}
 

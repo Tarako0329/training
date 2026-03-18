@@ -1,9 +1,9 @@
 <?php
 	require_once "config.php";
-	require_once "database.php";
-	$db = new Database();
+	//require_once "database.php";
+	//$db = new Database();
 
-	//log_writer2("\$_POST",$_POST,"lv3");
+	log_writer2("\$_POST",$_POST,"lv3");
 	$OFFSET = (int)($_POST["OFFSET"] ?? 0);
 	if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 		$id = $_SESSION['USER_ID'];
@@ -25,30 +25,13 @@
 	$sql = "SELECT log.*,con.condition,replace(log.ymd,'-','') as ymd2,log.ymd as ymd3,TIME_FORMAT(insdatetime, '%H:%i') as jikoku
 	,SUM(weight*rep*sets) OVER (PARTITION BY log.id,shu,log.ymd,log.typ) as total
 	,RANK() OVER(PARTITION BY log.id,log.ymd,shu,log.typ order by jun ) as setjun 
-	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = :id order by log.ymd desc,jun LIMIT 200 OFFSET :OFFSET";
-	/*
-	$result = $pdo_h->prepare( $sql );
-	$result->bindValue('id', $id, PDO::PARAM_STR);
-	$result->bindValue('limit', 300, PDO::PARAM_INT);
-	$result->execute();
-	$kintore_log = $result->fetchAll(PDO::FETCH_ASSOC);
-	$result = null;
-	$dataset = null;
-	*/
+	from tr_log as log left join tr_condition as con on log.id=con.id and log.ymd=con.ymd where log.id = :id order by log.ymd desc,jun LIMIT 300 OFFSET :OFFSET";
 	$kintore_log = $db->SELECT($sql,[":id" => $id,":OFFSET" => $OFFSET]);
 
 
 	//種目の取得
 	//全種目
 	$sql = "SELECT IF(typ=2,0,typ) as typ,shu,max(insdatetime) as sort from tr_log where id in (:id,'list') group by shu ,IF(typ=2,0,typ) order by sort desc, typ";
-	/*
-	$result = $pdo_h->prepare( $sql );
-	$result->bindValue(1, $id, PDO::PARAM_STR);
-	$result->execute();
-	$shumoku_list = $result->fetchAll(PDO::FETCH_ASSOC);
-	$result = null;
-	$dataset = null;
-	*/
 	$shumoku_list = $db->SELECT($sql,[":id" => $id]);
 
 
@@ -100,14 +83,6 @@
 					AND tmp.shu = ms.shu
 					WHERE sort_MB = 1 or sort_1Y = 1 or sort_3M = 1
 					GROUP BY id,ms.display_hide1,ms.sort,shu;";
-	/*
-	$result = $pdo_h->prepare( $sql );
-	$result->bindValue("id", $id, PDO::PARAM_STR);
-	$result->execute();
-	$max_list = $result->fetchAll(PDO::FETCH_ASSOC);
-	$result = null;
-	$dataset = null;
-	*/
 	$max_list = $db->SELECT($sql,[":id" => $id]);
 
 

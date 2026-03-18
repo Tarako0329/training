@@ -1,7 +1,7 @@
 <?php
 require_once "config.php";
-require_once "database.php";
-$db = new Database();
+//require_once "database.php";
+//$db = new Database();
 
 log_writer2("\$_POST",$_POST,"lv3");
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
@@ -33,16 +33,6 @@ $sql = "SELECT
 		UNION ALL 
 		SELECT * FROM  tr_log where id = :id2 and shu = :shu2) as T 
 	order by T.ymd desc,T.jun ";
-
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
-$result->bindValue(3, $id, PDO::PARAM_STR);
-$result->bindValue(4, $shu, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $dataset_work = $db->SELECT($sql,[":id1" => $id,":shu1" => $shu,":id2" => $id,":shu2" => $shu]);
 //log_writer2("\$dataset_work",$dataset_work,"lv3");
 $dataset = [];
@@ -114,21 +104,9 @@ if($tani==="month"){
 		ORDER BY TEMP.ymd";
 	$dataset_work = $db->SELECT($sql,[":id2" => $id,":shumoku2" => $shu,":shumoku3" => $shu,":date1" => $date]);
 }
-/*
-$result = $pdo_h->prepare( $sql );
-if($tani==="month"){
-	$result->bindValue('id1', $id, PDO::PARAM_STR);
-	$result->bindValue('shumoku1', $shu, PDO::PARAM_STR);
-}
-$result->bindValue('id2', $id, PDO::PARAM_STR);
-$result->bindValue('shumoku2', $shu, PDO::PARAM_STR);
-$result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 
 $dataset = [];
-//$i=1;
+
 $graph_data_max=[];
 $graph_data_max2=[];
 $graph_data_total=[];
@@ -172,8 +150,6 @@ foreach($dataset_work as $row){
 	}else{
 		exit();
 	}
-	
-	//$i++;
 }
 
 

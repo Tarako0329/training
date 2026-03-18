@@ -1,7 +1,7 @@
 <?php
 require_once "config.php";
-require_once "database.php";
-$db = new Database();	
+//require_once "database.php";
+//$db = new Database();	
 
 log_writer2("\$_POST",$_POST,"lv3");
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
@@ -27,13 +27,6 @@ $graph_title = "のＭＡＸ推移";
 
 //目標取得
 $sql = "SELECT * FROM ms_training WHERE id=:id and shu=:shu";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue("id", $id, PDO::PARAM_STR);
-$result->bindValue("shu", $shu, PDO::PARAM_STR);
-$result->execute();
-$ms_training = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $ms_training = $db->SELECT($sql,[":id" => $id,":shu" => $shu]);
 
 //最新の体組織取得
@@ -43,27 +36,12 @@ $sql = "SELECT ts.* FROM taisosiki ts
 		) tmp 
 	on ts.id=tmp.id 
 	and ts.ymd=tmp.seq";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue("id", $id, PDO::PARAM_STR);
-$result->execute();
-$taisosiki = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $taisosiki = $db->SELECT($sql,[":id" => $id]);
 
 //履歴取得
 $sql = "SELECT ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu ORDER BY T.ymd,T.jun) AS No,T.* FROM (SELECT *,0 AS max_weight FROM tr_log WHERE id = ? and shu = ? 
 	UNION ALL SELECT * FROM  tr_log_max_record WHERE id = ? and shu = ?) AS T 
 	ORDER BY T.ymd desc,T.jun ";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
-$result->bindValue(3, $id, PDO::PARAM_STR);
-$result->bindValue(4, $shu, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $dataset_work = $db->SELECT($sql,[$id,$shu,$id,$shu]);
 
 //log_writer2("\$dataset_work",$dataset_work,"lv3");
@@ -157,21 +135,6 @@ if($tani==="month"){
 	exit();
 }
 
-
-
-//$typ=1;
-/*
-$result = $pdo_h->prepare( $sql );
-if($tani==="month"){
-	$result->bindValue('id1', $id, PDO::PARAM_STR);
-	$result->bindValue('shumoku1', $shu, PDO::PARAM_STR);
-}
-$result->bindValue('id2', $id, PDO::PARAM_STR);
-$result->bindValue('shumoku2', $shu, PDO::PARAM_STR);
-$result->bindValue('shumoku3', $shu, PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 log_writer2("\$dataset_work",$dataset_work,"lv3");
 
 $dataset = [];

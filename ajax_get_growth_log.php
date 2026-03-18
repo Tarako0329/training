@@ -1,8 +1,7 @@
 <?php
 require_once "config.php";
-require_once "database.php";
-
-$db = new Database();
+//require_once "database.php";
+//$db = new Database();
 
 log_writer2("\$_POST",$_POST,"lv3");
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
@@ -25,26 +24,11 @@ $alert_status = "";
 
 //max値を検索
 $sql = "SELECT id,shu,max(max_weight) as max_w FROM `tr_log_max_record` where id=:id and shu=:shu group by id,shu";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
-$result->execute();
-$tmp = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $tmp = $db->SELECT($sql,[":id" => $id, ":shu" => $shu]);
 
 
 //max値を記録した最初の日を検索
 $sql = "SELECT id,shu,min(ymd) as first_day FROM `tr_log_max_record` where id=:id and shu=:shu and max_weight=:max_w group by id,shu";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
-$result->bindValue(3, $tmp[0]["max_w"], PDO::PARAM_INT);
-$result->execute();
-$tmp = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $tmp = $db->SELECT($sql,[":id" => $id, ":shu" => $shu, ":max_w" => $tmp[0]["max_w"]]);
 
 
@@ -65,17 +49,7 @@ $sql = "SELECT
 	) as T 
 	having T.ymd between DATE_SUB(:day1,INTERVAL 4 MONTH) and :day2 
 	order by T.ymd desc,T.jun ";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
-$result->bindValue(3, $id, PDO::PARAM_STR);
-$result->bindValue(4, $shu, PDO::PARAM_STR);
-$result->bindValue(5, $tmp[0]["first_day"], PDO::PARAM_STR);
-$result->bindValue(6, $tmp[0]["first_day"], PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
+
 $dataset_work = $db->SELECT($sql,[":id" => $id, ":shu" => $shu, ":id2" => $id, ":shu2" => $shu, ":day1" => $tmp[0]["first_day"], ":day2" => $tmp[0]["first_day"]]);
 
 //log_writer2("\$dataset_work",$dataset_work,"lv3");
@@ -96,16 +70,6 @@ $sql = "SELECT ymd,DATEDIFF(:day1,ymd) as beforedate,ROW_NUMBER() OVER(order by 
 	order by ymd";
 $graph_title = "MAX更新前のVolume推移";
 $subtitle="最初のMAX更新日4ヵ月前から";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $tmp[0]["first_day"], PDO::PARAM_STR);
-$result->bindValue(2, $id, PDO::PARAM_STR);
-$result->bindValue(3, $shu, PDO::PARAM_STR);
-$result->bindValue(4, $tmp[0]["first_day"], PDO::PARAM_STR);
-$result->bindValue(5, $tmp[0]["first_day"], PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
 $dataset_work = $db->SELECT($sql,[
     ":day1" => $tmp[0]["first_day"],
     ":id"   => $id,
@@ -137,15 +101,7 @@ $labels[$i-1] = "更新日";
 $sql = "SELECT max_weight as weight 
 	from tr_log_max_record where id = :id and shu = :shu and ymd between DATE_SUB(:day1,INTERVAL 4 MONTH) and :day2
 	order by ymd";
-/*
-$result = $pdo_h->prepare( $sql );
-$result->bindValue(1, $id, PDO::PARAM_STR);
-$result->bindValue(2, $shu, PDO::PARAM_STR);
-$result->bindValue(3, $tmp[0]["first_day"], PDO::PARAM_STR);
-$result->bindValue(4, $tmp[0]["first_day"], PDO::PARAM_STR);
-$result->execute();
-$dataset_work = $result->fetchAll(PDO::FETCH_ASSOC);
-*/
+
 $dataset_work = $db->SELECT($sql,[
     ":id"   => $id,
     ":shu"  => $shu,
