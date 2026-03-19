@@ -77,15 +77,16 @@
 function check_user(string $id="-1", string $pass=""):bool {
 	//$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options()); 
   
-  $sequrity = new Security($id,key);
-  $db = new Database();	
-	//$sql = "SELECT * from users where id = :id and pass like :pass";
+  $Security = new Security($id,key);
+  global $db;
+  //$db = new Database();	
+  //$sql = "SELECT * from users where id = :id and pass like :pass";
   //$row = $db->SELECT($sql,[":id" => $id,"pass" => $pass]);
 	$sql = "SELECT * from users where id = :id ";
   $row = $db->SELECT($sql,[":id" => $id]);
   //$row_cnt = count($row);
   
-  return $sequrity->verifyPassword($pass, $row[0]['pass']);
+  return $Security->verifyPassword($pass, $row[0]['pass']);
   /*
   if($row_cnt===0){
     return 1;
