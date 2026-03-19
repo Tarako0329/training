@@ -1,7 +1,6 @@
 <?php
   require_once "config.php";
- 	//require_once "database.php";
-	//$db = new Database();
+	use classes\Security\Security;
 
   //トランザクション処理
   //log_writer2("\$POST",$_POST,"lv3");
@@ -11,13 +10,9 @@
 	if($_POST["token"] === $_SESSION["token"]){
     //新規ユーザ登録画面の「登録」ボタン
 		$id = $_POST["id"];
+		$Security = new Security($id,key);
+
 		$sql = "SELECT * from users where `id`=:id";
-		/*
-		//$stmt = $pdo_h->prepare( $sql );
-		$stmt->bindValue(":id", $id, PDO::PARAM_STR);
-		$stmt->execute();
-		$row_cnt = $stmt->rowCount();
-		*/
 		$row = $db->SELECT($sql,[":id"=>$id]);
 		if(count($row)<>1){
 			//未登録ユーザ
@@ -27,7 +22,7 @@
 				$sql = "UPDATE users set `name`=:name,sex=:sex,height=:height,birthday=:birthday where id=:id";
 				$db->UP_DEL_EXEC($sql,[":name"=>$_POST['fname'],":sex"=>$_POST['sex'],":height"=>$_POST['height'],":birthday"=>$_POST['birthday'],":id"=>$_POST['id']]);
 				if(!empty($_POST["pass"])){
-					$pass = passEx($_POST['pass'],$id);
+					$pass = $Security->passEx($_POST['pass']);
 					$sql = "UPDATE users set pass=:pass where id=:id";
 					$db->UP_DEL_EXEC($sql,[":pass"=>$pass,":id"=>$id]);
 				}

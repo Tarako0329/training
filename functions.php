@@ -101,32 +101,36 @@ function max_r($wt, $rep){
 //自動ログイン処理
 //--------------------------------------------------------------------------//
  function check_auto_login($token) {
-	$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+	//$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+	global $db;
   //2週間前の日付を取得
 	$date = new DateTime("- 14 days");
 	unset($sql);
  	$datetime = $date->format('Y-m-d H:i:s');
 
-	$sql = "SELECT * FROM AUTO_LOGIN WHERE TOKEN = ? AND REGISTRATED_TIME >= ?;";
-
+	$sql = "SELECT * FROM AUTO_LOGIN WHERE TOKEN = :TOKEN AND REGISTRATED_TIME >= :REGISTRATED_TIME;";
+	$row =$db->SELECT($sql,[":TOKEN" => $token,":REGISTRATED_TIME" => $datetime]);
+	$row_cnt = count($row);
+	/*
 	$stmt = $pdo_h->prepare($sql);
 	$stmt->bindValue(1, $token, PDO::PARAM_STR);
 	$stmt->bindValue(2, $datetime, PDO::PARAM_STR);
 	$stmt->execute();
 	$row_cnt = $stmt->rowCount();
-
+	*/
 	if ($row_cnt == 1) {
-    	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    	/*while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
      		$_SESSION['USER_ID']  = $row['USER_ID'];
-    	}
-  	} else {
-	   	//自動ログイン失敗
-   		//Cookie のトークンを削除
-   		setCookie("token", '', -1, "/", "", true, true);
- 
-	    //古くなったトークンを削除
-   		delete_old_token($token);
-    	return 1;
+			}*/
+     	$_SESSION['USER_ID']  = $row[0]['USER_ID'];
+  } else {
+	 	//自動ログイン失敗
+  	//Cookie のトークンを削除
+  	setCookie("token", '', -1, "/", "", true, true);
+
+	  //古くなったトークンを削除
+  	delete_old_token($token);
+  	return 1;
 	}
     return 0;
 
@@ -136,12 +140,15 @@ function max_r($wt, $rep){
 //トークンの登録
 //---------------------------------------------------------------------------//
  function register_token($id, $token) {
-	$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+	//$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+	global $db;
 
   //プレースホルダで SQL 作成
-  $sql = "INSERT INTO AUTO_LOGIN ( USER_ID, TOKEN, REGISTRATED_TIME) VALUES (?,?,?);";
+  //$sql = "INSERT INTO AUTO_LOGIN ( USER_ID, TOKEN, REGISTRATED_TIME) VALUES (?,?,?);";
+	$db->INSERT("AUTO_LOGIN",["USER_ID"=>$id,"TOKEN"=>$token,"REGISTRATED_TIME"=>date('Y-m-d')]);
 
   //パラメーターの型を指定
+	/*
   $stmt = $pdo_h->prepare($sql);
 	$stmt->bindValue(1, $id, PDO::PARAM_STR);
 	$stmt->bindValue(2, $token, PDO::PARAM_STR);
@@ -149,7 +156,7 @@ function max_r($wt, $rep){
 		
     //パラメーターを渡して SQL 実行
 	$stmt->execute();
- 	
+ 	*/
  	return 0;
  
  }
@@ -159,17 +166,21 @@ function max_r($wt, $rep){
 //---------------------------------------------------------------------------//
 function delete_old_token($token) {
   //DB接続
-  $pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+  //$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());
+	global $db;
 
   //プレースホルダで SQL 作成
-  $sql = "DELETE  FROM AUTO_LOGIN WHERE TOKEN = ?";
+  $sql = "DELETE  FROM AUTO_LOGIN WHERE TOKEN = :TOKEN";
+	$db->UP_DEL_EXEC($sql,[":TOKEN" => $token]);
 
+	/*
   //パラメーターの型を指定
 	$stmt = $pdo_h->prepare($sql);
 	$stmt->bindValue(1, $token, PDO::PARAM_STR);
 	
   //パラメーターを渡して SQL 実行
 	$stmt->execute();
+	*/
  	return 0;
 }
  

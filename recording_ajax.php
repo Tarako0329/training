@@ -1,8 +1,6 @@
 <?php
 	//GoogleAuthで登録した場合
   require_once "config.php";
-  //require_once "database.php";
-	//$db = new Database();
   //GoogleAuth新規ユーザ登録用
   log_writer2("\$POST",$_POST,"lv3");
   
@@ -10,13 +8,15 @@
 	$status="false";
 	if($_POST["token"] === $_SESSION["token"]){
 		$id = $_POST["ID"] ?? -1;
-		$row = $db->SELECT("select * from users where id = :id",[":id" => $_POST["ID"]]);
+
+		$row = $db->SELECT("SELECT * from users where id = :id",[":id" => $_POST["ID"]]);
 		$row_cnt = count($row);
 		if($row_cnt===1){
 			$msg = "登録済ユーザ";
 		}else{
 			$msg = "新規ユーザ";
-			$pass = passEx($id,$id);
+			//$pass = passEx($id,$id);
+			$pass = $id;	//googleログインはパスワードにGoogle識別子IDをセットする
 			log_writer2("\$pass",$pass,"lv3");
 			$db->begin_tran();
 			$db->INSERT("users",["id" => $id,"pass" => $pass,"name" => $_POST['name'],"user_type" => "google"]);

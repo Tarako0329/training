@@ -18,7 +18,7 @@ if(EXEC_MODE==="local"){
   define("ROOT_URL","https://".MAIN_DOMAIN."/");
 }
 if(EXEC_MODE==="Product"){
-  $time="2026-02-20";	//リリース日
+  $time="2026-03-19";	//リリース日
 }else{
   $time=date("YmdHis");
 }

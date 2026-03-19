@@ -1,8 +1,7 @@
 <?php
 	//ID・パスワードで登録した場合
   require_once "config.php";
-  //require_once "database.php";
-  //$db = new Database();	
+  use classes\Security\Security;
 
   //トランザクション処理
   //log_writer2("\$POST",$_POST,"lv3");
@@ -10,6 +9,8 @@
 	if($_POST["btn"] == "ユーザー登録"){
     //新規ユーザ登録画面の「登録」ボタン
 		$id = ($_POST["id2"]) ?? -1;
+    $Security = new Security($id,key);
+
 		$sql = "SELECT * from users where id = :id";
 		$row = $db->SELECT($sql,[':id' => $id]);
 		$row_cnt = count($row);
@@ -20,7 +21,7 @@
 			?><a href="index.php"> 戻る</a><?php
 			exit();
 		}
-		$pass = passEx($_POST["pass2"],$id);
+		$pass = $Security->passEx($_POST["pass2"]);
 		$db->begin_tran();
 		$db->INSERT("users",["id" => $id,"pass" => $pass,"name" => ($_POST['fname']),"sex" => $_POST['sex'],"height" => $_POST['height'],"birthday" => $_POST['birthday'],"user_type" => "ipass"]);
 		$db->commit_tran();
