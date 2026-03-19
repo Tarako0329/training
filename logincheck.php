@@ -12,7 +12,8 @@
   if($P_login_type===$S_login_type && $P_login_type==="google"){
     $pass='%';
   }else{
-    $pass = passEx(!empty($_POST['pass'])?$_POST['pass']:0,$id);
+    //$pass = passEx(!empty($_POST['pass'])?$_POST['pass']:0,$id);
+    $pass = $_POST['pass'] ?? "xxxx";
   }
   $cookie_token = !empty($_COOKIE['token'])?$_COOKIE['token']:"";
  

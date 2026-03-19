@@ -11,12 +11,15 @@
 	if($_POST["token"] === $_SESSION["token"]){
     //新規ユーザ登録画面の「登録」ボタン
 		$id = $_POST["id"];
-		$sql = "SELECT * from users where id=?";
-		$stmt = $pdo_h->prepare( $sql );
-		$stmt->bindValue(1, $id, PDO::PARAM_STR);
+		$sql = "SELECT * from users where `id`=:id";
+		/*
+		//$stmt = $pdo_h->prepare( $sql );
+		$stmt->bindValue(":id", $id, PDO::PARAM_STR);
 		$stmt->execute();
 		$row_cnt = $stmt->rowCount();
-		if($row_cnt<>1){
+		*/
+		$row = $db->SELECT($sql,[":id"=>$id]);
+		if(count($row)<>1){
 			//未登録ユーザ
 		}else{
 			try{

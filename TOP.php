@@ -393,7 +393,8 @@
 			<div class='modal fade' id='usanso' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
-						<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit' id='us'>
+						<!--<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit' id='us'>-->
+						<form method = 'post' @submit.prevent='OnSubmit' id='us'>
 							<div class='modal-header'>
 								<h5 class="modal-title">有酸素トレーニング</h5>
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click='setCancel'></button>
@@ -1360,13 +1361,3 @@
 		</script>
 	</BODY>
 </HTML>
-
-<?php
-/*
-	$pdo_h = null;
-	$time = microtime();
-	$parts = explode(" ", $time);
-	$current_time_with_microseconds = date("H:i:s", $parts[1]) . "." . $parts[0];
-	log_writer2("TOP.php end",$current_time_with_microseconds,"lv1");
-	*/
-?>
