@@ -1,7 +1,5 @@
 <?php
 require_once "config.php";
-//require_once "database.php";
-//$db = new Database();	
 
 //log_writer2("\$_POST",$_POST,"lv3");
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
@@ -207,7 +205,7 @@ if($min_val===0 || $min_val <= 20){
 	$min_val = ($min_val % 20<=10)?$min_val-20 - ($min_val % 20):$min_val - ($min_val % 20);
 }
 
-if(empty($taisosiki[0])){
+if(!U::exist($taisosiki[0])){
 	$taisosiki[0]["weight"] = 0;
 }
 $return_sts = array(

@@ -1,7 +1,7 @@
 <?php
   //ファビコンパス
 	//$icon="img/mstile2-150x150.png";
-	if(empty($icon)){
+	if(!U::exist($icon)){
 		echo "<script>alert('install_modal.php でエラー。\$icon変数にファビコンのパスをセットしてください。')</script>";
 		exit();
 		//throw new Exception("0 で割ることはできません。");

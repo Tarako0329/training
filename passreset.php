@@ -2,9 +2,6 @@
   require_once "config.php";
 	use classes\Security\Security;
 	
-  //require_once "database.php";
-  //$db = new Database();	
-
   //トランザクション処理
   //log_writer2("\$POST",$_POST,"lv3");
   if($_POST["btn"] === "パスワード更新"){
@@ -12,7 +9,7 @@
 		$id = ($_POST["id2"]) ?? -1;
 		$Security = new Security($id,key);
 
-		$birthday = !empty($_POST["birthday"])?$_POST["birthday"]:"%";
+		$birthday = ($_POST["birthday"]) ?? "%";
 		$sql = "SELECT * from users where id=:id and height = :height and birthday like :birthday and sex = :sex";
 		$row = $db->SELECT($sql,[":id" => $id,":height" => $_POST["fname"],":birthday" => $birthday,":sex" => $_POST["sex"]]);
 		$row_cnt = count($row);

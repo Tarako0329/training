@@ -19,8 +19,8 @@ if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 
 $now = date('Y-m-d');
 //$hyoji  taiju：体重・体脂肪率 kinryou：筋肉量・脂肪量
-$hyoji = !empty($_POST["hyoji"])?$_POST["hyoji"]:"1";
-$gtype = !empty($_POST["gtype"])?$_POST["gtype"]:"all";
+$hyoji = $_POST["hyoji"] ?? "1";
+$gtype = $_POST["gtype"] ?? "all";
 
 $msg="";
 $alert_status="";

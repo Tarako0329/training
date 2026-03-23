@@ -4,8 +4,9 @@ require_once "config.php";
 //$db = new Database();
 
 log_writer2("\$_POST",$_POST,"lv3");
-if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
-	$id = $_SESSION['USER_ID'];
+$id = $_SESSION['USER_ID'] ?? "";
+if(U::exist($id)){ //ユーザーチェックブロック
+	//$id = $_SESSION['USER_ID'];
 }else if (check_auto_login($_COOKIE['token'])==0) {
 	$id = $_SESSION['USER_ID'];
 }else{

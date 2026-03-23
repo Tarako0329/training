@@ -22,7 +22,7 @@ if($_SESSION["msg"] === "ログオフしました"){
 	header("Location: logincheck.php");
 	//exit();
 }else{
-	$msg=(!empty($_SESSION["msg"]))?$_SESSION["msg"]:"";
+	$msg=$_SESSION["msg"] ?? "";
 	$_SESSION["msg"]="";
 }
 

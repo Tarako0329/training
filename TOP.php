@@ -7,10 +7,8 @@
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
-		decho ("session:".$id);
 	}else if (check_auto_login($cookie_token)==0) {
 		$id = $_SESSION['USER_ID'];
-		decho ("クッキー:".$id);
 	}else{
 		log_writer2("POST",$_POST,"lv3");
 		log_writer2("GET",$_GET,"lv3");
@@ -21,7 +19,7 @@
 		exit();
 	}
 
-	$logoff=!empty($_GET["logoff"])?$_GET["logoff"]:"";
+	$logoff=$_GET["logoff"] ?? "";
 
 	if($logoff === "out"){
 		delete_old_token($cookie_token);

@@ -16,7 +16,7 @@
 		//$pass = passEx(!empty($_POST['pass'])?$_POST['pass']:0,$id);
 		$pass = $_POST['pass'] ?? "xxxx";
 	}
-	$cookie_token = !empty($_COOKIE['token'])?$_COOKIE['token']:"";
+	$cookie_token = $_COOKIE['token'] ?? "";
  
 	//ログイン判定フラグ 0:ok 1:ng
 	$normal_result = 1;
@@ -25,7 +25,7 @@
 	//log_writer("\$cookie_token",$cookie_token);
  
 	//簡易ログイン
-	if (empty($cookie_token)) {
+	if (!U::exist($cookie_token)) {
 	 //if (check_user($id, $pass) == 0) {
 	 if (check_user($id, $pass) || $pass === "%") {
 			$normal_result = 0;
@@ -85,7 +85,11 @@ function check_user(string $id="-1", string $pass=""):bool {
 	//$row = $db->SELECT($sql,[":id" => $id,"pass" => $pass]);
 	$sql = "SELECT * from users where id = :id ";
 	$row = $db->SELECT($sql,[":id" => $id]);
-	//$row_cnt = count($row);
+	$row_cnt = count($row);
+
+	if($row_cnt===0){
+		return false;
+	}
 	
 	return $Security->verifyPassword($pass, $row[0]['pass']);
 	/*

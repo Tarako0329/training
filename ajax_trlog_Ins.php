@@ -1,7 +1,5 @@
 <?php
 require_once "config.php";
-//require_once "database.php";
-//$db = new Database();
 
 //トランザクション処理
 log_writer2("\$POST",$_POST,"lv3");
@@ -9,10 +7,8 @@ log_writer2("\$POST",$_POST,"lv3");
 //結果書き込み
 if(isset($_SESSION['USER_ID'])){
 	$id = $_SESSION['USER_ID'];
-	decho ("session:".$id);
 }else if (check_auto_login($_COOKIE['token'])==0) {
 	$id = $_SESSION['USER_ID'];
-	decho ("クッキー:".$id);
 }else{
 	$return_sts = array(
 		"MSG" => "UserIDが取得できませんでした"
@@ -24,19 +20,21 @@ if(isset($_SESSION['USER_ID'])){
 }
 
 //種目追加欄が空白の場合はリストの種目,種目追加欄が記入されてる場合は種目追加欄の種目
-//$shu = ($_POST["shu2"] == "")? $_POST["shu1"]:$_POST["shu2"];
-$shu = $_POST["shu1"];
+$shu = $_POST["shu1"] ?? "";
 $rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
 $cal = ($_POST["cal"] == "")?0:$_POST["cal"];
-$type = (!empty($_POST["jiju"]))?"2":$_POST["typ"];
+//$type = (!empty($_POST["jiju"]))?"2":$_POST["typ"];
+$type = (U::exist($_POST["jiju"]))?"2":$_POST["typ"];
 
 try{
 	$db->begin_tran();
 
-	if(empty($_POST["NO"])){
+	//if(empty($_POST["NO"])){
+	if(!U::exist($_POST["NO"])){
 		$sql = "SELECT max(jun) as junban from tr_log where ymd = :ymd and id = :id;";
 		$row = $db->SELECT($sql,[":ymd" => $_POST["ymd"],":id" => $id]);
-		$jun = empty($row[0]["junban"])?1:$row[0]["junban"]+1;
+		//$jun = empty($row[0]["junban"])?1:$row[0]["junban"]+1;
+		$jun = !U::exist($row[0]["junban"])?1:$row[0]["junban"]+1;
 		$db->INSERT("tr_log",[
 			"id" => $id
 			,"shu" => $shu
@@ -91,7 +89,8 @@ try{
 			,":NO" => $_POST["NO"]]);
 	}
 
-	if(!empty($_POST["condition"])){
+	//if(!empty($_POST["condition"])){
+	if(U::exist($_POST["condition"])){
 		//デリイン
 		$sql = "DELETE from tr_condition where id = :id and ymd = :ymd";
 		$db->UP_DEL_EXEC($sql,[":id" => $id,":ymd" => $_POST["ymd"]]);
@@ -119,8 +118,6 @@ try{
 		$db->INSERT("ms_training",["id" => $id,"shu"=>$shu,"sort"=>$next]);
 	}
 
-
-	//$pdo_h->commit();
 	$db->commit_tran();
 	
 	$return_sts = array(

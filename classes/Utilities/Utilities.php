@@ -14,7 +14,7 @@ class Utilities {
 
 	public static function exist($value): bool {
 		// =========================================================
-		// スペース、0を含め、$valueに何かしら値がセットされてればtrueを返す。それ以外はfalse
+		// 半角/全角スペース、0を含め、$valueに何かしら値がセットされてればtrueを返す。それ以外はfalse
 		// =========================================================
 		return $value !== null && $value !== "";
 	}
@@ -65,7 +65,7 @@ class Utilities {
 		,string $bcc = ""
 		,string $cc = ""
 		,string $from = FROM
-	):bool{
+		):bool{
 		if(EXEC_MODE==="Local"){
 			log_writer2("Util::send_mail - \$to",$to,"lv3");
 			log_writer2("Util::send_mail - \$body",$body,"lv3");

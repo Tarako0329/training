@@ -1,10 +1,6 @@
 <?php
 declare(strict_types=1);
 require_once "config.php";
-//require_once "database.php";
-
-//$db = new Database();
-//$pdo_h = $db->connect();
 
 //トランザクション処理
 log_writer2("\$POST",$_POST,"lv3");
@@ -12,10 +8,8 @@ log_writer2("\$POST",$_POST,"lv3");
 //結果書き込み
 if(isset($_SESSION['USER_ID'])){
 	$id = $_SESSION['USER_ID'];
-	decho ("session:".$id);
 }else if (check_auto_login($_COOKIE['token'])==0) {
 	$id = $_SESSION['USER_ID'];
-	decho ("クッキー:".$id);
 }else{
 	$return_sts = array(
 		"MSG" => "UserIDが取得できませんでした"
@@ -28,7 +22,7 @@ if(isset($_SESSION['USER_ID'])){
 }
 $status = "success";
 
-if(!empty($_POST["data"])){
+if(U::exist($_POST["data"])){
 	try{
 		$db->begin_tran();
 		$sql = "DELETE from ms_training where id = :id ";
