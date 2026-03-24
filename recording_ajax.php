@@ -2,6 +2,7 @@
 	//GoogleAuthで登録した場合
   require_once "config.php";
 	define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
+	define("GOOGLE_AUTH_SKEY",$_ENV["GOOGLE_AUTH_SKEY"]);
   //GoogleAuth新規ユーザ登録用
   log_writer2("\$POST",$_POST,"lv3");
   
@@ -14,7 +15,7 @@
 	if (isset($_POST['code'])) {
 	  $client = new Google\Client();
 	  $client->setClientId(GOOGLE_AUTH);
-	  $client->setClientSecret('あなたのクライアントシークレット'); // .env推奨
+	  $client->setClientSecret(GOOGLE_AUTH_SKEY); // .env推奨
 		$client->setRedirectUri('postmessage'); // JSからの場合はこれ
 
 	  // 認可コードをトークンに交換
