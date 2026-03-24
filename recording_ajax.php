@@ -18,7 +18,7 @@
 	  $client->setClientSecret(GOOGLE_AUTH_SKEY); // .env推奨
 		$client->setRedirectUri('postmessage'); // JSからの場合はこれ
 
-	  // 認可コードをトークンに交換
+	  // 認可コードをトークンに交換fetchAccessTokenWithAuthCode
 	  $accessToken = $client->fetchAccessTokenWithAuthCode($_POST['code']);
 		log_writer2("\$accessToken",$accessToken,"lv3");
 	  // この中に access_token が含まれる
@@ -29,6 +29,19 @@
 	    // 【重要】$refreshToken を MySQL の users テーブルに保存
 	    // $db->query("UPDATE users SET google_refresh_token = ? WHERE id = ?", [$refreshToken, $userId]);
 	  }
+		$client->setAccessToken($accessToken);
+	
+		// IDトークン（認証情報）からユーザー情報を取得
+		$payload = $client->verifyIdToken($token['id_token']);
+		log_writer2("\$payload",$payload,"lv3");
+		if ($payload) {
+				$id = $payload['sub']; // これが「識別子ID」です！
+				$email = $payload['email'];
+				$name = $payload['name'];
+		
+				// この $user_google_id を MySQL の users テーブルの主キーや 
+				// google_id カラムに保存して、今後の筋トレログと紐付けます。
+		}
 	}
 
 	if($_POST["token"] === $_SESSION["token"] && $id!==-1){
