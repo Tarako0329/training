@@ -101,26 +101,6 @@ $token=get_token();
 			</div>
 			<div class='accordion' id="recording">
 				<div style='padding-top:5px;font-size:1.0rem;font-weight:700;top: 156px;height:75px;'>
-					<!--アプリ詳細-->		
-					<!--<div class='accordion-item'>
-						<h2 class='accordion-header'>
-						<button type='button' class='accordion-button collapsed' style='font-size:1.0rem;' data-bs-toggle='collapse' data-bs-target='#collapseOne3' aria-expanded='false' aria-controls='collapseOne'>
-							アプリ詳細はコチラ
-						</button>
-						</h2>
-						<div id='collapseOne3' class='accordion-collapse collapse' data-bs-parent='#app_info'>
-						<div class='accordion-body'>
-							<div class='row'>
-								<div class='col-12'>
-									<div style='width:100%;height:500px;' id='Vmanager'>
-										<iframe src="https://site.greeen-sys.com/%e8%82%89%e4%bd%93%e6%94%b9%e9%80%a0%e3%83%8d%e3%83%83%e3%83%88%e3%83%af%e3%83%bc%e3%82%af/" width="100%" height="100%" id='Vmanager-frame'></iframe>
-									</div>
-								</div>
-							</div>
-    				</div>
-    				</div>
-					</div>-->
-					<!--アプリ詳細-->		
 					<div class='accordion-item'><!--ユーザー登録-->		
 						<h2 class='accordion-header'>
 							<button type='button' class='accordion-button collapsed' style='font-size:1.0rem;' data-bs-toggle='collapse' data-bs-target='#collapseOne' aria-expanded='false' aria-controls='collapseOne'>

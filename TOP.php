@@ -1,8 +1,7 @@
 <?php
 	// 設定ファイルインクルード
 	require_once "config.php";
-	//require_once "database.php";
-	//$db = new Database();
+	define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 	$cookie_token = $_COOKIE['token'] ?? "";
 
 	if(isset($_SESSION['USER_ID'])){
@@ -44,9 +43,11 @@
 		exit();
 	}
 
-	if($row[0]["user_type"]==="google"){
+	$user_type = $row[0]["user_type"] ?? "";
+	/*if($user_type==="google"){
 		setCookie("user_type", 'google', time()+60*60*24*365, "/", "", true, true);
-	}
+	}*/
+	setCookie("user_type", $user_type, time()+60*60*24*365, "/", "", true, true);
 
 	$device = get_device_type();
 	$user_name = ($row[0]["name"]);
@@ -79,6 +80,7 @@
 				transform: translateY(20px);
 			}
 		</STYLE>
+		<script src="https://accounts.google.com/gsi/client" ></script><!--google login api-->
 		<TITLE>肉体改造ネットワーク</TITLE>
 	</HEAD>
 	
@@ -310,23 +312,43 @@
 												<INPUT id='fname' required='required' type="text" class='form-control form-select-sm' name="fname" maxlength="100" style='' value="<?php echo $row[0]["name"];?>">
 											</div>
 											<div class='mb-2'>
-												<label for='height'><span style='color:yellow;'>※</span>身長(cm)</label>
+												<label for='height'><span style='color:yellow;'>※</span>身長(cm)：<small>BMIの計算に使用します</small></label>
 												<INPUT id='height' type="number" class='form-control form-select-sm' step="1" name="height" maxlength="10" style='' value="<?php echo $row[0]["height"];?>">
 											</div>
-											<div class='mb-2'>
+											<div v-if="'google'!=='<?php echo $user_type;?>'" class='mb-2'>
 												<label for='birthday'><span style='color:yellow;'>※</span>生年月日</label>
 												<INPUT id='birthday' required='required' type="date" class='form-control form-select-sm' name="birthday" value="<?php echo $row[0]["birthday"];?>">
 											</div>
-											<div class='mb-2'>
+											<div v-if="'google'!=='<?php echo $user_type;?>'" class='mb-2'>
 												<label for='sex'><span style='color:yellow;'>※</span>性別</label>
 												<SELECT size="1" id='sex' name="sex" class='form-select form-select-sm' style=''  value="<?php echo $row[0]["sex"];?>">
 													<OPTION value="1">男</OPTION>
 													<OPTION value="0">女</OPTION>
 												</SELECT>
 											</div>
-											<div><span style='color:yellow;'>※</span>：パスワード再設定に利用。(Googleログイン除く)</div>
+											<div v-if="'google'!=='<?php echo $user_type;?>'"><span style='color:yellow;'>※</span>：パスワード再設定に利用。</div>
 											<input type="hidden" name='token' value="<?php echo $token;?>">
 											<input type="hidden" name='id' value="<?php echo $row[0]["id"];?>">
+											<hr>
+											<div v-if="'google'!=='<?php echo $user_type;?>'" class='mb-2'>
+												<div class='mb-2'>
+													Googleログインに変更する（記録は全て引き継がれます）
+												</div>
+												<div class="g_id_signin" style='width:200px;margin:auto;'
+				    							data-type="standard"
+				    							data-size="large"
+				    							data-theme="outline"
+				    							data-text="signin_with"
+				    							data-shape="rectangular"
+				    							data-logo_alignment="left">
+												</div>
+												<INPUT type="hidden" name="login_type" id='login_type'>
+												<div id="g_id_onload"
+												     data-client_id="<?php echo GOOGLE_AUTH;?>"
+														 data-callback="handleCredentialResponse"
+												     data-auto_prompt="false">
+												</div>
+											</div>
 										</div>
 									</div>
 									<div class='col-1' ></div>
@@ -541,7 +563,7 @@
 										<option value='0' selected>回</option>
 										<option value='1'>秒</option>
 									</select><span style='padding:8px 0 0 5px;width:15px;'>x</span>
-									<input type='number' :class="input_select[2]" :readonly="keybord_show" style='width:40px;padding:6 6;' @Click.prevent='setindex(2)' @touchstart.prevent="setindex(2)" name='sets' v-model="kiroku[2]" required='required'><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
+									<input type='number' :class="input_select[2]" :readonly="keybord_show" style='width:50px;padding:6 6;' @Click.prevent='setindex(2)' @touchstart.prevent="setindex(2)" name='sets' v-model="kiroku[2]" required='required'><span style='padding:8px 0 0 5px;width:30px;'>SET</span>
 								</div>
 								<div class='row ' style='margin:1px 20px;'>
 									<label for='rep2' class="form-label" style='padding-left:0;margin-bottom:1px;'>補助/チート</label>
@@ -621,6 +643,67 @@
 			});
 			// ページ読み込み時に実行される場所に追記
 			document.addEventListener("touchstart", function() {}, true);
+
+			async function handleCredentialResponse (response) {
+				console_log('handleCredentialResponse実行')
+  			const responsePayload = decodeJwtResponse(response.credential);
+				console_log(responsePayload);
+				
+				try{
+					const form = new FormData()
+					form.append("ID",responsePayload.sub)
+					form.append("token","<?php echo $token;?>")
+					const res = await axios.post('ajax_chk_id.php',form, {headers: {'Content-Type': 'multipart/form-data'}})
+					console_log(res.data);
+					if(res.data.status==="success"){
+						if(res.data.MSG==="登録済"){
+							if(confirm("過去にgoogleログインで利用した実績があります。消去してもよいですか？") === false){
+								alert("処理を中断します")
+								return
+							}else{
+								form.append("shori","delin")	//既存のGoogleIDに紐づくデータを全削除し、IPASSのデータをGoogleIDに紐付ける
+							}
+						}else if (res.data.MSG === "新規"){
+							form.append("shori","new")	//IPASSのデータをGoogleIDに紐付ける
+						}
+						let token = res.data.token
+						form.append("token2",token)
+						const res_upd = await axios.post('ajax_upd_ipass_to_googleid.php',form, {headers: {'Content-Type': 'multipart/form-data'}})
+						if(res_upd.data.status==="success"){
+							alert("データを更新しました。ログオフします。")
+							//TOP.php?logoff=outに移動
+							window.location.href = 'TOP.php?logoff=out'
+							return
+						}else{
+							alert("エラーが発生しました。")
+							alert(res_upd.data.MSG)
+						}
+					}else{
+						alert("エラーが発生しました。")
+						alert(res_upd.data.MSG)
+					}
+				}catch (error) {
+    			// 3. 失敗（エラー）時の処理
+    			alert(error);
+			  } finally {
+    			// 4. 成功・失敗に関わらず最後に実行する処理（必要であれば）
+    			console.log("通信終了");
+  			}
+			}
+			function decodeJwtResponse (token){
+        var base64Url = token.split(".")[1];
+        var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        var jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map(function (c) {
+              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join("")
+        );
+
+        return JSON.parse(jsonPayload);
+      }
 		</script>
 		<script>//Vus.js
 			const { createApp, ref,shallowRef, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
@@ -923,7 +1006,7 @@
 					const setCancel = () =>{
 						console_log('setCancel start')
 						
-						Num.value = 0
+						Num.value = ''
 						ymd.value = '<?php echo $now?>'
 						shu.value = ''
 						shu_us.value = ''
@@ -1061,7 +1144,7 @@
 								document.getElementById("wt_modal_close").click()
 								document.getElementById("us_modal_close").click()
 								document.getElementById("ts_modal_close").click()
-								Num.value = 0
+								Num.value = ''
 								ymd.value = '<?php echo $now?>'
 								
 								kiroku.value[0]=0
@@ -1077,7 +1160,7 @@
 								
 								if(MODAL_INST){
 									MODAL_INST = new bootstrap.Modal(MODAL, {
-										backdrop: 'true' // backdropをstaticに設定
+										backdrop: 'static' // backdropをstaticに設定
 									})
 								}
 								if(jiju.value===true){
@@ -1344,18 +1427,7 @@
 					e.preventDefault();
 				}
 			}
-			/*
-			window.onload = function() {
-				axios.get("ajax_timestamper.php?point=TOP.js_loaded")
-				.catch((error) => {
-					console_log(`ajax_timestamper ERROR:${error}`)
-					console_log(error)
-				})
-				.finally(()=>{
-					console_log('おわり ajax_timestamper')
-				})
-			};
-			*/
+
 		</script>
 	</BODY>
 </HTML>
