@@ -73,13 +73,13 @@ $token=get_token();
 				     data-type="standard"
 				     data-size="large"
 				     data-theme="outline"
-				     data-text="<?php echo $g_login;?>"
+				     data-text="<?php //echo $g_login;?>"
 				     data-shape="rectangular"
 				     data-logo_alignment="left">
 						</div>
 						<INPUT type="hidden" name="login_type" id='login_type'>
 						<div id="g_id_onload"
-						     data-client_id="<?php echo GOOGLE_AUTH;?>"
+						     data-client_id="<?php //echo GOOGLE_AUTH;?>"
 								 data-callback="handleCredentialResponse"
 						     data-auto_prompt="false">
 						</div>-->
@@ -195,7 +195,7 @@ $token=get_token();
 					e.preventDefault();
 				}
 			}
-			function handleCredentialResponse(response) {
+			/*function handleCredentialResponse(response) {
   			// decodeJwtResponse() is a custom function defined by you
   			// to decode the credential response.
   			const responsePayload = decodeJwtResponse1(response.credential);
@@ -234,7 +234,7 @@ $token=get_token();
         );
 
         return JSON.parse(jsonPayload);
-      }
+      }*/
 
 		</script>
 		<script>//Vus.js
@@ -249,6 +249,7 @@ $token=get_token();
 					}
 
 				  function handleAuthCode(code) {
+						console_log('handleAuthCode start');
 				    const form = new FormData();
 				    form.append("code", code); // IDトークンではなく認可コードを送る
 						form.append("token", "<?php echo $token;?>");
@@ -265,7 +266,7 @@ $token=get_token();
 				    .catch((error) => alert("連携に失敗しました: " + error));
 				  }
 
-					function decodeJwtResponse(token) {
+					/*function decodeJwtResponse(token) {
       		  var base64Url = token.split(".")[1];
       		  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       		  var jsonPayload = decodeURIComponent(
@@ -278,7 +279,7 @@ $token=get_token();
       		  );
 
       		  return JSON.parse(jsonPayload);
-      		}
+      		}*/
 
 					onMounted(()=>{
 						client = google.accounts.oauth2.initCodeClient({
@@ -290,8 +291,8 @@ $token=get_token();
     				    if (response.code) {
     				      // 2. 取得した「認可コード」をサーバーに送る
 									console_log(response.code);
-									console_log(decodeJwtResponse(response.code));
-									console_log(decodeJwtResponse(response));
+									//console_log(decodeJwtResponse(response.code));
+									//console_log(decodeJwtResponse(response));
     				      handleAuthCode(response.code);
     				    }
     				  },
