@@ -11,25 +11,38 @@ class SpreadSheet {
     public function __construct($client, $fileName) {
         $this->service = new \Google\Service\Sheets($client);
         $this->driveService = new \Google\Service\Drive($client);
-        $this->spreadsheetId = $this->getOrCreateSpreadsheet($fileName);
+        $return = $this->getOrCreateSpreadsheet($fileName);
+        $this->spreadsheetId = $return["ID"];
+        if($return["SHORI"]==="insert"){
+            $this->createLogSheet($this->spreadsheetId);
+        }
     }
 
     // ファイル名からIDを取得、なければ作成
     private function getOrCreateSpreadsheet($fileName) {
         $query = "name = '$fileName' and mimeType = 'application/vnd.google-apps.spreadsheet' and trashed = false";
         $response = $this->driveService->files->listFiles(['q' => $query, 'fields' => 'files(id, name)']);
-        
+
+        $return_spreadsheetId = "";
+        $shori = "";
+
         if (count($response->files) > 0) {
-            return $response->files[0]->id;
+            $return_spreadsheetId = $response->files[0]->id;
+            $shori = "update";
         } else {
             // 新規作成
             $spreadsheet = new \Google\Service\Sheets\Spreadsheet([
                 'properties' => ['title' => $fileName]
             ]);
             $spreadsheet = $this->service->spreadsheets->create($spreadsheet);
-            $this->createLogSheet($spreadsheet->spreadsheetId);
-            return $spreadsheet->spreadsheetId;
+            //$this->createLogSheet($spreadsheet->spreadsheetId);
+            $return_spreadsheetId = $spreadsheet->spreadsheetId;
+            $shori = "insert";
         }
+        return array(
+          "ID" => $return_spreadsheetId,
+          "SHORI" => $shori
+        );
     }
 
     private function createLogSheet($id) {
