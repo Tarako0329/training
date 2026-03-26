@@ -1,6 +1,8 @@
 <?php
 	//GoogleAuthで登録した場合
   require_once "config.php";
+	use classes\SpreadSheet\SpreadSheet;
+
 	define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 	define("GOOGLE_AUTH_SKEY",$_ENV["GOOGLE_AUTH_SKEY"]);
   //GoogleAuth新規ユーザ登録用
@@ -8,8 +10,6 @@
   
 	$msg="不正なアクセスです";
 	$status="false";
-	$id = $_POST["ID"] ?? -1;
-	$name = $_POST['name'] ?? "";
 
 	// recording_ajax.php の一部
 	if (isset($_POST['code'])) {
@@ -21,6 +21,11 @@
 	  // 認可コードをトークンに交換fetchAccessTokenWithAuthCode
 		if(EXEC_MODE!=="local"){
 			$accessToken = $client->fetchAccessTokenWithAuthCode($_POST['code']);
+			$client->setAccessToken($accessToken);
+			$payload = $client->verifyIdToken($token['id_token']);
+			if ($payload) {
+				$id = $payload['sub']; // これが「識別子ID」です！
+			}
 		}else{
 			$accessToken = array(
 				// これはローカルテスト用のダミーデータです。実際のコードでは、fetchAccessTokenWithAuthCode() を使用して取得します。
@@ -32,60 +37,51 @@
     		,"id_token" => "eyJhbGciOiJSUzI1NiIsImtpZCI6ImM0MWYxNDFhYTE5ZGYwYWM5N2RhYTU1ZTYwMxxxxxxx"
     		,"created" => "1774342xxxx"
 			);
-		}
-		log_writer2("\$accessToken",$accessToken,"lv3");
-	  // この中に access_token が含まれる
-	  // この中に refresh_token が含まれる
-	  if (isset($accessToken['refresh_token'])) {
-	    $refreshToken = $accessToken['refresh_token'];
-
-	    // 【重要】$refreshToken を MySQL の users テーブルに保存
-	    // $db->query("UPDATE users SET google_refresh_token = ? WHERE id = ?", [$refreshToken, $userId]);
-	  }
-		$client->setAccessToken($accessToken);
-	
-		// IDトークン（認証情報）からユーザー情報を取得
-		if(EXEC_MODE!=="local"){
-			$payload = $client->verifyIdToken($token['id_token']);
-		}else{
 			$payload = array(
 				"sub" => "xxxxxxxxxxxxxxxx" // これが「識別子ID」です！
     		,"email" => "x.x.x@gmail.com"
     		,"name" => "xx xx"
 			);
-		}
-		log_writer2("\$payload",$payload,"lv3");
-		if ($payload) {
 			$id = $payload['sub']; // これが「識別子ID」です！
-			$email = $payload['email'];
-			$name = $payload['name'];
 		}
+		log_writer2("\$accessToken",$accessToken,"lv3");
+	  if (U::exist($accessToken['refresh_token']) && U::exist($accessToken['refresh_token'])) {
+	    $refreshToken = $accessToken['refresh_token'];
+			try{
+				//リフレッシュトークンの登録
+				$db->begin_tran();
+				$db->UP_DEL_EXEC("UPDATE users set google_refresh_token = :google_refresh_token WHERE id = :id",["google_refresh_token"=>$refreshToken,"id"=>$id]);
+				$db->commit_tran();
+
+				//スプレッドシートの作成
+				$client = new Google\Client();
+				$client->setClientId(GOOGLE_AUTH); // クライアントID
+				$client->setClientSecret(GOOGLE_AUTH_SKEY); // クライアントシークレット
+
+				// 1. MySQLから対象ユーザーの「リフレッシュトークン」を取得
+				// $refreshToken = $db->query("SELECT google_refresh_token FROM users WHERE id = ?", [$userId]);
+
+				// 2. リフレッシュトークンをセットして新しいアクセストークンを取得
+				$client->refreshToken($refreshToken);
+
+				// 3. この「準備が整った $client」をクラスに渡す
+				$SpreadSheet = new SpreadSheet($client, "ユーザー指定のファイル名");
+
+				$msg = "正常終了";
+				$status="success";
+			}catch(PDOException $e){
+				$db->rollback_tran($e->getMessage());
+				log_writer2("$e",$e,"lv0");
+			}catch(Exception $e){
+				log_writer2("$e",$e,"lv0");
+			}
+	  }
 	}
 
-	if($_POST["token"] === $_SESSION["token"] && $id!==-1){
-		$row = $db->SELECT("SELECT * from users where id = :id",[":id" => $id]);
-		$row_cnt = count($row);
-		if($row_cnt===1){
-			$msg = "登録済ユーザ";
-		}else{
-			$msg = "新規ユーザ";
-			//$pass = passEx($id,$id);
-			$pass = $id;	//googleログインはパスワードにGoogle識別子IDをセットする
-			log_writer2("\$pass",$pass,"lv3");
-			$db->begin_tran();
-			$db->INSERT("users",["id" => $id,"pass" => $pass,"name" => $name,"user_type" => "google"]);
-			$db->commit_tran();
-		}
-		$_SESSION['USER_ID'] = $id;
-		$_SESSION['login_type'] = "google";
-		$msg .= "【処理完了】";
-		$status="success";
-  }
 
 	$return_sts = array(
 		"MSG" => $msg
 		,"status" => $status
-		,"user_sub" => $id
 	);
 	header('Content-type: application/json');
 	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);

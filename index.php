@@ -69,26 +69,19 @@ $token=get_token();
 					</div>
 					<div class='position-relative mt-3 mb-3'>
 						<button type="submit" class='btn btn-primary mb-3' style='width:110px' id='GO'>ＧＯ！！</button>
-						<!--<div class="g_id_signin" style='width:200px;margin:auto;'
+						<div class="g_id_signin" style='width:200px;margin:auto;'
 				     data-type="standard"
 				     data-size="large"
 				     data-theme="outline"
-				     data-text="<?php //echo $g_login;?>"
+				     data-text="<?php echo $g_login;?>"
 				     data-shape="rectangular"
 				     data-logo_alignment="left">
 						</div>
 						<INPUT type="hidden" name="login_type" id='login_type'>
 						<div id="g_id_onload"
-						     data-client_id="<?php //echo GOOGLE_AUTH;?>"
+						     data-client_id="<?php echo GOOGLE_AUTH;?>"
 								 data-callback="handleCredentialResponse"
 						     data-auto_prompt="false">
-						</div>-->
-
-						<div class="text-center mt-3">
-						  <button type="button" class="btn btn-outline-dark" @click="loginWithGoogle" style="text-transform:none">
-						    <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
-						    Googleで続ける
-						  </button>
 						</div>
 					</div>
 				</div>
@@ -195,7 +188,7 @@ $token=get_token();
 					e.preventDefault();
 				}
 			}
-			/*function handleCredentialResponse(response) {
+			function handleCredentialResponse(response) {
   			// decodeJwtResponse() is a custom function defined by you
   			// to decode the credential response.
   			const responsePayload = decodeJwtResponse1(response.credential);
@@ -234,7 +227,7 @@ $token=get_token();
         );
 
         return JSON.parse(jsonPayload);
-      }*/
+      }
 
 		</script>
 		<script>//Vus.js
@@ -242,65 +235,11 @@ $token=get_token();
 			createApp({
 				setup(){
 					const msg = ref('<?php echo $msg;?>')
-					let client
-					// 独自ボタンや既存のフローから呼び出す関数
-				  function loginWithGoogle() {
-				    client.requestCode();
-					}
-
-				  function handleAuthCode(code) {
-						console_log('handleAuthCode start');
-				    const form = new FormData();
-				    form.append("code", code); // IDトークンではなく認可コードを送る
-						form.append("token", "<?php echo $token;?>");
-
-				    axios.post('recording_ajax.php', form)
-				    .then((response) => {
-				      // サーバー側でリフレッシュトークン保存が成功したらログイン完了
-				      document.getElementById("login_type").value = "google";
-				      // ※サーバー側から返ってきたユーザーIDをセット
-				      document.getElementById("id").value = response.data.user_sub;
-				      document.getElementById("pass").value = response.data.user_sub;
-				      document.getElementById("GO").click();
-				    })
-				    .catch((error) => alert("連携に失敗しました: " + error));
-				  }
-
-					/*function decodeJwtResponse(token) {
-      		  var base64Url = token.split(".")[1];
-      		  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      		  var jsonPayload = decodeURIComponent(
-      		    atob(base64)
-      		      .split("")
-      		      .map(function (c) {
-      		        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      		      })
-      		      .join("")
-      		  );
-
-      		  return JSON.parse(jsonPayload);
-      		}*/
 
 					onMounted(()=>{
-						client = google.accounts.oauth2.initCodeClient({
-    				  client_id: '<?php echo GOOGLE_AUTH;?>',
-    				  // スプレッドシート操作権限を追加
-    				  scope: 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/spreadsheets email profile openid',
-    				  ux_mode: 'popup',
-    				  callback: (response) => {
-    				    if (response.code) {
-    				      // 2. 取得した「認可コード」をサーバーに送る
-									console_log(response.code);
-									//console_log(decodeJwtResponse(response.code));
-									//console_log(decodeJwtResponse(response));
-    				      handleAuthCode(response.code);
-    				    }
-    				  },
-    				});						
 					})
 					return{
 						msg
-						,loginWithGoogle
 					}
 				}
 			}).mount('#main');

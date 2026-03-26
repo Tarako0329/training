@@ -44,13 +44,12 @@
 	}
 
 	$user_type = $row[0]["user_type"] ?? "";
-	/*if($user_type==="google"){
-		setCookie("user_type", 'google', time()+60*60*24*365, "/", "", true, true);
-	}*/
 	setCookie("user_type", $user_type, time()+60*60*24*365, "/", "", true, true);
 
 	$device = get_device_type();
 	$user_name = ($row[0]["name"]);
+	$google_refresh_token = U::exist($row[0]["google_refresh_token"]) ? "連携済":"未連携";
+
 	$token=get_token();
 
 	log_writer2("アクセス端末","USER_ID:".$id." DEVICE:".$device." USER_NAME:".$user_name,"lv1");
@@ -329,25 +328,47 @@
 											<div v-if="'google'!=='<?php echo $user_type;?>'"><span style='color:yellow;'>※</span>：パスワード再設定に利用。</div>
 											<input type="hidden" name='token' value="<?php echo $token;?>">
 											<input type="hidden" name='id' value="<?php echo $row[0]["id"];?>">
-											<hr>
-											<div v-if="'google'!=='<?php echo $user_type;?>'" class='mb-2'>
-												<div class='mb-2'>
-													Googleログインに変更する（記録は全て引き継がれます）
-												</div>
-												<div class="g_id_signin" style='width:200px;margin:auto;'
-				    							data-type="standard"
-				    							data-size="large"
-				    							data-theme="outline"
-				    							data-text="signin_with"
-				    							data-shape="rectangular"
-				    							data-logo_alignment="left">
-												</div>
+											<div v-if="'google1'!=='<?php echo $user_type;?>'" class='mb-2'>
+												<hr>
+												<!--<div class="g_id_signin" style='width:200px;'
+													data-type="standard"
+													data-size="large"
+													data-theme="outline"
+													data-text="signin_with"
+													data-shape="rectangular"
+													data-logo_alignment="left">
+												</div>-->
 												<INPUT type="hidden" name="login_type" id='login_type'>
+												<button type="button" class="btn btn-light d-flex" style="width: 200px;" @click='sinin_with_google();'>
+													<div class="google-icon-wrapper">
+														<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18px" height="18px">
+															<path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+															<path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+															<path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
+															<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+															<path fill="none" d="M0 0h48v48H0z"/>
+														</svg>
+													</div>
+													<span class="button-text">Googleログインに変更</span>
+												</button>
 												<div id="g_id_onload"
-												     data-client_id="<?php echo GOOGLE_AUTH;?>"
-														 data-callback="handleCredentialResponse"
-												     data-auto_prompt="false">
+													data-client_id="<?php echo GOOGLE_AUTH;?>"
+													data-callback="handleCredentialResponse"
+													data-auto_prompt="false"
+													data-itp_support="true"
+													data-use_fedcm_for_prompt="true">
 												</div>
+												<small class='d-block mt-1'>※記録は全て引き継がれますが、パスワードでのログインができなくなります。</small>
+											</div>
+											<div v-if="'連携済1'!=='<?php echo $google_refresh_token;?>'" class='mb-2'>
+												<hr>
+												<button type="button" class="btn btn-light d-flex" style="width: 200px;" @click='Drive_renkei();'>
+													<div class="google-icon-wrapper">
+														<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Google Drive" style="width: 18px; height: 18px;">
+													</div>
+													<span class="button-text">GoogleDriveに連携</span>
+												</button>
+												<small class='d-block mt-1'>※GoogleDriveのスプレッドシートに記録を連携します。</small>
 											</div>
 										</div>
 									</div>
@@ -646,7 +667,7 @@
 
 			async function handleCredentialResponse (response) {
 				console_log('handleCredentialResponse実行')
-  			const responsePayload = decodeJwtResponse(response.credential);
+				const responsePayload = decodeJwtResponse(response.credential);
 				console_log(responsePayload);
 				
 				try{
@@ -683,27 +704,28 @@
 						alert(res_upd.data.MSG)
 					}
 				}catch (error) {
-    			// 3. 失敗（エラー）時の処理
-    			alert(error);
-			  } finally {
-    			// 4. 成功・失敗に関わらず最後に実行する処理（必要であれば）
-    			console.log("通信終了");
-  			}
+					// 3. 失敗（エラー）時の処理
+					alert(error);
+				} finally {
+					// 4. 成功・失敗に関わらず最後に実行する処理（必要であれば）
+					console.log("通信終了");
+				}
 			}
 			function decodeJwtResponse (token){
-        var base64Url = token.split(".")[1];
-        var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-        var jsonPayload = decodeURIComponent(
-          atob(base64)
-            .split("")
-            .map(function (c) {
-              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-            })
-            .join("")
-        );
+				var base64Url = token.split(".")[1];
+				var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+				var jsonPayload = decodeURIComponent(
+					atob(base64)
+						.split("")
+						.map(function (c) {
+							return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+						})
+						.join("")
+				);
 
-        return JSON.parse(jsonPayload);
-      }
+				return JSON.parse(jsonPayload);
+			}
+			
 		</script>
 		<script>//Vus.js
 			const { createApp, ref,shallowRef, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
@@ -719,11 +741,8 @@
 					}
 
 					const background_show = ref(true)
-					//const kintore_log = ref([])
 					const kintore_log = shallowRef([])
-					//const shumoku = ref([])
 					const shumoku = shallowRef([])
-					//const max_log = ref([])
 					const max_log = shallowRef([])
 					const max_log_sort = computed(()=>{
 						let temp = max_log.value.sort((a,b)=>{
@@ -1250,7 +1269,6 @@
 								alert('')
 							}
 							setting_switch1.value=false
-							//document.getElementById('ms_training').style.height='500px'
 						}
 					}
 
@@ -1289,11 +1307,63 @@
 						console_log('onBeforeMount')
 					})
 
+					const sinin_with_google = () =>{
+						const loginTypeInput = document.getElementById('login_type');
+						if (loginTypeInput) loginTypeInput.value = 'google';
+				
+						// Google のログイン画面（選択画面）を強制的に表示させる
+						google.accounts.id.prompt((notification) => {
+							if (notification.isNotDisplayed()) {
+								console.log("表示されなかった理由:", notification.getNotDisplayedReason());
+							}
+						});
+					}
+
+
+					let client
+					// 独自ボタンや既存のフローから呼び出す関数
+					const Drive_renkei = () => {
+						client.requestCode();
+					}
+
+					const handleAuthCode = (code) => {
+						console_log('handleAuthCode start');
+						const form = new FormData();
+						form.append("code", code); // IDトークンではなく認可コードを送る
+						form.append("token", "<?php echo $token;?>");
+
+						axios.post('ajax_Drive_renkei.php', form)
+						.then((response) => {
+								if(response.data.status==="success"){
+									alert("連携に成功しました")
+								}else{
+									alert("連携に失敗しました")
+									alert(response.data.MSG)
+								}
+						})
+						.catch((error) => alert("連携に失敗しました: " + error));
+					}
+
+					const set_google_client = () =>{
+						client = google.accounts.oauth2.initCodeClient({
+							client_id: '<?php echo GOOGLE_AUTH;?>',
+							// スプレッドシート操作権限を追加
+							scope: 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/spreadsheets email profile openid',
+							ux_mode: 'popup',
+							callback: (response) => {
+								if (response.code) {
+									// 2. 取得した「認可コード」をサーバーに送る
+									console_log(response.code);
+									handleAuthCode(response.code);
+								}
+							},
+						});
+					}
+
 					const reloader = ref(null)
 					const reloader_info = ref('now Loading')
 					onMounted(() => {
 						console_log('onMounted')
-						//get_trlog()
 						const Modal_taisosiki = document.getElementById('taisosiki'); // モーダルのIDを取得
 						const Modal_usanso = document.getElementById('usanso'); // モーダルのIDを取得
 						const Modal_edit_wt = document.getElementById('edit_wt'); // モーダルのIDを取得
@@ -1357,10 +1427,11 @@
 							rootMargin: '0px',
 							threshold: 0.1
 						});
-
 						if (reloader.value) {
 							observer.observe(reloader.value);
 						}
+
+						set_google_client()
 					})
 
 					return{
@@ -1413,9 +1484,12 @@
 						debug_msg,
 						info_readed,
 						install_info,
+						Drive_renkei,
+						sinin_with_google,
 					}
 				}
 			}).mount('#logger');
+
 			// Enterキーが押された時にSubmitされるのを抑制する
 			document.getElementById('logger').onkeypress = (e) => {
 				// form1に入力されたキーを取得
