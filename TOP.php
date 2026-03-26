@@ -1348,7 +1348,7 @@
 						client = google.accounts.oauth2.initCodeClient({
 							client_id: '<?php echo GOOGLE_AUTH;?>',
 							// スプレッドシート操作権限を追加
-							scope: 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/spreadsheets email profile openid',
+							scope: 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file email profile openid',
 							ux_mode: 'popup',
 							callback: (response) => {
 								if (response.code) {
