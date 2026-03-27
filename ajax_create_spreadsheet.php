@@ -37,14 +37,42 @@
 				$SpreadSheet->createLogSheet("有酸素運動");
 				$SpreadSheet->G_INSERT([['SEQ', '日付','実施順','種目' ,'時間', '距離','消費カロリー' , 'メモ']], "有酸素運動");
 				$SpreadSheet->createLogSheet("体組織計測");
-				$SpreadSheet->G_INSERT([['SEQ', '日付','体重(kg)','体脂肪率(%)','筋肉量(kg)' , '骨量(kg)', '内臓脂肪レベル' , 'メモ']], "体組織計測");
+				$SpreadSheet->G_INSERT([['日付','体重(kg)','体脂肪率(%)','脂肪量(kg)' , '徐脂肪(kg)']], "体組織計測");
 				$SpreadSheet->DELETE_SHEET("シート1");
 
+				//既存のデータを反映
 				$row = array_map(function($item) {
 					return array_values($item);
 				}, $db->SELECT("SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight),rep,sets,memo FROM `tr_log` where id=:id and ymd > '2024-01-01' order by SEQ;",["id"=>$_SESSION['USER_ID']]));
-				
 				$SpreadSheet->G_INSERT($row,"ウェイトトレーニング");
+
+				$sql = "SELECT 
+					CONCAT(left(ymd,7)
+					,CASE
+						WHEN right(ymd,2) <= 10 THEN '上'
+					    WHEN right(ymd,2) <= 20 THEN '中'
+					    WHEN right(ymd,2) <= 31 THEN '下'
+					END) as ym
+					,round(avg(weight),2) as weight
+					,round(avg(taisibou),2) as taisibou
+					,round(avg(weight)*avg(taisibou)/100,1) as sibouryou
+					,round(avg(weight)-(avg(weight)*avg(taisibou)/100),1) as josibou
+					/*,MIN(DATEDIFF(now(),ymd)) as beforedate*/
+
+					FROM `taisosiki`
+					where id=:id
+					group by id,left(ymd,7) 
+					,CASE
+						WHEN right(ymd,2) <= 10 THEN '上'
+					    WHEN right(ymd,2) <= 20 THEN '中'
+					    WHEN right(ymd,2) <= 31 THEN '下'
+					END
+					order by MIN(DATEDIFF(now(),ymd)) desc ";
+				$row = array_map(function($item) {
+					return array_values($item);
+				}, $db->SELECT($sql,["id"=>$_SESSION['USER_ID']]));
+
+				$SpreadSheet->G_INSERT($row,"体組織計測");
 			}else{//更新
 				$SpreadSheet->G_UPDATE("0",[['0','目標', $mokuhyou]],"ウェイトトレーニング");
 				//ファイル名更新

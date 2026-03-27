@@ -1426,7 +1426,11 @@
 						axios.post('ajax_create_spreadsheet.php', form)
 						.then((response) => {
 							if(response.data.status==="success"){
-								alert("スプレッドシートを作成しました")
+								if(created_flg.value){
+									alert("スプレッドシートを更新しました")
+								}else{
+									alert("スプレッドシートを作成しました")
+								}
 								created_flg.value = true
 							}else{
 								alert("スプレッドシートの作成に失敗しました")

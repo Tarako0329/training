@@ -40,8 +40,8 @@ $sql = "SELECT
 	,left(ymd,7) as ym
 	,CASE
 		WHEN right(ymd,2) <= 10 THEN '上'
-	    WHEN right(ymd,2) <= 20 THEN '中'
-	    WHEN right(ymd,2) <= 31 THEN '下'
+			WHEN right(ymd,2) <= 20 THEN '中'
+			WHEN right(ymd,2) <= 31 THEN '下'
 	END as 旬
 	,round(avg(weight),2) as weight
 	,round(avg(taisibou),2) as taisibou
@@ -55,16 +55,16 @@ $sql = "SELECT
 			,CONCAT(((YEAR(CURDATE()) - YEAR(MIN(ymd))) * 12 + (MONTH(CURDATE()) - MONTH(MIN(ymd)))),'ヶ月前')),
 		CASE
 			WHEN right(ymd,2) <= 10 THEN '上旬'
-	    WHEN right(ymd,2) <= 20 THEN '中旬'
-	    WHEN right(ymd,2) <= 31 THEN '下旬'
+			WHEN right(ymd,2) <= 20 THEN '中旬'
+			WHEN right(ymd,2) <= 31 THEN '下旬'
 	END) as label
 	FROM `taisosiki`
 	where id=:id
 	group by id,left(ymd,7) 
 	,CASE
 		WHEN right(ymd,2) <= 10 THEN '上'
-	    WHEN right(ymd,2) <= 20 THEN '中'
-	    WHEN right(ymd,2) <= 31 THEN '下'
+			WHEN right(ymd,2) <= 20 THEN '中'
+			WHEN right(ymd,2) <= 31 THEN '下'
 	END
 	order by ymd ";
 $dataset_work = $db->SELECT($sql,[":id"=>$id]);
