@@ -302,7 +302,7 @@
 										<div class='col-10 ' >
 											<div class='mb-1'>
 												<label for='sheet_name'>スプレッドシート名</label>
-												<input type='text' id='sheet_name' class='form-control form-select-sm' v-model='sheet_name'>
+												<input type='text' id='sheet_name' class='form-control form-select-sm' v-model='sheetname'>
 												<label for='mokuhyou' class='mt-2'>スプレッドシートに記録する際の目標設定（任意）</label>
 												<input type='text' id='mokuhyou' class='form-control form-select-sm' v-model='mokuhyou' placeholder='例）体重60kg、ベンチプレス100kgなど'>
 											</div>
