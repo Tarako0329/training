@@ -1,5 +1,7 @@
 <?php
 require_once "config.php";
+use classes\SpreadSheet\SpreadSheet;
+use classes\Security\Security;
 
 //トランザクション処理
 log_writer2("\$POST",$_POST,"lv3");
@@ -23,17 +25,14 @@ if(isset($_SESSION['USER_ID'])){
 $shu = $_POST["shu1"] ?? "";
 $rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
 $cal = ($_POST["cal"] == "")?0:$_POST["cal"];
-//$type = (!empty($_POST["jiju"]))?"2":$_POST["typ"];
 $type = (U::exist($_POST["jiju"]))?"2":$_POST["typ"];
 
 try{
 	$db->begin_tran();
 
-	//if(empty($_POST["NO"])){
 	if(!U::exist($_POST["NO"])){
 		$sql = "SELECT max(jun) as junban from tr_log where ymd = :ymd and id = :id;";
 		$row = $db->SELECT($sql,[":ymd" => $_POST["ymd"],":id" => $id]);
-		//$jun = empty($row[0]["junban"])?1:$row[0]["junban"]+1;
 		$jun = !U::exist($row[0]["junban"])?1:$row[0]["junban"]+1;
 		$db->INSERT("tr_log",[
 			"id" => $id
@@ -89,7 +88,6 @@ try{
 			,":NO" => $_POST["NO"]]);
 	}
 
-	//if(!empty($_POST["condition"])){
 	if(U::exist($_POST["condition"])){
 		//デリイン
 		$sql = "DELETE from tr_condition where id = :id and ymd = :ymd";

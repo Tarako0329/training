@@ -26,12 +26,13 @@
 		
 		try{
 			//スプレッドシートの作成
-			$client = new Google\Client();
+			/*$client = new Google\Client();
 			$client->setClientId(GOOGLE_AUTH); // クライアントID
 			$client->setClientSecret(GOOGLE_AUTH_SKEY); // クライアントシークレット
-			$client->refreshToken($refreshToken);
+			$client->refreshToken($refreshToken);*/
 			// 3. この「準備が整った $client」をクラスに渡す
-			$SpreadSheet = new SpreadSheet($client, $sheetname);
+			//$SpreadSheet = new SpreadSheet($client, $sheetname);
+			$SpreadSheet = new SpreadSheet($refreshToken, $sheetname);
 
 			if($SpreadSheet->is_new_file){//新規作成の場合
 				$SpreadSheet->createLogSheet("ウェイトトレーニング");
@@ -66,11 +67,13 @@
 			}
 
 			//userテーブルの更新
+			$db->begin_tran();
 			$db->UP_DEL_EXEC("UPDATE users SET spsfilename = :spsfilename, mokuhyou = :mokuhyou WHERE id = :id",[
 				"spsfilename"=>$sheetname,
 				"mokuhyou"=>$mokuhyou,
 				"id"=>$_SESSION['USER_ID']
 			]);
+			$db->commit_tran();
 
 			$msg = "正常終了";
 			$status="success";

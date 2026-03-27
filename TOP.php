@@ -51,7 +51,7 @@
 	$user_name = ($row[0]["name"]);
 	$spsfilename = ($row[0]["spsfilename"] ?? "");
 	$mokuhyou = ($row[0]["mokuhyou"] ?? "");
-	$google_refresh_token = U::exist($row[0]["google_refresh_token"]) ? "連携済":"未連携";
+	$google_refresh_token = $row[0]["google_refresh_token"] ?? "";
 
 	$token=get_token();
 
@@ -302,13 +302,17 @@
 								<div class='row'>
 									<div class='col-1 col-md-0' ></div>
 										<div class='col-10 ' >
-											<div class='mb-1'>
-												<label for='sheet_name'>スプレッドシート名</label>
-												<input type='text' id='sheet_name' class='form-control form-select-sm' v-model='sheetname'>
-												<label for='mokuhyou' class='mt-2'>スプレッドシートに記録する際の目標設定（任意）</label>
-												<input type='text' id='mokuhyou' class='form-control form-select-sm' v-model='mokuhyou' placeholder='例）体重60kg、ベンチプレス100kgなど'>
-											</div>
-											<div v-if="'連携済'!=='<?php echo $google_refresh_token;?>'" class='mb-2'>
+											<details class='mb-2'>
+												<summary>なぜ連携するの？</summary>
+												<small>
+													連携後は、GoogleDriveのスプレッドシートにトレーニング記録が自動で保存されます。<br>
+													スプレッドシートを活用することで、記録を自由に解析できます。<br>
+													またAIツールと連携することで、トレーニングについて質問したときに"より"あなたに最適なの回答を引き出すことができます。<br>
+													<span class='text-warning'> AIに相談するときは「GoogleDriveの〇〇(ファイル名)に、体重とトレーニングの記録が入っています」と伝えるとスムーズです。</span><br>
+													※連携の解除も可能です。
+												</small>
+											</details>
+											<div v-if="!renkei_flg" class='mb-2 mt-2'>
 												<hr>
 												<button type="button" class="btn btn-light d-flex" style="width: 200px;" @click='Drive_renkei();'>
 													<div class="google-icon-wrapper">
@@ -318,10 +322,12 @@
 												</button>
 												<small class='d-block mt-1'>※GoogleDriveのスプレッドシートに記録を連携します。</small>
 											</div>
-											<div v-if="'連携済'==='<?php echo $google_refresh_token;?>'" class='mb-2'>
-												<div class='d-flex justify-content-end mt-2'>
-													<button type="button" class="btn btn-secondary mbtn" @click='Drive_renkei_cancel()'>連携解除</button>
-													<button type="button" class="btn btn-primary mbtn ms-2" @click='Drive_renkei_update()'>設定更新</button>
+											<div v-if="renkei_flg" class='mb-2'>
+												<div class='mb-1'>
+													<label for='sheet_name'>スプレッドシート名</label>
+													<input type='text' id='sheet_name' class='form-control form-select-sm' v-model='sheetname'>
+													<label for='mokuhyou' class='mt-2'>スプレッドシートに記録する際の目標設定（任意）</label>
+													<input type='text' id='mokuhyou' class='form-control form-select-sm' v-model='mokuhyou' placeholder='例）体重60kg、ベンチプレス100kgなど'>
 												</div>
 											</div>
 										</div>
@@ -329,8 +335,8 @@
 									<div class='col-1' ></div>
 								</div>
 								<div class='modal-footer'>
-									<button type='button' style='width:90px;font-size:13px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" id=''>キャンセル</button>
-									<button type='submit' style='width:90px;' name='btn' value='update' class="btn btn-primary mbtn" data-bs-dismiss="modal">更新</button>
+									<button type="button" class="btn btn-secondary mbtn" @click='Drive_renkei_cancel()'>連携解除</button>
+									<button type="button" class="btn btn-primary mbtn ms-2" @click='Drive_renkei_update()'>{{ btn_name }}</button>
 								</div>
 						</FORM>
 					</div>
@@ -1353,6 +1359,7 @@
 
 					//Google Drive 連携
 					let client
+					const renkei_flg = ref(<?php echo $google_refresh_token ? "true" : "false";?>)
 					const Drive_renkei = () => {
 						client.requestCode();
 					}
@@ -1366,6 +1373,7 @@
 						.then((response) => {
 								if(response.data.status==="success"){
 									alert("連携に成功しました")
+									renkei_flg.value = true
 								}else{
 									alert("連携に失敗しました")
 									alert(response.data.MSG)
@@ -1393,6 +1401,14 @@
 					//Spreadsheet作成
 					const sheetname = ref('<?php echo $spsfilename;?>')
 					const mokuhyou = ref('<?php echo $mokuhyou;?>')
+					const created_flg = ref(<?php echo $spsfilename ? "true" : "false";?>)
+					const btn_name = computed(()=>{
+						if(created_flg.value){
+							return '設定更新'
+						}else{
+							return 'ファイル作成'
+						}
+					})
 					const Drive_renkei_update = () =>{
 						if(!sheetname.value){
 							alert('ファイル名を入力してください')
@@ -1411,6 +1427,7 @@
 						.then((response) => {
 							if(response.data.status==="success"){
 								alert("スプレッドシートを作成しました")
+								created_flg.value = true
 							}else{
 								alert("スプレッドシートの作成に失敗しました")
 								alert(response.data.MSG)
@@ -1550,6 +1567,8 @@
 						sheetname,
 						mokuhyou,
 						Drive_renkei_update,
+						renkei_flg,
+						btn_name,
 					}
 				}
 			}).mount('#logger');

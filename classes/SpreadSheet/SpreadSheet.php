@@ -9,7 +9,11 @@ class SpreadSheet {
 	public readonly bool $is_new_file;
 	//private $sheetName = 'トレーニング記録';
 
-	public function __construct($client, $fileName) {
+	public function __construct($refreshToken, $fileName) {
+		$client = new \Google\Client();
+		$client->setClientId(GOOGLE_AUTH); // クライアントID
+		$client->setClientSecret(GOOGLE_AUTH_SKEY); // クライアントシークレット
+		$client->refreshToken($refreshToken);
 		$this->service = new \Google\Service\Sheets($client);
 		$this->driveService = new \Google\Service\Drive($client);
 		$this->getOrCreateSpreadsheet($fileName);
@@ -26,6 +30,7 @@ class SpreadSheet {
 			$this->is_new_file = false;
 			log_writer2("既存のスプレッドシートを使用",$spreadsheetId,"lv3");
 		} else {
+			log_writer2("新規スプレッドシートを作成",$spreadsheetId,"lv3");
 			// 新規作成
 			$spreadsheet = new \Google\Service\Sheets\Spreadsheet([
 				'properties' => ['title' => $fileName]
