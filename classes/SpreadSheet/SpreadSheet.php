@@ -128,7 +128,7 @@ class SpreadSheet {
 		if (!$rowNumber) return false; // 見つからない場合
 
 		$range = $sheetName . "!A" . $rowNumber;
-		$body = new \Google\Service\Sheets\ValueRange(['values' => [$newValues]]);
+		$body = new \Google\Service\Sheets\ValueRange(['values' => $newValues]);
 		$params = ['valueInputOption' => 'RAW'];
 			
 		return $this->service->spreadsheets_values->update(
