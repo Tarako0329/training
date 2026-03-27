@@ -37,52 +37,36 @@ class SpreadSheet {
 		$this->spreadsheetId = $spreadsheetId;
 	}
 
-	/**
- 	* ファイル名を指定して名前を変更する
- 	* @param string $sheetName
- 	* @param string $sheetName_new
- 	* @return string 'success' | 'warning' (重複のため作成スキップ) | 'error'
- 	*/
-	public function RENAME_SHEET($sheetName, $sheetName_new):string {
-		try {
-			// 1. スプレッドシートの全シート情報を取得してIDを探す
-			$spreadsheet = $this->service->spreadsheets->get($this->spreadsheetId);
-			$sheets = $spreadsheet->getSheets();
-			$targetSheetId = null;
+/**
+ * Googleドライブ上のファイル名を変更する
+ * @param string $newfilename 新しいファイル名
+ * @param string $filename 現在のファイル名（確認用）
+ * @return string 'success' | 'warning' (不一致) | 'error'
+ */
+	public function RENAME_FILE($newfilename, $filename): string {
+    try {
+      // 1. 現在のファイル情報を取得して名前をチェック
+      $file = $this->driveService->files->get($this->spreadsheetId, ['fields' => 'name']);
+       
+      // 現在の名前が引数の $filename と一致しない場合は warning
+      if ($file->getName() !== $filename) {
+        return 'warning';
+      }
 
-			foreach ($sheets as $sheet) {
-				if ($sheet->getProperties()->getTitle() === $sheetName) {
-					$targetSheetId = $sheet->getProperties()->getSheetId();
-					break;
-				}
-			}
+       // 2. 名前変更リクエストの作成
+      $driveFile = new \Google\Service\Drive\DriveFile();
+      $driveFile->setName($newfilename);
 
-			// 2. 見つからない場合はwarningを返す
-			if ($targetSheetId === null) {
-				return 'warning';
-			}
+      // 3. 実行
+      $this->driveService->files->update($this->spreadsheetId, $driveFile);
+        
+      return 'success';
 
-			// 3. 名前変更リクエストを実行
-			$body = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
-				'requests' => [
-					['updateSheetProperties' => [
-						'properties' => [
-							'sheetId' => $targetSheetId,
-							'title' => $sheetName_new
-						],
-						'fields' => 'title'
-					]]
-				]
-			]);
-
-			$this->service->spreadsheets->batchUpdate($this->spreadsheetId, $body);
-			return 'success';
-
-		} catch (\Exception $e) {
-			return 'error';
-		}
+    } catch (\Exception $e) {
+      // IDが無効な場合や、権限エラーなど
+      return 'error';
+    }
 	}
-
 
 	/**
  	* シート名を指定してシートを作成する
@@ -190,6 +174,52 @@ class SpreadSheet {
     } catch (\Exception $e) {
         return 'error';
     }
+	}
+
+	/**
+ 	* シート名を指定して名前を変更する
+ 	* @param string $sheetName
+ 	* @param string $sheetName_new
+ 	* @return string 'success' | 'warning' (重複のため作成スキップ) | 'error'
+ 	*/
+	public function RENAME_SHEET($sheetName, $sheetName_new):string {
+		try {
+			// 1. スプレッドシートの全シート情報を取得してIDを探す
+			$spreadsheet = $this->service->spreadsheets->get($this->spreadsheetId);
+			$sheets = $spreadsheet->getSheets();
+			$targetSheetId = null;
+
+			foreach ($sheets as $sheet) {
+				if ($sheet->getProperties()->getTitle() === $sheetName) {
+					$targetSheetId = $sheet->getProperties()->getSheetId();
+					break;
+				}
+			}
+
+			// 2. 見つからない場合はwarningを返す
+			if ($targetSheetId === null) {
+				return 'warning';
+			}
+
+			// 3. 名前変更リクエストを実行
+			$body = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
+				'requests' => [
+					['updateSheetProperties' => [
+						'properties' => [
+							'sheetId' => $targetSheetId,
+							'title' => $sheetName_new
+						],
+						'fields' => 'title'
+					]]
+				]
+			]);
+
+			$this->service->spreadsheets->batchUpdate($this->spreadsheetId, $body);
+			return 'success';
+
+		} catch (\Exception $e) {
+			return 'error';
+		}
 	}
 
 	// A列からSEQを探し、行番号（1始まり）を返す

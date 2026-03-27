@@ -11,23 +11,27 @@
 	$msg="不正なアクセスです";
 	$status="false";
 
+	//リフレッシュトークンの取得
+	$row = $db->SELECT("SELECT * FROM users WHERE id = :id",["id"=>$_SESSION['USER_ID']]);
+	$refreshToken = $row[0]['google_refresh_token'];
+	$db_spsfilename = $row[0]['spsfilename'] ?? "";
+
 	$mokuhyou = $_POST['mokuhyou'] ?? "";
+	$sheetname = $_POST['sheetname'] ?? "";
+
 	// recording_ajax.php の一部
-	if (U::exist($_POST['sheetname']) && U::exist($_SESSION['USER_ID'])) {
+	if (U::exist($sheetname) && U::exist($_SESSION['USER_ID'])) {
 	  $refreshToken = $accessToken['refresh_token'];
 		try{
-			//リフレッシュトークンの取得
-			$row = $db->SELECT("SELECT * FROM users WHERE id = :id",["id"=>$_SESSION['USER_ID']]);
-			$refreshToken = $row[0]['google_refresh_token'];
 			//スプレッドシートの作成
 			$client = new Google\Client();
 			$client->setClientId(GOOGLE_AUTH); // クライアントID
 			$client->setClientSecret(GOOGLE_AUTH_SKEY); // クライアントシークレット
 			$client->refreshToken($refreshToken);
 			// 3. この「準備が整った $client」をクラスに渡す
-			$SpreadSheet = new SpreadSheet($client, $_POST['sheetname']);
+			$SpreadSheet = new SpreadSheet($client, $sheetname);
 
-			if($SpreadSheet->is_new_file){
+			if($SpreadSheet->is_new_file){//新規作成の場合
 				$SpreadSheet->createLogSheet("ウェイトトレーニング");
 				$SpreadSheet->G_INSERT([['0','目標', $mokuhyou]], "ウェイトトレーニング");
 				$SpreadSheet->G_INSERT([['SEQ', '日付','実施順','種目' ,'重量', '回数','セット数' , 'メモ']], "ウェイトトレーニング");
@@ -44,11 +48,24 @@
 				$SpreadSheet->G_INSERT($row,"ウェイトトレーニング");
 			}else{//更新
 				$SpreadSheet->G_UPDATE("0",[['0','目標', $mokuhyou]],"ウェイトトレーニング");
+				//ファイル名更新
+				if($db_spsfilename !== $sheetname && U::exist($db_spsfilename)){
+					$rename_result = $SpreadSheet->RENAME_FILE($sheetname, $db_spsfilename);
+					if($rename_result === "warning"){
+						log_writer2("ファイル名の不一致",$sheetname."!=".$db_spsfilename,"lv1");
+						$msg = "ファイル名の不一致のため、ファイル名は更新されませんでした。";
+						$status="warning";
+					}else if($rename_result === "error"){
+						log_writer2("ファイル名の更新に失敗",$sheetname,"lv0");
+						$msg = "ファイル名の更新に失敗しました。";
+						$status="error";
+					}
+				}
 			}
 
 			//userテーブルの更新
 			$db->UP_DEL_EXEC("UPDATE users SET spsfilename = :spsfilename, mokuhyou = :mokuhyou WHERE id = :id",[
-				"spsfilename"=>$_POST['sheetname'],
+				"spsfilename"=>$sheetname,
 				"mokuhyou"=>$mokuhyou,
 				"id"=>$_SESSION['USER_ID']
 			]);
