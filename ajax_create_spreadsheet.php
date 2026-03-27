@@ -30,12 +30,18 @@
 			if($SpreadSheet->is_new_file){
 				$SpreadSheet->createLogSheet("ウェイトトレーニング");
 				$SpreadSheet->G_INSERT([['0','目標', $mokuhyou]], "ウェイトトレーニング");
-				$SpreadSheet->G_INSERT([['SEQ', '日付','実施順','種目' ,'重量', '回数','セット数' , '推定1RM', 'メモ']], "ウェイトトレーニング");
+				$SpreadSheet->G_INSERT([['SEQ', '日付','実施順','種目' ,'重量', '回数','セット数' , 'メモ']], "ウェイトトレーニング");
 				$SpreadSheet->createLogSheet("有酸素運動");
 				$SpreadSheet->G_INSERT([['SEQ', '日付','実施順','種目' ,'時間', '距離','消費カロリー' , 'メモ']], "有酸素運動");
 				$SpreadSheet->createLogSheet("体組織計測");
 				$SpreadSheet->G_INSERT([['SEQ', '日付','体重(kg)','体脂肪率(%)','筋肉量(kg)' , '骨量(kg)', '内臓脂肪レベル' , 'メモ']], "体組織計測");
 				$SpreadSheet->DELETE_SHEET("シート1");
+
+				$row = array_map(function($item) {
+    			return array_values($item);
+				}, $db->SELECT("SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight),rep,sets,memo FROM `tr_log` where id=:id order by SEQ;",["id"=>$_SESSION['USER_ID']]));
+				
+				$SpreadSheet->G_INSERT($row,"ウェイトトレーニング");
 			}else{//更新
 				$SpreadSheet->G_UPDATE("0",[['0','目標', $mokuhyou]],"ウェイトトレーニング");
 			}
@@ -46,7 +52,7 @@
 				"mokuhyou"=>$mokuhyou,
 				"id"=>$_SESSION['USER_ID']
 			]);
-			
+
 			$msg = "正常終了";
 			$status="success";
 		}catch(PDOException $e){

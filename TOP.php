@@ -49,6 +49,8 @@
 
 	$device = get_device_type();
 	$user_name = ($row[0]["name"]);
+	$spsfilename = ($row[0]["spsfilename"] ?? "");
+	$mokuhyou = ($row[0]["mokuhyou"] ?? "");
 	$google_refresh_token = U::exist($row[0]["google_refresh_token"]) ? "連携済":"未連携";
 
 	$token=get_token();
@@ -1389,8 +1391,8 @@
 					//Google Drive 連携ここまで
 
 					//Spreadsheet作成
-					const sheetname = ref('')
-					const mokuhyou = ref('')
+					const sheetname = ref('<?php echo $spsfilename;?>')
+					const mokuhyou = ref('<?php echo $mokuhyou;?>')
 					const Drive_renkei_update = () =>{
 						if(!sheetname.value){
 							alert('ファイル名を入力してください')
