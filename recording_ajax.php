@@ -12,7 +12,7 @@
 	$name = $_POST['name'] ?? "";
 
 	// recording_ajax.php の一部
-	if (isset($_POST['code'])) {
+	/*if (isset($_POST['code'])) {
 	  $client = new Google\Client();
 	  $client->setClientId(GOOGLE_AUTH);
 	  $client->setClientSecret(GOOGLE_AUTH_SKEY); // .env推奨
@@ -60,7 +60,7 @@
 			$email = $payload['email'];
 			$name = $payload['name'];
 		}
-	}
+	}*/
 
 	if($_POST["token"] === $_SESSION["token"] && $id!==-1){
 		$row = $db->SELECT("SELECT * from users where id = :id",[":id" => $id]);

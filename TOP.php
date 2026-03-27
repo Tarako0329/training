@@ -3,6 +3,7 @@
 	require_once "config.php";
 	define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 	$cookie_token = $_COOKIE['token'] ?? "";
+	$_SESSION["roop"] = 0;//セッションループ回避用リセット
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
@@ -105,6 +106,7 @@
 						</a>
 						<ul class="dropdown-menu">
 							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#user_info'>ユーザー情報</a></li>
+							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#GoogleDriveRenkei'>GoogleDrive連携</a></li>
 							<li><a class="dropdown-item" href="#" data-bs-toggle='modal' data-bs-target='#pwa_info'>インストール手順</a></li>
 							<li><a class="dropdown-item" href="TOP.php?logoff=out">ログオフ</a></li>
 						</ul>
@@ -285,6 +287,53 @@
 			$icon="img/icon-128x128.png";
 			require_once "install_modal.php";
 			?>
+			<!--GoogleDrive連携-->
+			<div class='modal fade' id='GoogleDriveRenkei' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
+				<div class='modal-dialog  modal-dialog-centered'>
+					<div class='modal-content edit' style=''>
+						<FORM method="post" action="user_update.php">
+							<div class='modal-header'>
+								<h5 class="modal-title">GoogleDrive連携</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class='modal-body container'>
+								<div class='row'>
+									<div class='col-1 col-md-0' ></div>
+										<div class='col-10 ' >
+											<div class='mb-1'>
+												<label for='sheet_name'>スプレッドシート名</label>
+												<input type='text' id='sheet_name' class='form-control form-select-sm' v-model='sheet_name'>
+												<label for='mokuhyou' class='mt-2'>スプレッドシートに記録する際の目標設定（任意）</label>
+												<input type='text' id='mokuhyou' class='form-control form-select-sm' v-model='mokuhyou' placeholder='例）体重60kg、ベンチプレス100kgなど'>
+											</div>
+											<div v-if="'連携済'!=='<?php echo $google_refresh_token;?>'" class='mb-2'>
+												<hr>
+												<button type="button" class="btn btn-light d-flex" style="width: 200px;" @click='Drive_renkei();'>
+													<div class="google-icon-wrapper">
+														<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Google Drive" style="width: 18px; height: 18px;">
+													</div>
+													<span class="button-text">GoogleDriveに連携</span>
+												</button>
+												<small class='d-block mt-1'>※GoogleDriveのスプレッドシートに記録を連携します。</small>
+											</div>
+											<div v-if="'連携済'==='<?php echo $google_refresh_token;?>'" class='mb-2'>
+												<div class='d-flex justify-content-end mt-2'>
+													<button type="button" class="btn btn-secondary mbtn" @click='Drive_renkei_cancel()'>連携解除</button>
+													<button type="button" class="btn btn-primary mbtn ms-2" @click='Drive_renkei_update()'>設定更新</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class='col-1' ></div>
+								</div>
+								<div class='modal-footer'>
+									<button type='button' style='width:90px;font-size:13px;' name='' class="btn btn-secondary mbtn" data-bs-dismiss="modal" id=''>キャンセル</button>
+									<button type='submit' style='width:90px;' name='btn' value='update' class="btn btn-primary mbtn" data-bs-dismiss="modal">更新</button>
+								</div>
+						</FORM>
+					</div>
+				</div>
+			</div>
 
 			<!--↓ユーザ情報モーダル-->
 			<div class='modal fade' id='user_info' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
@@ -330,14 +379,6 @@
 											<input type="hidden" name='id' value="<?php echo $row[0]["id"];?>">
 											<div v-if="'google1'!=='<?php echo $user_type;?>'" class='mb-2'>
 												<hr>
-												<!--<div class="g_id_signin" style='width:200px;'
-													data-type="standard"
-													data-size="large"
-													data-theme="outline"
-													data-text="signin_with"
-													data-shape="rectangular"
-													data-logo_alignment="left">
-												</div>-->
 												<INPUT type="hidden" name="login_type" id='login_type'>
 												<button type="button" class="btn btn-light d-flex" style="width: 200px;" @click='sinin_with_google();'>
 													<div class="google-icon-wrapper">
@@ -359,16 +400,6 @@
 													data-use_fedcm_for_prompt="true">
 												</div>
 												<small class='d-block mt-1'>※記録は全て引き継がれますが、パスワードでのログインができなくなります。</small>
-											</div>
-											<div v-if="'連携済1'!=='<?php echo $google_refresh_token;?>'" class='mb-2'>
-												<hr>
-												<button type="button" class="btn btn-light d-flex" style="width: 200px;" @click='Drive_renkei();'>
-													<div class="google-icon-wrapper">
-														<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Google Drive" style="width: 18px; height: 18px;">
-													</div>
-													<span class="button-text">GoogleDriveに連携</span>
-												</button>
-												<small class='d-block mt-1'>※GoogleDriveのスプレッドシートに記録を連携します。</small>
 											</div>
 										</div>
 									</div>
@@ -1303,10 +1334,8 @@
 					}
 					const install_info = ref('')
 
-					onBeforeMount(()=>{
-						console_log('onBeforeMount')
-					})
-
+	
+					//Googleログイン
 					const sinin_with_google = () =>{
 						const loginTypeInput = document.getElementById('login_type');
 						if (loginTypeInput) loginTypeInput.value = 'google';
@@ -1318,14 +1347,13 @@
 							}
 						});
 					}
+					//Googleログインここまで
 
-
+					//Google Drive 連携
 					let client
-					// 独自ボタンや既存のフローから呼び出す関数
 					const Drive_renkei = () => {
 						client.requestCode();
 					}
-
 					const handleAuthCode = (code) => {
 						console_log('handleAuthCode start');
 						const form = new FormData();
@@ -1343,7 +1371,6 @@
 						})
 						.catch((error) => alert("連携に失敗しました: " + error));
 					}
-
 					const set_google_client = () =>{
 						client = google.accounts.oauth2.initCodeClient({
 							client_id: '<?php echo GOOGLE_AUTH;?>',
@@ -1358,6 +1385,36 @@
 								}
 							},
 						});
+					}
+					//Google Drive 連携ここまで
+
+					//Spreadsheet作成
+					const sheetname = ref('')
+					const mokuhyou = ref('')
+					const create_spreadsheet = () =>{
+						if(!sheetname.value){
+							alert('ファイル名を入力してください')
+							return
+						}
+						if(!mokuhyou.value){
+							alert('目標を入力してください')
+							return
+						}
+						const form = new FormData()
+						form.append("sheetname", sheetname.value)
+						form.append("mokuhyou", mokuhyou.value)
+						form.append("token", "<?php echo $token;?>")
+
+						axios.post('ajax_create_spreadsheet.php', form)
+						.then((response) => {
+							if(response.data.status==="success"){
+								alert("スプレッドシートを作成しました")
+							}else{
+								alert("スプレッドシートの作成に失敗しました")
+								alert(response.data.MSG)
+							}
+						})
+						.catch((error) => alert("スプレッドシートの作成に失敗しました: " + error));
 					}
 
 					const reloader = ref(null)
@@ -1433,7 +1490,9 @@
 
 						set_google_client()
 					})
-
+					onBeforeMount(()=>{
+						console_log('onBeforeMount')
+					})
 					return{
 						kintore_log,
 						max_log,
@@ -1486,6 +1545,9 @@
 						install_info,
 						Drive_renkei,
 						sinin_with_google,
+						sheetname,
+						mokuhyou,
+						create_spreadsheet,
 					}
 				}
 			}).mount('#logger');

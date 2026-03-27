@@ -53,20 +53,6 @@
 				$db->UP_DEL_EXEC("UPDATE users set google_refresh_token = :google_refresh_token WHERE id = :id",["google_refresh_token"=>$refreshToken,"id"=>$id]);
 				$db->commit_tran();
 
-				//スプレッドシートの作成
-				$client = new Google\Client();
-				$client->setClientId(GOOGLE_AUTH); // クライアントID
-				$client->setClientSecret(GOOGLE_AUTH_SKEY); // クライアントシークレット
-
-				// 1. MySQLから対象ユーザーの「リフレッシュトークン」を取得
-				// $refreshToken = $db->query("SELECT google_refresh_token FROM users WHERE id = ?", [$userId]);
-
-				// 2. リフレッシュトークンをセットして新しいアクセストークンを取得
-				$client->refreshToken($refreshToken);
-
-				// 3. この「準備が整った $client」をクラスに渡す
-				$SpreadSheet = new SpreadSheet($client, "ユーザー指定のファイル名");
-
 				$msg = "正常終了";
 				$status="success";
 			}catch(PDOException $e){

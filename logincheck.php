@@ -2,8 +2,8 @@
 	declare(strict_types=1);
 	require_once "config.php";
 	use classes\Security\Security;
-	//require_once "database.php";
-	//$db = new Database();	
+
+	$_SESSION["roop"] = $_SESSION["roop"] ?? 0;//セッションループ回避用
 
 	//パラメーター取得
 	$id = $_POST['id'] ?? "0";
@@ -13,7 +13,6 @@
 	if($P_login_type===$S_login_type && $P_login_type==="google"){
 		$pass='%';
 	}else{
-		//$pass = passEx(!empty($_POST['pass'])?$_POST['pass']:0,$id);
 		$pass = $_POST['pass'] ?? "xxxx";
 	}
 	$cookie_token = $_COOKIE['token'] ?? "";
@@ -26,7 +25,6 @@
  
 	//簡易ログイン
 	if (!U::exist($cookie_token)) {
-	 //if (check_user($id, $pass) == 0) {
 	 if (check_user($id, $pass) || $pass === "%") {
 			$normal_result = 0;
 		}else{
@@ -49,13 +47,13 @@
 		if ($normal_result  == 0 || $auto_result == 0) {
 			//トークンの作成
 			$token = get_token();
-			 //トークンの登録
-			 register_token($id, $token);
-			 //自動ログインのトークンを4週間の有効期限でCookieにセット
-			 setCookie("token", $token, time()+60*60*24*28, "/", "",true,true);
-			 //古いトークンの削除
-			 delete_old_token($cookie_token);
-			 $_SESSION['USER_ID'] = $id;
+			//トークンの登録
+			register_token($id, $token);
+			//自動ログインのトークンを4週間の有効期限でCookieにセット
+			setCookie("token", $token, time()+60*60*24*28, "/", "",true,true);
+			//古いトークンの削除
+			delete_old_token($cookie_token);
+			$_SESSION['USER_ID'] = $id;
 			
 		}
 	
@@ -65,8 +63,13 @@
 		exit();
 	} else {
 		//ログイン失敗
+		//$_COOKIE['token']の削除
+		delete_old_token($cookie_token);
+		setCookie("token", '', -1, "/", "", true, true);
+		$_SESSION['USER_ID'] = "";
 		
 		//リダイレクト
+		$_SESSION["roop"]++;
 		header("HTTP/1.1 301 Moved Permanently");
 		header("Location: index.php");
 		exit();
@@ -76,13 +79,8 @@
 // ログイン処理
 //---------------------------------------------------------------------------//
 function check_user(string $id="-1", string $pass=""):bool {
-	//$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options()); 
-	
 	$Security = new Security($id,key);
 	global $db;
-	//$db = new Database();	
-	//$sql = "SELECT * from users where id = :id and pass like :pass";
-	//$row = $db->SELECT($sql,[":id" => $id,"pass" => $pass]);
 	$sql = "SELECT * from users where id = :id ";
 	$row = $db->SELECT($sql,[":id" => $id]);
 	$row_cnt = count($row);
@@ -92,13 +90,5 @@ function check_user(string $id="-1", string $pass=""):bool {
 	}
 	
 	return $Security->verifyPassword($pass, $row[0]['pass']);
-	/*
-	if($row_cnt===0){
-		return 1;
-	}
-	return 0;
-	*/
 }
-
- 
 ?>

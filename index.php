@@ -18,6 +18,8 @@ if($_SESSION["msg"] === "ログオフしました"){
 	setCookie("token", '', -1, "/", "", true, true);
 	$msg='登録完了しました。IDとパスワードを入力しログインしてください。';
 }else if (isset($_COOKIE['token'])) {
+	//自動ログイン
+	$_SESSION["roop"] = $_SESSION["roop"] ?? 0;//セッションループ回避用
 	header("HTTP/1.1 301 Moved Permanently");
 	header("Location: logincheck.php");
 	//exit();
