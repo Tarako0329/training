@@ -1391,7 +1391,7 @@
 					//Spreadsheet作成
 					const sheetname = ref('')
 					const mokuhyou = ref('')
-					const create_spreadsheet = () =>{
+					const Drive_renkei_update = () =>{
 						if(!sheetname.value){
 							alert('ファイル名を入力してください')
 							return
@@ -1547,7 +1547,7 @@
 						sinin_with_google,
 						sheetname,
 						mokuhyou,
-						create_spreadsheet,
+						Drive_renkei_update,
 					}
 				}
 			}).mount('#logger');
