@@ -76,6 +76,21 @@ class Security {
 		return $return;
 	}
 
+	//暗号化（可逆）
+	public function encrypt(string $str): string {
+		$method = "AES-256-CBC";
+		$key = hash('sha256', $this->key);
+		$iv = substr(hash('sha256', $this->uid), 0, 16);
+		return openssl_encrypt($str, $method, $key, 0, $iv);
+	}
+	//復号化（可逆）
+	public function decrypt(string $str): string {
+		$method = "AES-256-CBC";
+		$key = hash('sha256', $this->key);
+		$iv = substr(hash('sha256', $this->uid), 0, 16);
+		return openssl_decrypt($str, $method, $key, 0, $iv);
+	}
+
 	//tore
 	private function passEx_tore(string $str,string $uid,string $key):string {
 		if(strlen($str)<=8 and !empty($uid)){
@@ -113,7 +128,9 @@ class Security {
 			$rtn = $str;
 		}
 		return $rtn;
-	}	
+	}
+
+
 
 }
 ?>

@@ -1,19 +1,21 @@
 <?php
 	//GoogleAuthで登録した場合
-  require_once "config.php";
+	require_once "config.php";
 	use classes\SpreadSheet\SpreadSheet;
+	use classes\Security\Security;
 
 	define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 	define("GOOGLE_AUTH_SKEY",$_ENV["GOOGLE_AUTH_SKEY"]);
-  //GoogleAuth新規ユーザ登録用
-  log_writer2("\$POST",$_POST,"lv3");
-  
+	//GoogleAuth新規ユーザ登録用
+	log_writer2("\$POST",$_POST,"lv3");
+	
 	$msg="不正なアクセスです";
 	$status="false";
 
 	//リフレッシュトークンの取得
 	$row = $db->SELECT("SELECT * FROM users WHERE id = :id",["id"=>$_SESSION['USER_ID']]);
-	$refreshToken = $row[0]['google_refresh_token'];
+	$SQ = new Security($id,key);
+	$refreshToken = $SQ->decrypt($row[0]['google_refresh_token']);
 	$db_spsfilename = $row[0]['spsfilename'] ?? "";
 
 	$mokuhyou = $_POST['mokuhyou'] ?? "";
@@ -21,7 +23,7 @@
 
 	// recording_ajax.php の一部
 	if (U::exist($sheetname) && U::exist($refreshToken) && U::exist($_SESSION['USER_ID'])) {
-	  //$refreshToken = $accessToken['refresh_token'];
+		
 		try{
 			//スプレッドシートの作成
 			$client = new Google\Client();
@@ -42,7 +44,7 @@
 				$SpreadSheet->DELETE_SHEET("シート1");
 
 				$row = array_map(function($item) {
-    			return array_values($item);
+					return array_values($item);
 				}, $db->SELECT("SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight),rep,sets,memo FROM `tr_log` where id=:id order by SEQ;",["id"=>$_SESSION['USER_ID']]));
 				
 				$SpreadSheet->G_INSERT($row,"ウェイトトレーニング");
@@ -87,5 +89,5 @@
 	);
 	header('Content-type: application/json');
 	echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
-  exit();
+	exit();
 ?>
