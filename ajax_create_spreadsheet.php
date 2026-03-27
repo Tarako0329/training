@@ -14,7 +14,7 @@
 
 	//リフレッシュトークンの取得
 	$row = $db->SELECT("SELECT * FROM users WHERE id = :id",["id"=>$_SESSION['USER_ID']]);
-	$SQ = new Security($id,key);
+	$SQ = new Security($_SESSION['USER_ID'],key);
 	$refreshToken = $SQ->decrypt($row[0]['google_refresh_token']);
 	$db_spsfilename = $row[0]['spsfilename'] ?? "";
 
