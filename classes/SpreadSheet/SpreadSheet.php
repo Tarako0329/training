@@ -100,7 +100,7 @@ class SpreadSheet {
 
 	// データ挿入（末尾追加）
 	public function G_INSERT($values,$sheetName) {
-		log_writer2("G_INSERT",$values,"lv3");
+		//log_writer2("G_INSERT",$values,"lv3");
 		$body = new \Google\Service\Sheets\ValueRange(['values' => $values]);
 		$params = ['valueInputOption' => 'RAW'];
 		return $this->service->spreadsheets_values->append($this->spreadsheetId, $sheetName . '!A1', $body, $params);
