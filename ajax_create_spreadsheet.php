@@ -19,19 +19,15 @@
 	$db_spsfilename = $row[0]['spsfilename'] ?? "";
 
 	$mokuhyou = $_POST['mokuhyou'] ?? "";
-	$sheetname = $_POST['sheetname'] ?? "";
+	$new_sheetname = $_POST['sheetname'] ?? "";
+
+	$sheetname = U::exist($db_spsfilename)?$db_spsfilename:$new_sheetname;//新規もしくは既存のファイル名をセット
 
 	// recording_ajax.php の一部
 	if (U::exist($sheetname) && U::exist($refreshToken) && U::exist($_SESSION['USER_ID'])) {
 		
 		try{
 			//スプレッドシートの作成
-			/*$client = new Google\Client();
-			$client->setClientId(GOOGLE_AUTH); // クライアントID
-			$client->setClientSecret(GOOGLE_AUTH_SKEY); // クライアントシークレット
-			$client->refreshToken($refreshToken);*/
-			// 3. この「準備が整った $client」をクラスに渡す
-			//$SpreadSheet = new SpreadSheet($client, $sheetname);
 			$SpreadSheet = new SpreadSheet($refreshToken, $sheetname);
 
 			if($SpreadSheet->is_new_file){//新規作成の場合
@@ -52,8 +48,8 @@
 			}else{//更新
 				$SpreadSheet->G_UPDATE("0",[['0','目標', $mokuhyou]],"ウェイトトレーニング");
 				//ファイル名更新
-				if($db_spsfilename !== $sheetname && U::exist($db_spsfilename)){
-					$rename_result = $SpreadSheet->RENAME_FILE($sheetname, $db_spsfilename);
+				if($new_sheetname !== $sheetname && U::exist($db_spsfilename)){
+					$rename_result = $SpreadSheet->RENAME_FILE($new_sheetname, $sheetname);
 					if($rename_result === "warning"){
 						log_writer2("ファイル名の不一致",$sheetname."!=".$db_spsfilename,"lv1");
 						$msg = "ファイル名の不一致のため、ファイル名は更新されませんでした。";
