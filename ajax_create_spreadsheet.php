@@ -20,8 +20,8 @@
 	$sheetname = $_POST['sheetname'] ?? "";
 
 	// recording_ajax.php の一部
-	if (U::exist($sheetname) && U::exist($_SESSION['USER_ID'])) {
-	  $refreshToken = $accessToken['refresh_token'];
+	if (U::exist($sheetname) && U::exist($refreshToken) && U::exist($_SESSION['USER_ID'])) {
+	  //$refreshToken = $accessToken['refresh_token'];
 		try{
 			//スプレッドシートの作成
 			$client = new Google\Client();
