@@ -46,7 +46,7 @@
 
 				$row = array_map(function($item) {
 					return array_values($item);
-				}, $db->SELECT("SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight),rep,sets,memo FROM `tr_log` where id=:id order by SEQ;",["id"=>$_SESSION['USER_ID']]));
+				}, $db->SELECT("SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight),rep,sets,memo FROM `tr_log` where id=:id and ymd > '2024-01-01' order by SEQ;",["id"=>$_SESSION['USER_ID']]));
 				
 				$SpreadSheet->G_INSERT($row,"ウェイトトレーニング");
 			}else{//更新
