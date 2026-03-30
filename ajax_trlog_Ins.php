@@ -29,6 +29,7 @@ $shu = $_POST["shu1"] ?? "";
 $rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
 $cal = ($_POST["cal"] == "")?0:$_POST["cal"];
 $type = (U::exist($_POST["jiju"] ?? null) ? "2" : $_POST["typ"]);
+$sheetname = ($type === "1") ? "有酸素運動" : "ウェイトトレーニング";
 
 try{
 	$db->begin_tran();
@@ -110,17 +111,21 @@ try{
 	//スプレッドシートに記録
 	if($spread_flg){
 		//さっき登録したデータを取得(INSERTの場合はSEQが不明なため)
-		$sql = "SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight) as weight,rep,sets,tani,cal,memo FROM tr_log where (id=:id and ymd = :ymd and jun = :jun) OR (id=:id2 and SEQ = :SEQ);";
+		if($type === "1"){
+			$sql = "SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight) as weight,rep,sets,tani,cal,memo FROM tr_log where (id=:id and ymd = :ymd and jun = :jun) OR (id=:id2 and SEQ = :SEQ);";
+		}else{
+			$sql = "SELECT SEQ,ymd,jun,shu,rep as 時間,rep2 as 距離,sets,cal,memo FROM tr_log where (id=:id and ymd = :ymd and jun = :jun) OR (id=:id2 and SEQ = :SEQ);";
+		}
 		$row = $db->SELECT($sql,[":id" => $id,":ymd" => $_POST["ymd"],":jun" => $jun,":id2" => $id,":SEQ" => $_POST["SEQ"]]);
 		$row = array_map(function($item) {
 			return array_values($item);
 		}, $row);
 		if(!U::exist($_POST["NO"])){//新規登録
 			$SpreadSheet = new SpreadSheet($refreshToken, $db_spsfilename);
-			$SpreadSheet->G_INSERT($row, "ウェイトトレーニング");
+			$SpreadSheet->G_INSERT($row, $sheetname);
 		}else{//更新
 			$SpreadSheet = new SpreadSheet($refreshToken, $db_spsfilename);
-			$SpreadSheet->G_UPDATE($_POST["SEQ"], $row, "ウェイトトレーニング");
+			$SpreadSheet->G_UPDATE($_POST["SEQ"], $row, $sheetname);
 		}
 	}
 

@@ -35,7 +35,7 @@
 				$SpreadSheet->G_INSERT([['0','目標', $mokuhyou]], "ウェイトトレーニング");
 				$SpreadSheet->G_INSERT([['SEQ', '日付','実施順','種目' ,'重量', '回数','セット数' , 'メモ']], "ウェイトトレーニング");
 				$SpreadSheet->createLogSheet("有酸素運動");
-				$SpreadSheet->G_INSERT([['SEQ', '日付','実施順','種目' ,'時間', '距離','消費カロリー' , 'メモ']], "有酸素運動");
+				$SpreadSheet->G_INSERT([['SEQ', '日付','実施順','種目' ,'時間', '距離','セット数' ,'消費カロリー' , 'メモ']], "有酸素運動");
 				$SpreadSheet->createLogSheet("体組織計測");
 				$SpreadSheet->G_INSERT([['日付','体重(kg)','体脂肪率(%)','脂肪量(kg)' , '徐脂肪(kg)']], "体組織計測");
 				$SpreadSheet->DELETE_SHEET("シート1");
@@ -43,8 +43,13 @@
 				//既存のデータを反映
 				$row = array_map(function($item) {
 					return array_values($item);
-				}, $db->SELECT("SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight),rep,sets,memo FROM `tr_log` where id=:id and ymd > '2024-01-01' order by SEQ;",["id"=>$_SESSION['USER_ID']]));
+				}, $db->SELECT("SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight),rep,sets,memo FROM `tr_log` where id=:id and ymd > '2024-01-01' and typ!=1 order by SEQ;",["id"=>$_SESSION['USER_ID']]));
 				$SpreadSheet->G_INSERT($row,"ウェイトトレーニング");
+
+				$row = array_map(function($item) {
+					return array_values($item);
+				}, $db->SELECT("SELECT SEQ,ymd,jun,shu,rep as 時間,rep2 as 距離,sets,cal,memo FROM `tr_log` where id=:id and ymd > '2024-01-01' and typ=1 order by SEQ;",["id"=>$_SESSION['USER_ID']]));
+				$SpreadSheet->G_INSERT($row,"有酸素運動");
 
 				$sql = "SELECT 
 					CONCAT(left(ymd,7)

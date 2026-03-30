@@ -114,7 +114,11 @@ class SpreadSheet {
 // SEQを利用して更新
 	public function G_UPDATE($seq, $newValues, $sheetName) {
 		$rowNumber = $this->findRowBySeq($seq, $sheetName);
-		if (!$rowNumber) return false; // 見つからない場合
+		if (!$rowNumber){
+			log_writer2("G_UPDATE","行が見つかりません","lv3");
+			log_writer2("\$seq",$seq,"lv3");
+			return false; // 見つからない場合
+		}
 
 		$range = $sheetName . "!A" . $rowNumber;
 		$body = new \Google\Service\Sheets\ValueRange(['values' => $newValues]);
