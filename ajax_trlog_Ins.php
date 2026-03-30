@@ -111,7 +111,7 @@ try{
 	//スプレッドシートに記録
 	if($spread_flg){
 		//さっき登録したデータを取得(INSERTの場合はSEQが不明なため)
-		if($type === "1"){
+		if($type !== "1"){
 			$sql = "SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight) as weight,rep,sets,tani,cal,memo FROM tr_log where (id=:id and ymd = :ymd and jun = :jun) OR (id=:id2 and SEQ = :SEQ);";
 		}else{
 			$sql = "SELECT SEQ,ymd,jun,shu,rep as 時間,rep2 as 距離,sets,cal,memo FROM tr_log where (id=:id and ymd = :ymd and jun = :jun) OR (id=:id2 and SEQ = :SEQ);";
