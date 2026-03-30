@@ -158,14 +158,8 @@ class SpreadSheet {
     ]);
 
     // 4. 実行
-    try {
-        $this->service->spreadsheets->batchUpdate($this->spreadsheetId, $batchUpdateRequest);
-        return true;
-    } catch (\Exception $e) {
-        // エラーハンドリング（必要に応じてログ出力など）
-        return false;
-    }
-}
+		return $this->service->spreadsheets->batchUpdate($this->spreadsheetId, $batchUpdateRequest);
+	}
 
 
 	// SEQを利用して削除（行をクリア,空行が残る）
