@@ -163,7 +163,7 @@ class SpreadSheet {
 								'sheetId' => $targetSheetId,
 								'dimension' => 'ROWS',
 								'startIndex' => $rowNumber-1,
-								'endIndex' => $rowNumber-1
+								'endIndex' => $rowNumber
 						]
 				]
 		]);
