@@ -132,8 +132,44 @@ class SpreadSheet {
 		);
 	}
 
-	// SEQを利用して削除（行をクリア）
 	public function G_DELETE($seq, $sheetName) {
+    // 1. 対象の行番号を取得
+		$rowNumber = $this->findRowBySeq($seq, $sheetName);
+		if (!$rowNumber){
+			log_writer2("G_UPDATE","行が見つかりません","lv3");
+			log_writer2("\$seq",$seq,"lv3");
+			return false; // 見つからない場合
+		}
+
+    // 3. 行削除のリクエストを作成
+    $deleteRequest = new \Google\Service\Sheets\Request([
+        'deleteDimension' => [
+            'range' => [
+                'sheetId' => $this->spreadsheetId,
+                'dimension' => 'ROWS',
+                'startIndex' => $rowNumber-1,
+                'endIndex' => $rowNumber-1
+            ]
+        ]
+    ]);
+
+    $batchUpdateRequest = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
+        'requests' => [$deleteRequest]
+    ]);
+
+    // 4. 実行
+    try {
+        $this->service->spreadsheets->batchUpdate($this->spreadsheetId, $batchUpdateRequest);
+        return true;
+    } catch (\Exception $e) {
+        // エラーハンドリング（必要に応じてログ出力など）
+        return false;
+    }
+}
+
+
+	// SEQを利用して削除（行をクリア,空行が残る）
+	public function G_CLEAR($seq, $sheetName) {
 		$rowNumber = $this->findRowBySeq($seq, $sheetName);
 		if (!$rowNumber) return false;
 
