@@ -533,7 +533,7 @@
 							</div>
 							<div class='modal-footer'>
 								<template v-if='mBtnName[0]==="更新"'>
-									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(SEQ)'>削除</button>
+									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(SEQ,1)'>削除</button>
 								</template>
 								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel'>{{mBtnName[1]}}</button><!--キャンセル-->
 								<input type='submit'  class="btn btn-primary mbtn" :value='mBtnName[0]'><!--登録・更新-->
@@ -676,7 +676,7 @@
 							</div>
 							<div class='modal-footer'>
 								<template v-if='mBtnName[0]==="更新"'>
-									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(SEQ)'>削除</button>
+									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(SEQ,0)'>削除</button>
 								</template>
 								<button type='button' class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel' >{{mBtnName[1]}}</button><!--キャンセル-->
 								<input type='submit' class="btn btn-primary mbtn" :value='mBtnName[0]'>{{}}<!--登録・更新-->
@@ -1093,7 +1093,7 @@
 						*/
 					}
 					//const delete_log = (NO,YMD) =>{
-					const delete_log = (p_SEQ) =>{
+					const delete_log = (p_SEQ,p_typ) =>{
 						console_log('delete_log start')
 						if(confirm('削除してよいですか？')===false){
 							return
@@ -1102,6 +1102,7 @@
 						//let numbers = document.createElement('input');
 						//let date = document.createElement('input');
 						let seq = document.createElement('input');
+						let typ = document.createElement('input');
 
 						form.method = 'POST';
 						form.action = 'logdel_sql.php';
@@ -1118,9 +1119,14 @@
 						seq.name = 'SEQ';
 						seq.value = p_SEQ;
 
+						typ.type = 'hidden';
+						typ.name = 'typ';
+						typ.value = p_typ;
+
 						//form.appendChild(numbers);
 						//form.appendChild(date);
 						form.appendChild(seq);
+						form.appendChild(typ);
 						document.body.appendChild(form);
 						
 						form.submit();						

@@ -17,6 +17,7 @@ if(isset($_SESSION['USER_ID'])){
 	exit();
 }
 
+$sheetname = $_POST["typ"] == "1" ? "有酸素運動" : "ウェイトトレーニング";
 
 try{
 	$db->begin_tran();
@@ -33,7 +34,7 @@ try{
 
 	if($spread_flg){
 		$SpreadSheet = new SpreadSheet($refreshToken, $db_spsfilename);
-		$SpreadSheet->G_DELETE($_POST["SEQ"],"ウェイトトレーニング");
+		$SpreadSheet->G_DELETE($_POST["SEQ"],$sheetname);
 	}
 
 	$db->commit_tran();
