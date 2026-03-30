@@ -2,9 +2,12 @@
 require_once "config.php";
 use classes\SpreadSheet\SpreadSheet;
 use classes\Security\Security;
+define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
+define("GOOGLE_AUTH_SKEY",$_ENV["GOOGLE_AUTH_SKEY"]);
 
 //トランザクション処理
 log_writer2("\$POST",$_POST,"lv3");
+$now = date("Y-m-d H:i:s");
 
 //結果書き込み
 if(isset($_SESSION['USER_ID'])){
@@ -25,12 +28,20 @@ if(isset($_SESSION['USER_ID'])){
 $shu = $_POST["shu1"] ?? "";
 $rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
 $cal = ($_POST["cal"] == "")?0:$_POST["cal"];
-$type = (U::exist($_POST["jiju"]))?"2":$_POST["typ"];
+$type = (U::exist($_POST["jiju"] ?? null) ? "2" : $_POST["typ"]);
 
 try{
 	$db->begin_tran();
 
-	if(!U::exist($_POST["NO"])){
+	//リフレッシュトークンの取得
+	$row = $db->SELECT("SELECT * FROM users WHERE id = :id",["id"=>$_SESSION['USER_ID']]);
+	$SQ = new Security($_SESSION['USER_ID'],key);
+	$refreshToken = $SQ->decrypt($row[0]['google_refresh_token']);
+	$db_spsfilename = $row[0]['spsfilename'] ?? "";
+
+	$spread_flg = U::exist($refreshToken) && U::exist($db_spsfilename);
+
+	if(!U::exist($_POST["NO"])){//新規登録
 		$sql = "SELECT max(jun) as junban from tr_log where ymd = :ymd and id = :id;";
 		$row = $db->SELECT($sql,[":ymd" => $_POST["ymd"],":id" => $id]);
 		$jun = !U::exist($row[0]["junban"])?1:$row[0]["junban"]+1;
@@ -46,15 +57,22 @@ try{
 			,"cal" => $cal
 			,"ymd" => $_POST["ymd"]
 			,"memo" => $_POST["memo"]
-			,"typ" => $type]);
-	}else{
-		$sql = "SELECT max(jun) as junban from tr_log where  ymd = :ymd and id = :id;";
-		$row = $db->SELECT($sql,[":ymd" => $_POST["ymd"],":id" => $id]);
-		
-		if($_POST["motoYMD"] == $_POST["ymd"]){//日付の変更がない場合は元の順番で更新
+			,"typ" => $type
+			,"insdatetime" => $now]
+		);
+	}else{//更新
+		//更新対象の日付を取得
+		$sql = "SELECT ymd as motoYMD,jun from tr_log where id = :id and SEQ = :SEQ;";
+		$row = $db->SELECT($sql,[":id" => $id,":SEQ" => $_POST["SEQ"]]);
+
+		//if($_POST["motoYMD"] == $_POST["ymd"]){//日付の変更がない場合は元の順番で更新
+		if($row[0]["motoYMD"] === $_POST["ymd"]){//日付の変更がない場合は元の順番で更新
 			$jun=$_POST["NO"];
 		}else{
-			$jun=($row_cnt==0)?1:$jun=$row["junban"]+1;
+			//日付の変更がある場合は変更後の日付の順番の最後に更新
+			$sql = "SELECT max(jun) as junban from tr_log where  ymd = :ymd and id = :id;";
+			$row = $db->SELECT($sql,[":ymd" => $_POST["ymd"],":id" => $id]);
+			$jun=(count($row)==0)?1:$jun=$row[0]["junban"]+1;
 		}
 	
 		$sql = "UPDATE tr_log set 
@@ -68,8 +86,9 @@ try{
 			`cal` = :cal,
 			`ymd` = :ymd,
 			`typ` = :typ,
-			`memo` = :memo 
-			where `id` =:id and `ymd` = :motoYMD and `jun` = :NO";
+			`memo` = :memo ,
+			`insdatetime` = :insdatetime
+			where `id` =:id and `SEQ` = :SEQ";
 		
 		$db->UP_DEL_EXEC($sql,[
 			":shu" => $shu
@@ -83,12 +102,29 @@ try{
 			,":ymd" => $_POST["ymd"]
 			,":typ" => $type
 			,":memo" => $_POST["memo"]
+			,":insdatetime" => $now
 			,":id" => $id
-			,":motoYMD" => $_POST["motoYMD"]
-			,":NO" => $_POST["NO"]]);
+			,":SEQ" => $_POST["SEQ"]]);
 	}
 
-	if(U::exist($_POST["condition"])){
+	//スプレッドシートに記録
+	if($spread_flg){
+		//さっき登録したデータを取得(INSERTの場合はSEQが不明なため)
+		$sql = "SELECT SEQ,ymd,jun,shu,if(typ=2,'自重',weight) as weight,rep,sets,tani,cal,memo FROM tr_log where (id=:id and ymd = :ymd and jun = :jun) OR (id=:id2 and SEQ = :SEQ);";
+		$row = $db->SELECT($sql,[":id" => $id,":ymd" => $_POST["ymd"],":jun" => $jun,":id2" => $id,":SEQ" => $_POST["SEQ"]]);
+		$row = array_map(function($item) {
+			return array_values($item);
+		}, $row);
+		if(!U::exist($_POST["NO"])){//新規登録
+			$SpreadSheet = new SpreadSheet($refreshToken, $db_spsfilename);
+			$SpreadSheet->G_INSERT($row, "ウェイトトレーニング");
+		}else{//更新
+			$SpreadSheet = new SpreadSheet($refreshToken, $db_spsfilename);
+			$SpreadSheet->G_UPDATE($_POST["SEQ"], $row, "ウェイトトレーニング");
+		}
+	}
+
+	if(U::exist($_POST["condition"])){//今日のコンディション登録
 		//デリイン
 		$sql = "DELETE from tr_condition where id = :id and ymd = :ymd";
 		$db->UP_DEL_EXEC($sql,[":id" => $id,":ymd" => $_POST["ymd"]]);

@@ -166,7 +166,7 @@
 														<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
 														<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 														<button type='button' class='icn-btn' style='' 
-															@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
+															@click='setUpdate(list,"edit_wt")'>
 															<i class='bi bi-pencil'></i>
 														</button>
 													</template>
@@ -178,7 +178,7 @@
 														<div class='text-end' style='padding-right:0;width:50px;'>{{list.sets}}sets</div>
 														<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 														<button type='button' class='icn-btn' style='' 
-															@click='setUpdate(list.jun,list.ymd3,list.shu,list.weight,list.rep,list.sets,list.rep2,list.memo,list.typ,"edit_wt")'>
+															@click='setUpdate(list,"edit_wt")'>
 															<i class='bi bi-pencil'></i>
 														</button>
 														</template>
@@ -189,7 +189,7 @@
 														<div class='text-end' style='width: 70px;padding-right:0;'>{{list.cal}}kcal</div>
 														<div class='' style='padding:0 0 0 10px;max-width:250px;width:calc(100vw - 240px);font-size:12px;word-wrap: break-word;word-break: break-all;margin-top:-5px;'>{{list.memo}}</div>
 														<button type='button' class='icn-btn' style='' 
-															@click='setUpdate(list.jun,list.ymd3,list.shu,list.cal,list.rep,list.sets,list.rep2,list.memo,list.typ,"usanso")'>
+															@click='setUpdate(list,"usanso")'>
 															<i class='bi bi-pencil'></i>
 														</button>
 													</template>
@@ -473,7 +473,6 @@
 			<div class='modal fade' id='usanso' tabindex='-1' role='dialog' aria-labelledby='basicModal' aria-hidden='true'>
 				<div class='modal-dialog  modal-dialog-centered'>
 					<div class='modal-content edit' style=''>
-						<!--<form method = 'post' action='logInsUpd_sql.php' @submit.prevent='OnSubmit' id='us'>-->
 						<form method = 'post' @submit.prevent='OnSubmit' id='us'>
 							<div class='modal-header'>
 								<h5 class="modal-title">有酸素トレーニング</h5>
@@ -534,7 +533,7 @@
 							</div>
 							<div class='modal-footer'>
 								<template v-if='mBtnName[0]==="更新"'>
-									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(Num,motoymd)'>削除</button>
+									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(SEQ)'>削除</button>
 								</template>
 								<button type='button'  class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel'>{{mBtnName[1]}}</button><!--キャンセル-->
 								<input type='submit'  class="btn btn-primary mbtn" :value='mBtnName[0]'><!--登録・更新-->
@@ -544,7 +543,8 @@
 							<INPUT type="hidden" name="typ" value="1">
 							<INPUT type="hidden" name="shu1" :value="shu_us">							
 							<INPUT type="hidden" name="NO" :value="Num">
-							<INPUT type="hidden" name="motoYMD" :value="motoymd">
+							<!-- <INPUT type="hidden" name="motoYMD" :value="motoymd"> -->
+							<INPUT type="hidden" name="SEQ" :value="SEQ">
 							<INPUT type="hidden" name="tani" value="2">
 							<INPUT type="hidden" name="sets" value="1">
 							<INPUT type="hidden" name="weight" value="0">
@@ -676,7 +676,7 @@
 							</div>
 							<div class='modal-footer'>
 								<template v-if='mBtnName[0]==="更新"'>
-									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(Num,motoymd)'>削除</button>
+									<button type='button' class="btn btn-danger mbtn" style='width:60px;' data-bs-dismiss="modal" @click='delete_log(SEQ)'>削除</button>
 								</template>
 								<button type='button' class="btn btn-secondary mbtn" data-bs-dismiss="modal" @click='setCancel' >{{mBtnName[1]}}</button><!--キャンセル-->
 								<input type='submit' class="btn btn-primary mbtn" :value='mBtnName[0]'>{{}}<!--登録・更新-->
@@ -687,11 +687,15 @@
 							<INPUT type="hidden" name="typ" value="0">
 							<INPUT type="hidden" name="cal" value="0">
 							<INPUT type="hidden" name="NO" :value="Num">
-							<INPUT type="hidden" name="motoYMD" :value="motoymd">
+							<!--<INPUT type="hidden" name="motoYMD" :value="motoymd">-->
+							<INPUT type="hidden" name="SEQ" :value="SEQ">
 						</form>
 					</div>
 				</div>
 			</div>
+			<div class="loader-wrap" v-show='loader'>
+				<div class="loader">Loading...</div>
+			</div>			
 		</div>
 		<script>
 			// すべてのモーダルに対して有効な設定
@@ -1011,7 +1015,8 @@
 					const mBtnName = ref(['登録','閉じる'])
 					const Num = ref('')
 					const ymd = ref('<?php echo $now?>')
-					const motoymd = ref('')
+					//const motoymd = ref('')
+					const SEQ = ref(0)
 					const shu = ref()
 					const shu_us = ref()
 					const jiju = ref(false)	//自重種目ONOFF
@@ -1030,25 +1035,28 @@
 					}
 					let MODAL_INST
 					let MODAL
-					const setUpdate = (NO,YMD,SHU,wt,rep,set,rep2,MEMO,typ,modal_id) =>{
+					//const setUpdate = (NO,YMD,SHU,wt,rep,set,rep2,MEMO,typ,SEQ,modal_id) =>{
+					const setUpdate = (p_list,modal_id) =>{
 						console_log('setUpdate start')
-						Num.value = NO
-						ymd.value = YMD
-						motoymd.value = YMD
+						console_log(p_list)
+						Num.value = p_list.jun
+						ymd.value = p_list.ymd3
+						//motoymd.value = YMD
+						SEQ.value = p_list.SEQ
 						//shu.value = SHU
-						if(typ==="1"){
-							shu_us.value = SHU
+						if(p_list.typ==="1"){
+							shu_us.value = p_list.shu
 						}else{
-							shu.value = SHU
+							shu.value = p_list.shu
 						}
-						kiroku.value[0]=wt
-						kiroku.value[1]=rep
-						kiroku.value[2]=set
-						kiroku.value[3]=rep2
-						memo.value=MEMO
+						kiroku.value[0]=p_list.weight
+						kiroku.value[1]=p_list.rep
+						kiroku.value[2]=p_list.sets
+						kiroku.value[3]=p_list.rep2
+						memo.value=p_list.memo
 						mBtnName.value[0] = '更新'
 						mBtnName.value[1] = 'キャンセル'
-						jiju.value = (typ==="2")?true:false
+						jiju.value = (p_list.typ==="2")?true:false
 
 						MODAL = document.getElementById(modal_id)
 						/*
@@ -1068,6 +1076,7 @@
 						ymd.value = '<?php echo $now?>'
 						shu.value = ''
 						shu_us.value = ''
+						SEQ.value = 0
 						kiroku.value[0]=0
 						kiroku.value[1]=0
 						kiroku.value[2]=0
@@ -1083,18 +1092,20 @@
 						});
 						*/
 					}
-					const delete_log = (NO,YMD) =>{
+					//const delete_log = (NO,YMD) =>{
+					const delete_log = (p_SEQ) =>{
 						console_log('delete_log start')
 						if(confirm('削除してよいですか？')===false){
 							return
 						}
 						let form = document.createElement('form');
-						let numbers = document.createElement('input');
-						let date = document.createElement('input');
+						//let numbers = document.createElement('input');
+						//let date = document.createElement('input');
+						let seq = document.createElement('input');
 
 						form.method = 'POST';
 						form.action = 'logdel_sql.php';
-						
+						/*
 						numbers.type = 'hidden'; //入力フォームが表示されないように
 						numbers.name = 'k_jun';
 						numbers.value = NO;
@@ -1102,9 +1113,14 @@
 						date.type = 'hidden'; //入力フォームが表示されないように
 						date.name = 'k_ymd';
 						date.value = YMD;
+						*/
+						seq.type = 'hidden';
+						seq.name = 'SEQ';
+						seq.value = p_SEQ;
 
-						form.appendChild(numbers);
-						form.appendChild(date);
+						//form.appendChild(numbers);
+						//form.appendChild(date);
+						form.appendChild(seq);
 						document.body.appendChild(form);
 						
 						form.submit();						
@@ -1359,6 +1375,7 @@
 
 					//Google Drive 連携
 					let client
+					const loader = ref(false)
 					const renkei_flg = ref(<?php echo $google_refresh_token ? "true" : "false";?>)
 					const Drive_renkei = () => {
 						client.requestCode();
@@ -1368,7 +1385,7 @@
 						const form = new FormData();
 						form.append("code", code); // IDトークンではなく認可コードを送る
 						form.append("token", "<?php echo $token;?>");
-
+						loader.value = true
 						axios.post('ajax_Drive_renkei.php', form)
 						.then((response) => {
 								if(response.data.status==="success"){
@@ -1379,9 +1396,13 @@
 									alert(response.data.MSG)
 								}
 						})
-						.catch((error) => alert("連携に失敗しました: " + error));
+						.catch((error) => alert("連携に失敗しました: " + error))
+						.finally(()=>{
+							loader.value = false
+						})
 					}
 					const set_google_client = () =>{
+						loader.value = true
 						client = google.accounts.oauth2.initCodeClient({
 							client_id: '<?php echo GOOGLE_AUTH;?>',
 							// スプレッドシート操作権限を追加
@@ -1395,6 +1416,7 @@
 								}
 							},
 						});
+						loader.value = false
 					}
 					//Google Drive 連携ここまで
 
@@ -1423,6 +1445,8 @@
 						form.append("mokuhyou", mokuhyou.value)
 						form.append("token", "<?php echo $token;?>")
 
+						loader.value = true
+
 						axios.post('ajax_create_spreadsheet.php', form)
 						.then((response) => {
 							if(response.data.status==="success"){
@@ -1437,7 +1461,10 @@
 								alert(response.data.MSG)
 							}
 						})
-						.catch((error) => alert("スプレッドシートの作成に失敗しました: " + error));
+						.catch((error) => alert("スプレッドシートの作成に失敗しました: " + error))
+						.finally(()=>{
+							loader.value = false
+						})
 					}
 
 					const reloader = ref(null)
@@ -1538,7 +1565,7 @@
 						mBtnName,
 						Num,
 						ymd,
-						motoymd,
+						//motoymd,
 						shu,
 						shu_us,
 						set_shumoku,
@@ -1573,6 +1600,8 @@
 						Drive_renkei_update,
 						renkei_flg,
 						btn_name,
+						loader,
+						SEQ,
 					}
 				}
 			}).mount('#logger');

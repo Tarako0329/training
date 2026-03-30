@@ -16,8 +16,10 @@ if(isset($_SESSION['USER_ID'])){
 
 try{
 	$db->begin_tran();
-	$sql = "DELETE from tr_log where id = :id and ymd = :ymd and jun = :jun";
-	$db->UP_DEL_EXEC($sql,[":id" => $id,":ymd" => $_POST["k_ymd"],":jun" => $_POST["k_jun"]]);
+	//$sql = "DELETE from tr_log where id = :id and ymd = :ymd and jun = :jun";
+	$sql = "DELETE from tr_log where id = :id and SEQ = :SEQ";
+	//$db->UP_DEL_EXEC($sql,[":id" => $id,":ymd" => $_POST["k_ymd"],":jun" => $_POST["k_jun"]]);
+	$db->UP_DEL_EXEC($sql,[":id" => $id,":SEQ" => $_POST["SEQ"]]);
 	$db->commit_tran();
 
 }catch(Exception $e){
