@@ -49,28 +49,28 @@ class SpreadSheet {
  * @return string 'success' | 'warning' (不一致) | 'error'
  */
 	public function RENAME_FILE($newfilename, $filename): string {
-    try {
-      // 1. 現在のファイル情報を取得して名前をチェック
-      $file = $this->driveService->files->get($this->spreadsheetId, ['fields' => 'name']);
-       
-      // 現在の名前が引数の $filename と一致しない場合は warning
-      if ($file->getName() !== $filename) {
-        return 'warning';
-      }
+		try {
+			// 1. 現在のファイル情報を取得して名前をチェック
+			$file = $this->driveService->files->get($this->spreadsheetId, ['fields' => 'name']);
+			 
+			// 現在の名前が引数の $filename と一致しない場合は warning
+			if ($file->getName() !== $filename) {
+				return 'warning';
+			}
 
-       // 2. 名前変更リクエストの作成
-      $driveFile = new \Google\Service\Drive\DriveFile();
-      $driveFile->setName($newfilename);
+			 // 2. 名前変更リクエストの作成
+			$driveFile = new \Google\Service\Drive\DriveFile();
+			$driveFile->setName($newfilename);
 
-      // 3. 実行
-      $this->driveService->files->update($this->spreadsheetId, $driveFile);
-        
-      return 'success';
+			// 3. 実行
+			$this->driveService->files->update($this->spreadsheetId, $driveFile);
+				
+			return 'success';
 
-    } catch (\Exception $e) {
-      // IDが無効な場合や、権限エラーなど
-      return 'error';
-    }
+		} catch (\Exception $e) {
+			// IDが無効な場合や、権限エラーなど
+			return 'error';
+		}
 	}
 
 	/**
@@ -84,23 +84,23 @@ class SpreadSheet {
 		]);
 		
 		try {
-        $this->service->spreadsheets->batchUpdate($this->spreadsheetId, $body);
-        return 'success';
-    } catch (\Google\Service\Exception $e) {
-        $error = json_decode($e->getMessage(), true);
-        
-        // エラーメッセージの中に "already exists" が含まれているか確認
-        if (isset($error['error']['message']) && str_contains($error['error']['message'], 'already exists')) {
-            return 'warning'; // 同名のシートが既に存在する場合
-        }
-        
-        // それ以外のGoogle APIエラー
-        return 'error';
-    } catch (\Exception $e) {
-        // ネットワークエラーなど、その他の例外
+				$this->service->spreadsheets->batchUpdate($this->spreadsheetId, $body);
+				return 'success';
+		} catch (\Google\Service\Exception $e) {
+				$error = json_decode($e->getMessage(), true);
+				
+				// エラーメッセージの中に "already exists" が含まれているか確認
+				if (isset($error['error']['message']) && str_contains($error['error']['message'], 'already exists')) {
+						return 'warning'; // 同名のシートが既に存在する場合
+				}
+				
+				// それ以外のGoogle APIエラー
+				return 'error';
+		} catch (\Exception $e) {
+				// ネットワークエラーなど、その他の例外
 				log_writer2("シート追加作成でエラー",$e,"lv0");
-        return 'error';
-    }
+				return 'error';
+		}
 	}	
 
 	// データ挿入（末尾追加）
@@ -133,31 +133,32 @@ class SpreadSheet {
 	}
 
 	public function G_DELETE($seq, $sheetName) {
-    // 1. 対象の行番号を取得
+		// 1. 対象の行番号を取得
 		$rowNumber = $this->findRowBySeq($seq, $sheetName);
 		if (!$rowNumber){
-			log_writer2("G_UPDATE","行が見つかりません","lv3");
+			log_writer2("G_DELETE","行が見つかりません","lv3");
 			log_writer2("\$seq",$seq,"lv3");
 			return false; // 見つからない場合
 		}
+		log_writer2("\$rowNumber",$rowNumber,"lv3");
 
-    // 3. 行削除のリクエストを作成
-    $deleteRequest = new \Google\Service\Sheets\Request([
-        'deleteDimension' => [
-            'range' => [
-                'sheetId' => $this->spreadsheetId,
-                'dimension' => 'ROWS',
-                'startIndex' => $rowNumber-1,
-                'endIndex' => $rowNumber-1
-            ]
-        ]
-    ]);
+		// 3. 行削除のリクエストを作成
+		$deleteRequest = new \Google\Service\Sheets\Request([
+				'deleteDimension' => [
+						'range' => [
+								'sheetId' => $this->spreadsheetId,
+								'dimension' => 'ROWS',
+								'startIndex' => $rowNumber-1,
+								'endIndex' => $rowNumber-1
+						]
+				]
+		]);
 
-    $batchUpdateRequest = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
-        'requests' => [$deleteRequest]
-    ]);
+		$batchUpdateRequest = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
+				'requests' => [$deleteRequest]
+		]);
 
-    // 4. 実行
+		// 4. 実行
 		return $this->service->spreadsheets->batchUpdate($this->spreadsheetId, $batchUpdateRequest);
 	}
 
@@ -182,37 +183,37 @@ class SpreadSheet {
  	* @return string 'success' | 'warning' (見つからない) | 'error'
  	*/
 	public function DELETE_SHEET($sheetName) {
-    try {
-        // 1. スプレッドシートの全シート情報を取得してIDを探す
-        $spreadsheet = $this->service->spreadsheets->get($this->spreadsheetId);
-        $sheets = $spreadsheet->getSheets();
-        $targetSheetId = null;
+		try {
+				// 1. スプレッドシートの全シート情報を取得してIDを探す
+				$spreadsheet = $this->service->spreadsheets->get($this->spreadsheetId);
+				$sheets = $spreadsheet->getSheets();
+				$targetSheetId = null;
 
-        foreach ($sheets as $sheet) {
-            if ($sheet->getProperties()->getTitle() === $sheetName) {
-                $targetSheetId = $sheet->getProperties()->getSheetId();
-                break;
-            }
-        }
+				foreach ($sheets as $sheet) {
+						if ($sheet->getProperties()->getTitle() === $sheetName) {
+								$targetSheetId = $sheet->getProperties()->getSheetId();
+								break;
+						}
+				}
 
-        // 2. 見つからない場合はwarningを返す
-        if ($targetSheetId === null) {
-            return 'warning';
-        }
+				// 2. 見つからない場合はwarningを返す
+				if ($targetSheetId === null) {
+						return 'warning';
+				}
 
-        // 3. 削除リクエストを実行
-        $body = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
-            'requests' => [
-                ['deleteSheet' => ['sheetId' => $targetSheetId]]
-            ]
-        ]);
+				// 3. 削除リクエストを実行
+				$body = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
+						'requests' => [
+								['deleteSheet' => ['sheetId' => $targetSheetId]]
+						]
+				]);
 
-        $this->service->spreadsheets->batchUpdate($this->spreadsheetId, $body);
-        return 'success';
+				$this->service->spreadsheets->batchUpdate($this->spreadsheetId, $body);
+				return 'success';
 
-    } catch (\Exception $e) {
-        return 'error';
-    }
+		} catch (\Exception $e) {
+				return 'error';
+		}
 	}
 
 	/**
