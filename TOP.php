@@ -385,7 +385,7 @@
 											<div v-if="'google'!=='<?php echo $user_type;?>'"><span style='color:yellow;'>※</span>：パスワード再設定に利用。</div>
 											<input type="hidden" name='token' value="<?php echo $token;?>">
 											<input type="hidden" name='id' value="<?php echo $row[0]["id"];?>">
-											<div v-if="'google1'!=='<?php echo $user_type;?>'" class='mb-2'>
+											<div v-if="'google'!=='<?php echo $user_type;?>'" class='mb-2'>
 												<hr>
 												<INPUT type="hidden" name="login_type" id='login_type'>
 												<button type="button" class="btn btn-light d-flex" style="width: 200px;" @click='sinin_with_google();'>
