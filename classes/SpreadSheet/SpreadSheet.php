@@ -142,11 +142,25 @@ class SpreadSheet {
 		}
 		log_writer2("\$rowNumber",$rowNumber,"lv3");
 
+		// 2. シートの全シート情報を取得してシートIDを探す
+		$spreadsheet = $this->service->spreadsheets->get($this->spreadsheetId);
+		$sheets = $spreadsheet->getSheets();
+		$targetSheetId = null;
+		foreach ($sheets as $sheet) {
+				if ($sheet->getProperties()->getTitle() === $sheetName) {
+						$targetSheetId = $sheet->getProperties()->getSheetId();
+						break;
+				}
+		}
+		if ($targetSheetId === null) {
+				log_writer2("G_DELETE","シートが見つかりません","lv3");
+				return false; // シートが見つからない場合
+		}
 		// 3. 行削除のリクエストを作成
 		$deleteRequest = new \Google\Service\Sheets\Request([
 				'deleteDimension' => [
 						'range' => [
-								'sheetId' => $this->spreadsheetId,
+								'sheetId' => $targetSheetId,
 								'dimension' => 'ROWS',
 								'startIndex' => $rowNumber-1,
 								'endIndex' => $rowNumber-1
