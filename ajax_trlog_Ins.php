@@ -73,7 +73,7 @@ try{
 			//日付の変更がある場合は変更後の日付の順番の最後に更新
 			$sql = "SELECT max(jun) as junban from tr_log where  ymd = :ymd and id = :id;";
 			$row = $db->SELECT($sql,[":ymd" => $_POST["ymd"],":id" => $id]);
-			$jun=(count($row)==0)?1:$jun=(int)($row[0]["junban"] ?? 0) + 1;
+			$jun=(count($row)==0) ? 1 : (int)($row[0]["junban"] ?? 0) + 1;
 		}
 	
 		$sql = "UPDATE tr_log set 
