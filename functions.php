@@ -75,7 +75,7 @@ function max_r($wt, $rep){
 //---------------------------------------------------------------------------//
 //自動ログイン処理
 //--------------------------------------------------------------------------//
- function check_auto_login($token) {
+ function check_auto_login($token):bool {
 	global $db;
   //2週間前の日付を取得
 	$date = new DateTime("- 14 days");
@@ -93,9 +93,9 @@ function max_r($wt, $rep){
 
 	  //古くなったトークンを削除
   	delete_old_token($token);
-  	return 1;
+  	return false;
 	}
-  return 0;
+  return true;
 }
  
 //---------------------------------------------------------------------------//

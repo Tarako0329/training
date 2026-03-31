@@ -42,11 +42,12 @@ try{
 }catch(Exception $e){
 	$msg = "catch Exception \$e：".$e;
 	$db->rollback_tran($msg);
-
+	log_writer2("ログ削除失敗 \$e: " , $e,"lv3");
+	$_SESSION["msg"] = "ログ削除に失敗しました。再度お試しください。";
 }
 //ログイン失敗
 //リダイレクト
 header("HTTP/1.1 301 Moved Permanently");
-header("Location: index.php");
+header("Location: TOP.php");
 exit();
 ?>

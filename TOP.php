@@ -3,7 +3,7 @@
 	require_once "config.php";
 	define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 	$cookie_token = $_COOKIE['token'] ?? "";
-	$_SESSION["roop"] = 0;//セッションループ回避用リセット
+	$_SESSION["auto_login"] = true;//セッションループ回避用リセット
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];

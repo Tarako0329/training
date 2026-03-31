@@ -2,7 +2,7 @@
 require_once "config.php";
 define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 $logoff = $_GET["logoff"] ?? "";
-
+$_SESSION["auto_login"] = $_SESSION["auto_login"] ?? true;//セッションループ回避用
 
 $msg="";
 $cookie_token = $_COOKIE['token'] ?? "";
@@ -17,14 +17,11 @@ if($_SESSION["msg"] === "ログオフしました"){
 	$_SESSION["USER_ID"] = "";
 	setCookie("token", '', -1, "/", "", true, true);
 	$msg='登録完了しました。IDとパスワードを入力しログインしてください。';
-}else if (isset($_COOKIE['token'])) {
+}else if (isset($_COOKIE['token']) && $_SESSION["auto_login"] === true) {
 	//自動ログイン
-	$_SESSION["roop"] = $_SESSION["roop"] ?? 0;//セッションループ回避用
-	if ($_SESSION["roop"] < 6){
-		//header("HTTP/1.1 301 Moved Permanently");
-		//header("Location: logincheck.php");
-		//exit();
-	}
+	header("HTTP/1.1 301 Moved Permanently");
+	header("Location: logincheck.php");
+	exit();
 }else{
 	$msg=$_SESSION["msg"] ?? "";
 	$_SESSION["msg"]="";
@@ -206,10 +203,14 @@ $token=get_token();
 				axios.post('recording_ajax.php',form, {headers: {'Content-Type': 'multipart/form-data'}})
 				.then((response)=>{
 					console_log(response)
+					/*
 					document.getElementById("login_type").value="google"
 					document.getElementById("id").value=responsePayload.sub
 					document.getElementById("pass").value=responsePayload.sub
 					document.getElementById("GO").click()
+					*/
+					//TOP.phpに遷移
+					window.location.href = "TOP.php";
 				})
 				.catch((error)=>{
 					alert(error)

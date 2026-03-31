@@ -2,8 +2,8 @@
 	declare(strict_types=1);
 	require_once "config.php";
 	use classes\Security\Security;
-
-	$_SESSION["roop"] = $_SESSION["roop"] ?? 0;//セッションループ回避用
+	log_writer2("\$POST",$_POST,"lv3");
+	log_writer2("\$_COOKIE",$_COOKIE,"lv3");
 
 	//パラメーター取得
 	$id = $_POST['id'] ?? "0";
@@ -31,7 +31,7 @@
 			$_SESSION["msg"]='ＩＤ 又はパスワードが間違っています。';
 		}
 	}else {//自動ログイン
-		if (check_auto_login($cookie_token) == 0) {
+		if (check_auto_login($cookie_token) === true) {
 			$auto_result = 0;
 			$id = $_SESSION['USER_ID'];
 		}else{
@@ -42,20 +42,15 @@
 	//ログイン判定
 	if ($normal_result == 0 || $auto_result == 0) {
 		//ログイン成功
-
-		//トークン生成処理
-		if ($normal_result  == 0 || $auto_result == 0) {
-			//トークンの作成
-			$token = get_token();
-			//トークンの登録
-			register_token($id, $token);
-			//自動ログインのトークンを4週間の有効期限でCookieにセット
-			setCookie("token", $token, time()+60*60*24*28, "/", "",true,true);
-			//古いトークンの削除
-			delete_old_token($cookie_token);
-			$_SESSION['USER_ID'] = $id;
-			
-		}
+		//トークンの作成
+		$token = get_token();
+		//トークンの登録
+		register_token($id, $token);
+		//自動ログインのトークンを4週間の有効期限でCookieにセット
+		setCookie("token", $token, time()+60*60*24*28, "/", "",true,true);
+		//古いトークンの削除
+		delete_old_token($cookie_token);
+		$_SESSION['USER_ID'] = $id;
 	
 		//リダイレクト
 		header("HTTP/1.1 301 Moved Permanently");
@@ -67,7 +62,8 @@
 		delete_old_token($cookie_token);
 		setCookie("token", '', -1, "/", "", true, true);
 		$_SESSION['USER_ID'] = "";
-		log_writer2("ログイン失敗 \$_SESSION: " , json_encode($_SESSION),"lv3");
+		$_SESSION["auto_login"] = false;//セッションループ回避用
+		log_writer2("ログイン失敗 \$_SESSION: " , $_SESSION,"lv3");
 		
 		//リダイレクト
 		$_SESSION["roop"]++;
