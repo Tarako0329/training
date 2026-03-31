@@ -67,6 +67,7 @@
 		delete_old_token($cookie_token);
 		setCookie("token", '', -1, "/", "", true, true);
 		$_SESSION['USER_ID'] = "";
+		log_writer2("ログイン失敗 \$_SESSION: " , json_encode($_SESSION),"lv3");
 		
 		//リダイレクト
 		$_SESSION["roop"]++;

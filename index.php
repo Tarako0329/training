@@ -20,9 +20,11 @@ if($_SESSION["msg"] === "ログオフしました"){
 }else if (isset($_COOKIE['token'])) {
 	//自動ログイン
 	$_SESSION["roop"] = $_SESSION["roop"] ?? 0;//セッションループ回避用
-	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: logincheck.php");
-	//exit();
+	if ($_SESSION["roop"] < 6){
+		header("HTTP/1.1 301 Moved Permanently");
+		header("Location: logincheck.php");
+		exit();
+	}
 }else{
 	$msg=$_SESSION["msg"] ?? "";
 	$_SESSION["msg"]="";
