@@ -1,10 +1,7 @@
 <?php
 	require_once "config.php";
-	//require_once "database.php";
-	//$db = new Database();
 
 	//log_writer2("\$_POST",$_POST,"lv3");
-	//$shu = ($_POST["shu"]);
 	if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 		$id = $_SESSION['USER_ID'];
 	}else if (check_auto_login($_COOKIE['token'])===true) {

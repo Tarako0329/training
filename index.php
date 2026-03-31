@@ -203,12 +203,6 @@ $token=get_token();
 				axios.post('recording_ajax.php',form, {headers: {'Content-Type': 'multipart/form-data'}})
 				.then((response)=>{
 					console_log(response)
-					/*
-					document.getElementById("login_type").value="google"
-					document.getElementById("id").value=responsePayload.sub
-					document.getElementById("pass").value=responsePayload.sub
-					document.getElementById("GO").click()
-					*/
 					//TOP.phpに遷移
 					window.location.href = "TOP.php";
 				})

@@ -20,7 +20,6 @@
 				$msg = "登録済ユーザ";
 			}else{
 				$msg = "新規ユーザ";
-				//$pass = passEx($id,$id);
 				$pass = $id;	//googleログインはパスワードにGoogle識別子IDをセットする
 				log_writer2("\$pass",$pass,"lv3");
 				$db->begin_tran();

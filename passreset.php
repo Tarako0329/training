@@ -17,15 +17,11 @@
 			$_SESSION["msg"]="入力されたIDに紐づく情報が一致してません。";
 		}
 		$db->begin_tran();
-		//$pass = passEx($_POST["pass2"],$id);
 		$pass = $Security->passEx($_POST["pass2"]);
 		$sql = "UPDATE users set pass = :pass where id = :id;";
 		$db->UP_DEL_EXEC($sql,[":pass" => $pass,":id" => $id]);
 		$db->commit_tran();
 		
-		//echo "<P>パスワードを更新しました。</P>";
-		//echo "<P>ログイン画面から再度ログインしてください。</P>";
-		//echo "<a href='index.php'> ログイン画面へ</a>";
 		$_SESSION["msg"]="パスワードを更新しました。ログインしてください。";
 	}
    

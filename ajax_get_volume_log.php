@@ -1,7 +1,5 @@
 <?php
 require_once "config.php";
-//require_once "database.php";
-//$db = new Database();
 
 log_writer2("\$_POST",$_POST,"lv3");
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック

@@ -1,8 +1,6 @@
 <?php
 // 設定ファイルインクルード
 require_once "config.php";
-//require_once "database.php";
-//$db = new Database();	
 
 log_writer2("\$_GET",$_GET,"lv3");
 $now = date('Y-m-d');

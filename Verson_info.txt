@@ -100,8 +100,8 @@ ver1.25.3:無限スクロール実装-フィルタリング時の不具合修正
 ver1.26.0:bugfix-commited
 ver1.27.0:リファクタリング-commited
 ver1.28.0:IPASSからgoogleログインへ変更可能に-commited
-ver1.29.0:googleスプレッドシート連携
-ver1.30.0:bugfix連続リダイレクト
+ver1.29.0:googleスプレッドシート連携-commited
+ver1.30.0:bugfix連続リダイレクト-commited
 
 
 

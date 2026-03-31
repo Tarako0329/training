@@ -1,7 +1,5 @@
 <?php
 require_once "config.php";
-//require_once "database.php";
-//$db = new Database();
 
 log_writer2("\$_POST",$_POST,"lv3");
 $id = $_SESSION['USER_ID'] ?? "";

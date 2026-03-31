@@ -1,7 +1,5 @@
 <?php
 require_once "config.php";
-//require_once "database.php";
-//$db = new Database();
 
 //トランザクション処理
 log_writer2("\$POST",$_POST,"lv3");

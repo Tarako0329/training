@@ -66,7 +66,6 @@ try{
 		$sql = "SELECT ymd as motoYMD,jun from tr_log where id = :id and SEQ = :SEQ;";
 		$row = $db->SELECT($sql,[":id" => $id,":SEQ" => $_POST["SEQ"]]);
 
-		//if($_POST["motoYMD"] == $_POST["ymd"]){//日付の変更がない場合は元の順番で更新
 		if($row[0]["motoYMD"] === $_POST["ymd"]){//日付の変更がない場合は元の順番で更新
 			$jun=$_POST["NO"];
 		}else{
