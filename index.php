@@ -21,9 +21,9 @@ if($_SESSION["msg"] === "ログオフしました"){
 	//自動ログイン
 	$_SESSION["roop"] = $_SESSION["roop"] ?? 0;//セッションループ回避用
 	if ($_SESSION["roop"] < 6){
-		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: logincheck.php");
-		exit();
+		//header("HTTP/1.1 301 Moved Permanently");
+		//header("Location: logincheck.php");
+		//exit();
 	}
 }else{
 	$msg=$_SESSION["msg"] ?? "";
