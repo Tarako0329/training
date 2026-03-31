@@ -31,7 +31,7 @@
 			//トークンの作成
 			$token = get_token();
 			//トークンの登録
-			register_token($id, get_token());
+			register_token($id, $token);
 			//自動ログインのトークンを4週間の有効期限でCookieにセット
 			setCookie("token", $token, time()+60*60*24*28, "/", "",true,true);
 			$_SESSION['USER_ID'] = $id;
