@@ -15,10 +15,10 @@
 	if($_POST["token"] === $_SESSION["token"] && $id!==-1){
 		$row = $db->SELECT("SELECT * from users where id = :id",[":id" => $id]);
 		$row_cnt = count($row);
-		if($row_cnt===1){
-			$msg = "登録済ユーザ";
-		}else{
-			try{
+		try{
+			if($row_cnt===1){
+				$msg = "登録済ユーザ";
+			}else{
 				$msg = "新規ユーザ";
 				//$pass = passEx($id,$id);
 				$pass = $id;	//googleログインはパスワードにGoogle識別子IDをセットする
@@ -26,25 +26,23 @@
 				$db->begin_tran();
 				$db->INSERT("users",["id" => $id,"pass" => $pass,"name" => $name,"user_type" => "google"]);
 				$db->commit_tran();
-
-				//トークンの作成
-				$token = get_token();
-				//トークンの登録
-				register_token($id, $token);
-				//自動ログインのトークンを4週間の有効期限でCookieにセット
-				setCookie("token", $token, time()+60*60*24*28, "/", "",true,true);
-
-				$_SESSION['USER_ID'] = $id;
-				$_SESSION['login_type'] = "google";
-				$msg .= "【処理完了】";
-				$status="success";
-
-			}catch(Exception $e){
-				$db->rollback_tran("Google登録でユーザ登録に失敗 \$e: ".$e);
-				log_writer2("Google登録でユーザ登録に失敗 \$e: " , $e,"lv0");
-				$msg = "ユーザ登録に失敗しました。再度お試しください。";
-				$status="false";
 			}
+
+			//トークンの作成
+			$token = get_token();
+			//トークンの登録
+			register_token($id, get_token());
+			//自動ログインのトークンを4週間の有効期限でCookieにセット
+			setCookie("token", $token, time()+60*60*24*28, "/", "",true,true);
+			$_SESSION['USER_ID'] = $id;
+			$_SESSION['login_type'] = "google";
+			$msg .= "【処理完了】";
+			$status="success";
+		}catch(Exception $e){
+			$db->rollback_tran("Google登録でユーザ登録に失敗 \$e: ".$e);
+			log_writer2("Google登録でユーザ登録に失敗 \$e: " , $e,"lv0");
+			$msg = "ユーザ登録に失敗しました。再度お試しください。";
+			$status="false";
 		}
   }
 
