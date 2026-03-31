@@ -25,6 +25,7 @@
 		delete_old_token($cookie_token);
 		setCookie("token", '', -1, "/", "", true, true);
 		$_SESSION=[];
+		$_SESSION["auto_login"] = false;//セッションループ回避用
 		$_SESSION["msg"] = "ログオフしました";
 		header("HTTP/1.1 301 Moved Permanently");
 		header("Location: index.php");
@@ -37,7 +38,9 @@
 	$row_cnt = count($row);
 
 	if($row_cnt===0){
+		log_writer2("ユーザID未検出；\$id = ",$id,"lv3");
 		$_SESSION=[];
+		$_SESSION["auto_login"] = false;//セッションループ回避用
 		$_SESSION["msg"] = "ＩＤ 又はパスワードが間違っています。";
 		header("HTTP/1.1 301 Moved Permanently");
 		header("Location: index.php");
