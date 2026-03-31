@@ -9,7 +9,7 @@ define("GOOGLE_AUTH_SKEY",$_ENV["GOOGLE_AUTH_SKEY"]);
 //結果書き込み
 if(isset($_SESSION['USER_ID'])){
 	$id = $_SESSION['USER_ID'];
-}else if (check_auto_login($_COOKIE['token'])==0) {
+}else if (check_auto_login($_COOKIE['token'])===true) {
 	$id = $_SESSION['USER_ID'];
 }else{
 	header("HTTP/1.1 301 Moved Permanently");

@@ -7,7 +7,7 @@
 
 	if(isset($_SESSION['USER_ID'])){
 		$id = $_SESSION['USER_ID'];
-	}else if (check_auto_login($cookie_token)==0) {
+	}else if (check_auto_login($cookie_token)===true) {
 		$id = $_SESSION['USER_ID'];
 	}else{
 		log_writer2("POST",$_POST,"lv3");
@@ -41,7 +41,7 @@
 		log_writer2("ユーザID未検出；\$id = ",$id,"lv3");
 		delete_old_token($cookie_token);
 		setCookie("token", '', -1, "/", "", true, true);
-				
+
 		$_SESSION=[];
 		$_SESSION["auto_login"] = false;//セッションループ回避用
 		$_SESSION["msg"] = "ＩＤ 又はパスワードが間違っています。";

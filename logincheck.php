@@ -66,7 +66,6 @@
 		log_writer2("ログイン失敗 \$_SESSION: " , $_SESSION,"lv3");
 		
 		//リダイレクト
-		$_SESSION["roop"]++;
 		header("HTTP/1.1 301 Moved Permanently");
 		header("Location: index.php");
 		exit();

@@ -12,7 +12,7 @@ $now = date("Y-m-d H:i:s");
 //結果書き込み
 if(isset($_SESSION['USER_ID'])){
 	$id = $_SESSION['USER_ID'];
-}else if (check_auto_login($_COOKIE['token'])==0) {
+}else if (check_auto_login($_COOKIE['token'])===true) {
 	$id = $_SESSION['USER_ID'];
 }else{
 	$return_sts = array(

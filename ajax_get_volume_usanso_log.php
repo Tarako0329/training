@@ -7,7 +7,7 @@ log_writer2("\$_POST",$_POST,"lv3");
 $shu = ($_POST["shu"]);
 if(isset($_SESSION['USER_ID'])){ //ユーザーチェックブロック
 	$id = $_SESSION['USER_ID'];
-}else if (check_auto_login($_COOKIE['token'])==0) {
+}else if (check_auto_login($_COOKIE['token'])===true) {
 	$id = $_SESSION['USER_ID'];
 }else{
 	$return_sts = array(
