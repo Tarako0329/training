@@ -19,6 +19,8 @@
 				$db->UP_DEL_EXEC("UPDATE taisosiki set `id` = :newid where `id` = :id",["newid" => $google_id."_bk_".date('YmdHis'),":id" => $google_id]);
 				$db->UP_DEL_EXEC("UPDATE ms_training set `id` = :newid where `id` = :id",["newid" => $google_id."_bk_".date('YmdHis'),":id" => $google_id]);
 				$db->UP_DEL_EXEC("UPDATE AUTO_LOGIN set `id` = :newid where `id` = :id",["newid" => $google_id."_bk_".date('YmdHis'),":id" => $google_id]);
+				//旧IDのAUTO_LOINデータを削除
+				$db->UP_DEL_EXEC("DELETE from AUTO_LOGIN where `id` = :id",["id" => $old_id]);
 			}
 
 			if($_POST["shori"] === "delin" || $_POST["shori"] === "new"){
