@@ -163,7 +163,7 @@ try{
 		,"status" => "success"
 		,"filter" => $shu
 	);
-}catch(Exception $e){
+}catch(\Throwable $e){
 	$msg = "catch Exception \$e：".$e;	
 	$db->rollback_tran($msg);
 	log_writer2("\$e",$e,"lv1");
