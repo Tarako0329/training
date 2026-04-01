@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace classes\Security;
 use classes\Database\Database;
+use classes\Utilities\Utilities as U;
 
 
 class Security {
@@ -79,7 +80,10 @@ class Security {
 	}
 
 	//暗号化（可逆）
-	public function encrypt(string $str): string {
+	public function encrypt(string $str=""): string {
+		if(!U::exist($str)){
+			return "";
+		}
 		$method = "AES-256-CBC";
 		$key = hash('sha256', $this->key);
 		$iv = substr(hash('sha256', $this->uid), 0, 16);
@@ -87,8 +91,7 @@ class Security {
 	}
 	//復号化（可逆）
 	public function decrypt(string $str=""): string {
-		class_alias('classes\Utilities\Utilities','U');
-		if(U::exist($str)){
+		if(!U::exist($str)){
 			return "";
 		}
 		$method = "AES-256-CBC";

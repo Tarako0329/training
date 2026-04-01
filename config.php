@@ -12,6 +12,7 @@ $dotenv->load();
 
 define("MAIN_DOMAIN",$_ENV["MAIN_DOMAIN"]);
 define("EXEC_MODE",$_ENV["KANKYO"]);
+define("SYSTEM_NOTICE_MAIL",$_ENV["SYSTEM_NOTICE_MAIL"]);
 if(EXEC_MODE==="local"){
   define("ROOT_URL","http://".MAIN_DOMAIN."/");
 }else{

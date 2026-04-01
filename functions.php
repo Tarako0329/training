@@ -13,7 +13,7 @@ function log_writer2($pgname,$msg,$kankyo){
 			log_writer($pgname,$msg);
 			$log = print_r($msg,true);
 			
-			//send_mail(SYSTEM_NOTICE_MAIL,"【重要】".TITLE."でシステムエラー発生",$log);
+			U::send_mail(SYSTEM_NOTICE_MAIL,EXEC_MODE."【重要】肉体改造ネットワークでシステムエラー発生",$log,EXEC_MODE."肉体改造ネットワークERROR通知");
 	}else if($kankyo==="lv1"){
 			log_writer($pgname,$msg);
 	}else if($kankyo==="lv2" && EXEC_MODE!=="Product"){
