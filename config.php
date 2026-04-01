@@ -63,4 +63,36 @@ use classes\Database\Database;
 
 $db = new Database();
 define("key","bonBer");
+
+// シャットダウン時に実行される関数を登録
+register_shutdown_function(function () {
+    // 最後に発生したエラーを取得
+    $error = error_get_last();
+
+    // エラーが存在し、かつ致命的なエラー（E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR）の場合
+    if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        
+        $to = "developer@example.com"; // 開発者のメールアドレス
+        $subject = "【重要】システムフェータルエラー発生";
+        
+        // メールの本文を作成
+        $body = "致命的なエラーが発生しました。\n\n";
+        $body .= "メッセージ: " . $error['message'] . "\n";
+        $body .= "ファイル: " . $error['file'] . "\n";
+        $body .= "行数: " . $error['line'] . "\n";
+        $body .= "発生時刻: " . date('Y-m-d H:i:s') . "\n";
+        $body .= "URL: " . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'CLI') . "\n";
+
+        $fromName = "System Watcher";
+
+        // Utilitiesクラスのメソッドを呼び出し
+        // ※クラスがオートロードされているか、requireされている必要があります
+        U::send_mail(
+            $to,
+            $subject,
+            $body,
+            $fromName
+        );
+    }
+});
 ?>
