@@ -24,6 +24,15 @@ if(EXEC_MODE==="Product"){
   $time=date("YmdHis");
 }
 
+//メール送信関連
+define("HOST", $_ENV["HOST"]);
+define("PORT", $_ENV["PORT"]);
+define("FROM", $_ENV["FROM"]);
+define("PROTOCOL", $_ENV["PROTOCOL"]);
+define("POP_HOST", $_ENV["POP_HOST"]);
+define("POP_USER", $_ENV["POP_USER"]);
+define("POP_PASS", $_ENV["POP_PASS"]);
+
 
 //DB接続関連
 define("DNS","mysql:host=".$_ENV["SV"].";dbname=".$_ENV["DBNAME"].";charset=utf8");
