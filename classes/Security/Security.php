@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace classes\Security;
 use classes\Database\Database;
+
+
 class Security {
 	private const AUTH_OPTIONS = [
 		'cost' => 12, // 計算負荷を上げる（将来的に数値を増やす）
@@ -84,7 +86,11 @@ class Security {
 		return openssl_encrypt($str, $method, $key, 0, $iv);
 	}
 	//復号化（可逆）
-	public function decrypt(string $str): string {
+	public function decrypt(string $str=""): string {
+		class_alias('classes\Utilities\Utilities','U');
+		if(U::exist($str)){
+			return "";
+		}
 		$method = "AES-256-CBC";
 		$key = hash('sha256', $this->key);
 		$iv = substr(hash('sha256', $this->uid), 0, 16);
