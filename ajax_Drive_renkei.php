@@ -58,8 +58,10 @@
 				$status="success";
 			}catch(PDOException $e){
 				$db->rollback_tran($e->getMessage());
+				log_writer2("Googleリフレッシュトークン登録に失敗 \$e: " , $e,"lv0");	
 				log_writer2("$e",$e,"lv0");
-			}catch(Exception $e){
+			}catch(\Throwable $e){
+				log_writer2("Googleリフレッシュトークン登録に失敗 \$e: " , $e,"lv0");	
 				log_writer2("$e",$e,"lv0");
 			}
 		}

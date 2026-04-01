@@ -34,7 +34,8 @@ try{
 		"MSG" => "success"
 		,"status" => "success"
 	);
-}catch(Exception $e){
+}catch(\Throwable $e){
+	log_writer2("種目マスタ更新に失敗 \$e: " , $e,"lv0");	
 	$msg = "catch Exception \$e：".$e;
 	$db->rollback_tran($msg);
 	$return_sts = array(

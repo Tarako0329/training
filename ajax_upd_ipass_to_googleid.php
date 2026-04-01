@@ -35,9 +35,10 @@
 			$db->commit_tran();
 			$status="success";
 			$msg = "成功";
-		}catch(Exception $e){
+		}catch(\Throwable $e){
 			$db->rollback_tran($e->getMessage());
 			$msg=$e->getMessage();
+			log_writer2("Googleログインへの変更に失敗 \$e: " , $e,"lv0");	
 			$status="error";
 		}
 	

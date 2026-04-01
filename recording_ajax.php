@@ -37,7 +37,7 @@
 			$_SESSION['login_type'] = "google";
 			$msg .= "【処理完了】";
 			$status="success";
-		}catch(Exception $e){
+		}catch(\Throwable $e){
 			$db->rollback_tran("Google登録でユーザ登録に失敗 \$e: ".$e);
 			log_writer2("Google登録でユーザ登録に失敗 \$e: " , $e,"lv0");
 			$msg = "ユーザ登録に失敗しました。再度お試しください。";

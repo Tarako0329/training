@@ -40,7 +40,8 @@ if(U::exist($_POST["data"])){
 		}
 		$db->commit_tran();
 		$msg = "success";
-	}catch(Exception $e){
+	}catch(\Throwable $e){
+		log_writer2("種目マスタ登録に失敗 \$e: " , $e,"lv0");	
 		$msg = "catch Exception \$e：".$e;
 		$db->rollback_tran($msg);
 		$status = "error";

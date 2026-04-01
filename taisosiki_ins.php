@@ -30,9 +30,10 @@
 			]);
 			
 			$db->commit_tran();
-		}catch(Exception $e){
+		}catch(\Throwable $e){
 			$msg = "catch Exception \$e：".$e;
 			$db->rollback_tran($msg);
+			log_writer2("体組織記録登録に失敗 \$e: " , $e,"lv0");	
 		}
 		//リダイレクト
 		header("HTTP/1.1 307 Moved Permanently");

@@ -27,9 +27,10 @@
 					$db->UP_DEL_EXEC($sql,[":pass"=>$pass,":id"=>$id]);
 				}
 				$db->commit_tran();
-			}catch(Exception $e){
+			}catch(\Throwable $e){
 				$msg = "catch Exception \$e：".$e;
 				$db->rollback_tran($msg);
+				log_writer2("パスワード更新に失敗 \$e: " , $e,"lv0");	
 			}
 		}
 

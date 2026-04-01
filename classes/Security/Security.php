@@ -69,7 +69,7 @@ class Security {
 				//$db->commit_tran();
 				
 				$return = true;
-			}catch(\Exception $e){
+			}catch(\Throwable $e){
 				//$db->rollback_tran();
 				log_writer2("func:verifyPassword","パスワード更新失敗","lv0");
 				log_writer2("\$e",$e,"lv0");
