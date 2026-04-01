@@ -166,7 +166,7 @@ try{
 }catch(\Throwable $e){
 	$msg = "catch Exception \$e：".$e;	
 	$db->rollback_tran($msg);
-	log_writer2("\$e",$e,"lv1");
+	log_writer2("\$e",$e,"lv0");
 	$return_sts = array(
 		"MSG" => $msg
 		,"status" => "error"
