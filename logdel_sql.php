@@ -40,9 +40,9 @@ try{
 	$db->commit_tran();
 
 }catch(\Throwable $e){
-	$msg = "catch Exception \$e：".$e;
+	$msg = "catch Exception \$e：".$e->getMessage();
 	$db->rollback_tran($msg);
-	log_writer2("トレーニングログ削除失敗 \$e: " , $e,"lv0");
+	U::send_E($e,"トレーニングログ削除に失敗", "トレーニングログ削除に失敗しました。");
 	$_SESSION["msg"] = "ログ削除に失敗しました。再度お試しください。";
 }
 //ログイン失敗

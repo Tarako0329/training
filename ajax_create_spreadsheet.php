@@ -106,13 +106,11 @@
 
 			$msg = "正常終了";
 			$status="success";
-		}catch(PDOException $e){
-			$db->rollback_tran($e->getMessage());
-			log_writer2("スプレッドシート登録に失敗 \$e: " , $e,"lv0");	
-			log_writer2("$e",$e,"lv0");
 		}catch(\Throwable $e){
-			log_writer2("スプレッドシート登録に失敗 \$e: " , $e,"lv0");	
-			log_writer2("$e",$e,"lv0");
+			$db->rollback_tran($e->getMessage());
+			U::send_E($e,"スプレッドシート登録に失敗", "スプレッドシートの作成または更新に失敗しました。");
+			$msg = "スプレッドシートの作成または更新に失敗しました。";
+			$status="error";
 		}
 	}
 

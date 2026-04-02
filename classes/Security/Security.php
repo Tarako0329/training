@@ -71,8 +71,7 @@ class Security {
 				$return = true;
 			}catch(\Throwable $e){
 				//$db->rollback_tran();
-				log_writer2("func:verifyPassword","パスワード更新失敗","lv0");
-				log_writer2("\$e",$e,"lv0");
+				U::send_E($e,"パスワードハッシュ更新に失敗", "パスワードハッシュ更新に失敗しました。");
 			}
 		}
 		

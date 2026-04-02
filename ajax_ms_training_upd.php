@@ -19,13 +19,12 @@ if(isset($_SESSION['USER_ID'])){
 	exit();
 }
 
-//種目追加欄が空白の場合はリストの種目,種目追加欄が記入されてる場合は種目追加欄の種目
+//トレーニング種目別の目標をマスタにセット
 $shu = $_POST["shu"];
 $mokuhyou_type = $_POST["mokuhyou_type"];
 $mokuhyou = $_POST["mokuhyou"];
 
 try{
-	//種目マスタ追加
 	$db->begin_tran();
 	$sql = 'UPDATE ms_training set mokuhyou_type = :mokuhyou_type,mokuhyou=:mokuhyou where id = :id and shu = :shu';
 	$db->UP_DEL_EXEC($sql,[":mokuhyou_type" => $mokuhyou_type,":mokuhyou" => $mokuhyou,":id" => $id,":shu" => $shu]);
@@ -35,9 +34,9 @@ try{
 		,"status" => "success"
 	);
 }catch(\Throwable $e){
-	log_writer2("種目マスタ更新に失敗 \$e: " , $e,"lv0");	
-	$msg = "catch Exception \$e：".$e;
-	$db->rollback_tran($msg);
+	U::send_E($e,"種目マスタの目標更新に失敗", "種目マスタの目標更新に失敗しました。");
+	$msg = "catch Exception \$e：".$e->getMessage();
+	$db->rollback_tran($e->getMessage());
 	$return_sts = array(
 		"MSG" => $msg
 		,"status" => "error"

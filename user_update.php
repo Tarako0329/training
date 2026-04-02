@@ -28,9 +28,9 @@
 				}
 				$db->commit_tran();
 			}catch(\Throwable $e){
-				$msg = "catch Exception \$e：".$e;
+				$msg = "catch Exception \$e：".$e->getMessage();
 				$db->rollback_tran($msg);
-				log_writer2("パスワード更新に失敗 \$e: " , $e,"lv0");	
+				U::send_E($e,"ユーザ情報更新に失敗", "ユーザ情報更新に失敗しました。");
 			}
 		}
 

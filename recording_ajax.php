@@ -10,7 +10,6 @@
 	$status="false";
 	$id = $_POST["ID"] ?? -1;
 	$name = $_POST['name'] ?? "";
-
 	
 	if($_POST["token"] === $_SESSION["token"] && $id!==-1){
 		$row = $db->SELECT("SELECT * from users where id = :id",[":id" => $id]);
@@ -38,8 +37,8 @@
 			$msg .= "【処理完了】";
 			$status="success";
 		}catch(\Throwable $e){
-			$db->rollback_tran("Google登録でユーザ登録に失敗 \$e: ".$e);
-			log_writer2("Google登録でユーザ登録に失敗 \$e: " , $e,"lv0");
+			$db->rollback_tran("Google登録でユーザ登録に失敗 \$e: ".$e->getMessage());
+			U::send_E($e,"Google登録でユーザ登録に失敗", "Google登録でユーザ登録に失敗しました。");
 			$msg = "ユーザ登録に失敗しました。再度お試しください。";
 			$status="false";
 		}

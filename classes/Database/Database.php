@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace classes\Database;
 use PDO,PDOException,Exception;
+use classes\Utilities\Utilities as U;
 
 class Database {
     // 接続情報をプロパティとして保持（.envから読み込む想定）
@@ -157,7 +158,8 @@ class Database {
       $this->connect()->commit();
       $this->exec_log();
     }
-    public function rollback_tran(string $msg=""):void{
+    public function rollback_tran($msg=""):void{
+      $msg = var_export($msg, true); //配列やオブジェクトも文字列化してログに出力できるようにする
       $this->log .= "rollback;\n";
       $this->log .= "/*ERROR SQL:[".$this->sql.";]*/\n";
       $this->log .= "/*".$msg."*/\n";

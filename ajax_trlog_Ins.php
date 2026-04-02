@@ -164,9 +164,9 @@ try{
 		,"filter" => $shu
 	);
 }catch(\Throwable $e){
-	$msg = "catch Exception \$e：".$e;	
+	$msg = "catch Exception \$e：".$e->getMessage();
 	$db->rollback_tran($msg);
-	log_writer2("\$e",$e,"lv0");
+	U::send_E($e,"トレーニングログの登録・更新に失敗", "トレーニングログの登録・更新に失敗しました。");
 	$return_sts = array(
 		"MSG" => $msg
 		,"status" => "error"

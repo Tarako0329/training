@@ -37,8 +37,8 @@
 			$msg = "成功";
 		}catch(\Throwable $e){
 			$db->rollback_tran($e->getMessage());
-			$msg=$e->getMessage();
-			log_writer2("Googleログインへの変更に失敗 \$e: " , $e,"lv0");	
+			$msg="Googleログインへの変更に失敗" . $e->getMessage();
+			U::send_E($e,"Googleログインへの変更に失敗", "Googleログインへの変更に失敗しました。");
 			$status="error";
 		}
 	
