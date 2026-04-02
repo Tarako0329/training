@@ -124,7 +124,8 @@ class Utilities {
 	private static function log_writer($hensuu_name,$msg){
 		$log = var_export($msg,true);
 		//file_put_contents("error_log","[".date("Y/m/d H:i:s")."] log_writer => [".$_SERVER["PHP_SELF"]." -> ".$hensuu_name."] => ".$log."\n",FILE_APPEND);
-		error_log("[".date("Y/m/d H:i:s")."] log_writer => [".$_SERVER["PHP_SELF"]." -> ".$hensuu_name."] => ".$log."\n");
+		//error_log("[".date("Y/m/d H:i:s")."] log_writer => [".$_SERVER["PHP_SELF"]." -> ".$hensuu_name."] => ".$log."\n");
+		error_log("log_writer => [".$_SERVER["PHP_SELF"]." -> ".$hensuu_name."] => ".$log."\n");
 	}
 	public static function log(string $hensuu_name = "",$msg="",int $kankyo = 4):void{
 		//$kankyo:1=全環境+メール通知 2=全環境 3=本番以外 4=テスト・ローカル環境のみ(デフォルト)
@@ -145,12 +146,13 @@ class Utilities {
 	}
 	public static function send_E(\Throwable $e, string $subject = "", string $comment=""):void{
 		$subject = self::exist($subject) ? $subject : $_SERVER["PHP_SELF"];
-		$msg = "コメント: " . $comment . "\n\n";
-		$msg .= "Eメッセージ: " . $e->getMessage() . "\n";
-    $msg .="エラーコード: " . $e->getCode() . "\n";
-    $msg .="発生場所: " . $e->getFile() . " の " . $e->getLine() . "行目\n";
-		$msg .="スタックトレース: " . $e->getTraceAsString() . "\n\n";
-		$msg .= var_export($e,true);
+		$msg = "\n";
+		$msg .= "コメント       : " . $comment . "\n";
+		$msg .= "Eメッセージ    : " . $e->getMessage() . "\n";
+    $msg .= "エラーコード   : " . $e->getCode() . "\n";
+    $msg .= "発生場所       : " . $e->getFile() . " の " . $e->getLine() . "行目\n";
+		$msg .= "スタックトレース: " . $e->getTraceAsString() . "\n\n";
+		$msg .= "\$e => ".var_export($e,true);
 		self::log_writer($subject,$msg);
 		self::send_mail(SYSTEM_NOTICE_MAIL,"【".EXEC_MODE."：異常】".APP_NAME." ".$subject,$msg,EXEC_MODE."-".APP_NAME);
 	}
