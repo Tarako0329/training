@@ -92,7 +92,8 @@
 						$msg = "ファイル名の更新に失敗しました。";
 						$status="error";
 					}else{
-						U::log("ファイル名の更新に成功","$sheetname => $new_sheetname");
+						U::log("ファイル名の更新に成功","$sheetname => $new_sheetname",4);
+						$sheetname = $new_sheetname;//更新成功したので、以降の処理は新しいファイル名で行う
 					}
 				}
 			}
