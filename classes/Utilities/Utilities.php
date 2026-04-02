@@ -146,7 +146,7 @@ class Utilities {
 	}
 	public static function send_E(\Throwable $e, string $subject = "", string $comment=""):void{
 		$subject = self::exist($subject) ? $subject : $_SERVER["PHP_SELF"];
-		$msg = "\n";
+		$msg = "\n[".$_SERVER["PHP_SELF"]." -> ".$subject."]\n";
 		$msg .= "コメント       : " . $comment . "\n";
 		$msg .= "Eメッセージ    : " . $e->getMessage() . "\n";
     $msg .= "エラーコード   : " . $e->getCode() . "\n";
@@ -156,6 +156,5 @@ class Utilities {
 		self::log_writer($subject,$msg);
 		self::send_mail(SYSTEM_NOTICE_MAIL,"【".EXEC_MODE."：異常】".APP_NAME." ".$subject,$msg,EXEC_MODE."-".APP_NAME);
 	}
-
 }
 ?>
