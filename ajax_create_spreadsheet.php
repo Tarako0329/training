@@ -91,6 +91,8 @@
 						log_writer2("ファイル名の更新に失敗",$sheetname,"lv0");
 						$msg = "ファイル名の更新に失敗しました。";
 						$status="error";
+					}else{
+						U::log("ファイル名の更新に成功","$sheetname => $new_sheetname");
 					}
 				}
 			}
