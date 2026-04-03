@@ -72,39 +72,35 @@
 <meta property='og:description' content='筋トレ記録・解析ＷＥＢアプリ' />
 <meta property='fb:admins' content='100000504600659' />
 <script>
-    var KANKYO = <?php echo "'".EXEC_MODE."'" ;?>;
+	var KANKYO = <?php echo "'".EXEC_MODE."'" ;?>;
 </script>
 
 <script src="script/function.js?<?php echo $time; ?>"></script>
 <link rel='manifest' href='site.webmanifest?<?php echo $time;?>'>
 <script>
-    /*
-    if('serviceWorker' in navigator){
-    	navigator.serviceWorker.register('serviceworker.js').then(function(){
-    		console_log("Service Worker is registered!!");
-    	});
-    }
-    */
-    
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('serviceworker.js')
-            .then(registration => {
-                // 登録成功
-                console_log("Service Worker is registered!!");
-                
-                // serviceworker.js　の更新確認(bit単位で比較し相違があったら更新する。らしい)
-                registration.onupdatefound = function() {
-                    console_log('Service Worker is Updated');
-                    registration.update();
-                }
-            })
-            .catch(err => {
-                // 登録失敗
-                console_log("Service Worker is Oops!!");
-        });
-    }
-    if(window.matchMedia('(display-mode: standalone)').matches){
-        // ここにPWA環境下でのみ実行するコードを記述
-    }
-    
+	if ('serviceWorker' in navigator) {
+		// ページ読み込み完了後に登録を実行（初期表示の速度を落とさないため）
+		window.addEventListener('load', function() {
+			navigator.serviceWorker.register('serviceworker.js')
+				.then(registration => {
+					// 登録成功
+					console.log("Service Worker の登録に成功しました！");
+
+					// 更新が見つかった時の処理
+					registration.onupdatefound = function() {
+						console.log('新しい Service Worker を検知しました。更新中...');
+					};
+				})
+				.catch(err => {
+					// 登録失敗
+					console.error("Service Worker の登録に失敗しました:", err);
+				});
+		});
+	}
+
+	// PWA環境（インストール済みアプリとして起動）の判定
+	if (window.matchMedia('(display-mode: standalone)').matches) {
+		console.log("PWA環境で実行されています。");
+		// ここにアプリ専用の処理（例：戻るボタンの表示調整など）を記述
+	}
 </script>
