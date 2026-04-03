@@ -86,26 +86,25 @@
     }
     */
     
-    /*if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('serviceworker.js')
             .then(registration => {
-                / 登録成功
+                // 登録成功
                 console_log("Service Worker is registered!!");
                 
-                /serviceworker.js　の更新確認(bit単位で比較し相違があったら更新する。らしい)
+                // serviceworker.js　の更新確認(bit単位で比較し相違があったら更新する。らしい)
                 registration.onupdatefound = function() {
                     console_log('Service Worker is Updated');
                     registration.update();
                 }
             })
             .catch(err => {
-                / 登録失敗
+                // 登録失敗
                 console_log("Service Worker is Oops!!");
         });
     }
     if(window.matchMedia('(display-mode: standalone)').matches){
-        / ここにPWA環境下でのみ実行するコードを記述
+        // ここにPWA環境下でのみ実行するコードを記述
     }
-    /スマフォで:active :hover を有効に
-    document.getElementsByTagName('html')[0].setAttribute('ontouchstart', '');*/
+    
 </script>

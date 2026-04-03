@@ -4,11 +4,11 @@ const CACHE_VERSION = 'v39_';
 const CACHE_NAME = `${CACHE_VERSION}!${registration.scope}`;
 
 // キャッシュするファイルをセットする
-const urlsToCache = [
+const urlsToCache = [/*
   '/css'
   ,'/img'
   ,'/favicon.ico'
-];
+*/];
 
 //サービスワーカーインストール
 
