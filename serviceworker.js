@@ -1,5 +1,5 @@
 // キャッシュするリソース(必要に応じて urlsToCache に追加してください)
-const CACHE_VERSION = 'v39_';
+const CACHE_VERSION = 'v40_';
 // self.registration.scope で自身のスコープを参照します
 const CACHE_NAME = `${CACHE_VERSION}!${self.registration.scope}`;
 
