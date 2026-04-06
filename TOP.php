@@ -61,7 +61,8 @@
 
 	$token=get_token();
 
-	log_writer2("アクセス端末","USER_ID:".$id." DEVICE:".$device." USER_NAME:".$user_name,"lv1");
+	//log_writer2("アクセス端末","USER_ID:".$id." DEVICE:".$device." USER_NAME:".$user_name,"lv1");
+	U::log("アクセス端末","USER_ID:".$id." DEVICE:".$device." USER_NAME:".$user_name,1);
 ?>
 <!DOCTYPE html>
 <HTML>
