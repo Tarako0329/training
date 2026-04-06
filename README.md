@@ -1,4 +1,5 @@
 # training
+
 筋トレを記録するウェブアプリです。
 
 ユーザーが実施したトレーニングをメニューリストとして蓄積するため、従来のアプリにありがちな
@@ -13,4 +14,4 @@
 各種目のトレーニング負荷やマックス値の推移をグラフで表示できます。
 
 稼働サイト
-https://training.green-island.mixh.jp/
+[https://mussle.greeen-sys.com](https://training.green-island.mixh.jp/)

@@ -12,7 +12,6 @@ $dotenv->load();
 
 define("MAIN_DOMAIN",$_ENV["MAIN_DOMAIN"]);
 define("EXEC_MODE",$_ENV["KANKYO"]);
-define("SYSTEM_NOTICE_MAIL",$_ENV["SYSTEM_NOTICE_MAIL"]);
 define("APP_NAME",$_ENV["APP_NAME"]);
 if(EXEC_MODE==="Local"){
   define("ROOT_URL","http://".MAIN_DOMAIN."/");
@@ -33,6 +32,7 @@ define("PROTOCOL", $_ENV["PROTOCOL"]);
 define("POP_HOST", $_ENV["POP_HOST"]);
 define("POP_USER", $_ENV["POP_USER"]);
 define("POP_PASS", $_ENV["POP_PASS"]);
+define("SYSTEM_NOTICE_MAIL",$_ENV["SYSTEM_NOTICE_MAIL"]);
 
 
 //DB接続関連
