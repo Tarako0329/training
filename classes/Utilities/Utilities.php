@@ -130,7 +130,7 @@ class Utilities {
 	public static function log(string $hensuu_name = "",$msg="",int $kankyo = 4):void{
 		//$kankyo:1=全環境+メール通知 2=全環境 3=本番以外 4=テスト・ローカル環境のみ(デフォルト)
 		if($kankyo===1){
-			log_writer($hensuu_name,$msg);
+			self::log_writer($hensuu_name,$msg);
 			$log = $hensuu_name."\n".var_export($msg,true);
 
 			self::send_mail(SYSTEM_NOTICE_MAIL,"【".EXEC_MODE."】".APP_NAME.":".$hensuu_name,$log,EXEC_MODE."-".APP_NAME);
