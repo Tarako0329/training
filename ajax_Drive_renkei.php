@@ -1,5 +1,6 @@
 <?php
-	//GoogleAuthで登録した場合
+	//GoogleAuthのリフレッシュトークンをDBに保存するためのコード
+	//PGNAME:ajax_Drive_renkei.php
 	require_once "config.php";
 	use classes\Security\Security;
 
@@ -61,8 +62,7 @@
 				U::log("GoogleAuth - アクセストークンの取得に失敗",["accessToken"=>$accessToken,"payload"=>$payload],1);
 			}
 		}catch(\Throwable $e){
-			$db->rollback_tran($e->getMessage());
-			U::send_E($e,"Googleリフレッシュトークン登録に失敗", "Googleリフレッシュトークン登録に失敗しました。");
+			$db->Exception_rollback($e,"Googleリフレッシュトークン登録に失敗しました。");
 			$msg = "Googleリフレッシュトークン登録に失敗しました。";
 			$status="false";	
 		}

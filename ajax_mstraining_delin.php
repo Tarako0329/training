@@ -41,9 +41,8 @@ if(U::exist($_POST["data"])){
 		$db->commit_tran();
 		$msg = "success";
 	}catch(\Throwable $e){
-		U::send_E($e,"種目マスタの登録に失敗", "種目マスタの登録に失敗しました。");
-		$msg = "catch Exception \$e：".$e->getMessage();
-		$db->rollback_tran($msg);
+		$db->Exception_rollback($e,"種目マスタ登録失敗");
+		$msg = "種目マスタの登録に失敗しました。";
 		$status = "error";
 	}
 }else{

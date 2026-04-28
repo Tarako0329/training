@@ -34,9 +34,8 @@ try{
 		,"status" => "success"
 	);
 }catch(\Throwable $e){
-	U::send_E($e,"種目マスタの目標更新に失敗", "種目マスタの目標更新に失敗しました。");
-	$msg = "catch Exception \$e：".$e->getMessage();
-	$db->rollback_tran($e->getMessage());
+	$db->Exception_rollback($e,"種目マスタ目標更新失敗");
+	$msg = "種目マスタの目標更新に失敗しました。";
 	$return_sts = array(
 		"MSG" => $msg
 		,"status" => "error"

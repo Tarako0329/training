@@ -37,8 +37,7 @@
 			$msg .= "【処理完了】";
 			$status="success";
 		}catch(\Throwable $e){
-			$db->rollback_tran("Google登録でユーザ登録に失敗 \$e: ".$e->getMessage());
-			U::send_E($e,"Google登録でユーザ登録に失敗", "Google登録でユーザ登録に失敗しました。");
+			$db->Exception_rollback($e,"Google登録でユーザ登録に失敗");
 			$msg = "ユーザ登録に失敗しました。再度お試しください。";
 			$status="false";
 		}

@@ -31,9 +31,7 @@
 			
 			$db->commit_tran();
 		}catch(\Throwable $e){
-			$msg = "catch Exception \$e：".$e->getMessage();
-			$db->rollback_tran($msg);
-			U::send_E($e,"体組織記録登録に失敗", "体組織記録登録に失敗しました。");
+			$db->Exception_rollback($e,"体組織記録登録に失敗");
 		}
 		//リダイレクト
 		header("HTTP/1.1 307 Moved Permanently");

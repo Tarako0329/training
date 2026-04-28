@@ -107,6 +107,7 @@ ver1.30.2:phpmailer導入-commited
 ver1.30.3:リファクタリング:catch_Throwableに修正-commited
 ver1.31.0:サービスワーカー有効化-commited
 ver1.31.1:プライバシーポリシー更新
+ver1.31.2:リファクタリング：例外処理強化
 
 
 

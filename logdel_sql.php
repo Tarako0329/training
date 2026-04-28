@@ -27,7 +27,7 @@ try{
 	$refreshToken = $SQ->decrypt($row[0]['google_refresh_token']);
 	$db_spsfilename = $row[0]['spsfilename'] ?? "";
 
-	$spread_flg = U::exist($refreshToken) && U::exist($db_spsfilename);
+	$spread_flg = U::exist($refreshToken) && U::exist($db_spsfilename) && (EXEC_MODE!=="Local");
 
 	$sql = "DELETE from tr_log where id = :id and SEQ = :SEQ";
 	$db->UP_DEL_EXEC($sql,[":id" => $id,":SEQ" => $_POST["SEQ"]]);
@@ -40,9 +40,7 @@ try{
 	$db->commit_tran();
 
 }catch(\Throwable $e){
-	$msg = "catch Exception \$e：".$e->getMessage();
-	$db->rollback_tran($msg);
-	U::send_E($e,"トレーニングログ削除に失敗", "トレーニングログ削除に失敗しました。");
+	$db->Exception_rollback($e,"トレーニングログ削除失敗");
 	$_SESSION["msg"] = "ログ削除に失敗しました。再度お試しください。";
 }
 //ログイン失敗

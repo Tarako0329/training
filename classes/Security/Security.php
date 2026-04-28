@@ -5,6 +5,7 @@ use classes\Database\Database;
 use classes\Utilities\Utilities as U;
 
 
+
 class Security {
 	private const AUTH_OPTIONS = [
 		'cost' => 12, // 計算負荷を上げる（将来的に数値を増やす）
@@ -137,8 +138,6 @@ class Security {
 		}
 		return $rtn;
 	}
-
-
-
+	
 }
 ?>

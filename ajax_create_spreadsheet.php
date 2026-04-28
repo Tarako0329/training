@@ -1,5 +1,6 @@
 <?php
-	//GoogleAuthで登録した場合
+	//GoogleAuthを使用してスプレッドシートを作成するためのAjax処理
+	//PGNAME:ajax_create_spreadsheet.php
 	require_once "config.php";
 	use classes\SpreadSheet\SpreadSheet;
 	use classes\Security\Security;
@@ -25,7 +26,6 @@
 
 	// recording_ajax.php の一部
 	if (U::exist($sheetname) && U::exist($refreshToken) && U::exist($_SESSION['USER_ID'])) {
-		
 		try{
 			//スプレッドシートの作成
 			$SpreadSheet = new SpreadSheet($refreshToken, $sheetname);
@@ -110,8 +110,7 @@
 			$msg = "正常終了";
 			$status="success";
 		}catch(\Throwable $e){
-			$db->rollback_tran($e->getMessage());
-			U::send_E($e,"スプレッドシート登録に失敗", "スプレッドシートの作成または更新に失敗しました。");
+			$db->Exception_rollback($e,"トレーニングログ削除失敗");
 			$msg = "スプレッドシートの作成または更新に失敗しました。";
 			$status="error";
 		}

@@ -28,9 +28,7 @@
 				}
 				$db->commit_tran();
 			}catch(\Throwable $e){
-				$msg = "catch Exception \$e：".$e->getMessage();
-				$db->rollback_tran($msg);
-				U::send_E($e,"ユーザ情報更新に失敗", "ユーザ情報更新に失敗しました。");
+				$db->Exception_rollback($e,"ユーザ情報更新に失敗");
 			}
 		}
 

@@ -40,7 +40,7 @@ try{
 	$refreshToken = $SQ->decrypt($row[0]['google_refresh_token']);
 	$db_spsfilename = $row[0]['spsfilename'] ?? "";
 
-	$spread_flg = U::exist($refreshToken) && U::exist($db_spsfilename);
+	$spread_flg = U::exist($refreshToken) && U::exist($db_spsfilename) && (EXEC_MODE!=="Local");;
 
 	if(!U::exist($_POST["NO"])){//新規登録
 		$sql = "SELECT max(jun) as junban from tr_log where ymd = :ymd and id = :id;";
@@ -164,9 +164,8 @@ try{
 		,"filter" => $shu
 	);
 }catch(\Throwable $e){
-	$msg = "catch Exception \$e：".$e->getMessage();
-	$db->rollback_tran($msg);
-	U::send_E($e,"トレーニングログの登録・更新に失敗", "トレーニングログの登録・更新に失敗しました。");
+	$db->Exception_rollback($e,"トレーニングログの登録・更新に失敗");
+	$msg= "トレーニングログの登録・更新に失敗しました。再度お試しください。";
 	$return_sts = array(
 		"MSG" => $msg
 		,"status" => "error"
