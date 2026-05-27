@@ -73,7 +73,7 @@ register_shutdown_function(function () {
     // エラーが存在し、かつ致命的なエラー（E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR）の場合
     if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
         
-        $to = "developer@example.com"; // 開発者のメールアドレス
+        $to = SYSTEM_NOTICE_MAIL; // 開発者のメールアドレス
         $subject = "【重要】システムフェータルエラー発生";
         
         // メールの本文を作成
