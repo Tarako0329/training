@@ -37,10 +37,15 @@ $sql = "SELECT ts.* FROM taisosiki ts
 $taisosiki = $db->SELECT($sql,[":id" => $id]);
 
 //履歴取得
-$sql = "SELECT ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu ORDER BY T.ymd,T.jun) AS No,T.* FROM (SELECT *,0 AS max_weight FROM tr_log WHERE id = ? and shu = ? 
-	UNION ALL SELECT * FROM  tr_log_max_record WHERE id = ? and shu = ?) AS T 
+$sql = "SELECT ROW_NUMBER() OVER(partition by T.id,T.ymd,T.shu ORDER BY T.ymd,T.jun) AS No,T.* FROM (SELECT *,0 AS max_weight FROM tr_log WHERE id = :id1 AND shu = :shu1 
+	UNION ALL SELECT * FROM  tr_log_max_record WHERE id = :id2 AND shu = :shu2) AS T 
 	ORDER BY T.ymd desc,T.jun ";
-$dataset_work = $db->SELECT($sql,[$id,$shu,$id,$shu]);
+$dataset_work = $db->SELECT($sql,[
+	":id1" => $id,
+	":shu1" => $shu,
+	":id2" => $id,
+	":shu2" => $shu
+]);
 
 //log_writer2("\$dataset_work",$dataset_work,"lv3");
 $dataset = [];
