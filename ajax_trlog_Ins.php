@@ -36,8 +36,9 @@ try{
 
 	//リフレッシュトークンの取得
 	$row = $db->SELECT("SELECT * FROM users WHERE id = :id",["id"=>$_SESSION['USER_ID']]);
+	//U::log("\$row",$row[0],4);
 	$SQ = new Security($_SESSION['USER_ID'],key);
-	$refreshToken = $SQ->decrypt($row[0]['google_refresh_token']);
+	$refreshToken = $SQ->decrypt($row[0]['google_refresh_token'] ?? ""); ;
 	$db_spsfilename = $row[0]['spsfilename'] ?? "";
 
 	$spread_flg = U::exist($refreshToken) && U::exist($db_spsfilename) && (EXEC_MODE!=="Local");;

@@ -519,15 +519,15 @@
 
 								<div class='row' style='margin:1px 20px;'>
 									<label for='rep' class="form-label" style='padding-left:0;margin-bottom:1px;'>時間(分)</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='rep' name='rep' :value='kiroku[1]'>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='rep' name='rep' v-model='kiroku[1]'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='kyori' class="form-label" style='padding-left:0;margin-bottom:1px;'>距離(ｍ)</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='kyori' name='rep2' :value='kiroku[3]'>
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='kyori' name='rep2' v-model='kiroku[3]'>
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='cal' class="form-label" style='padding-left:0;margin-bottom:1px;'>カロリー(Kcal)</label>
-									<input type='text' @focus='keydown' class="form-control form-control-sm" id='cal' name='cal' :value='kiroku[0]'> <!--cal を weightで代用-->
+									<input type='text' @focus='keydown' class="form-control form-control-sm" id='cal' name='cal' v-model='kiroku[0]'> <!--cal を weightで代用-->
 								</div>
 								<div class='row' style='margin:1px 20px;'>
 									<label for='memo2' class="form-label" style='padding-left:0;margin-bottom:1px;'>SETメモ</label>
@@ -1066,10 +1066,6 @@
 						jiju.value = (p_list.typ==="2")?true:false
 
 						MODAL = document.getElementById(modal_id)
-						/*
-						MODAL_INST = new bootstrap.Modal(MODAL, {
-							backdrop: 'static' // backdropをstaticに設定
-						});*/
 						// すでにインスタンスがあるか確認し、なければ作る（二重生成防止）
 						MODAL_INST = bootstrap.Modal.getInstance(MODAL) || new bootstrap.Modal(MODAL, {
 							backdrop: 'static' // コメント通り「背景クリックで閉じない」にするならこれ
@@ -1093,11 +1089,6 @@
 						mBtnName.value[1] = '閉じる'
 						keybord_show.value=false
 						kiroku_index.value=''
-						/*
-						MODAL_INST = new bootstrap.Modal(MODAL, {
-							backdrop: true // backdropをtrueに設定
-						});
-						*/
 					}
 					//const delete_log = (NO,YMD) =>{
 					const delete_log = (p_SEQ,p_typ) =>{
@@ -1106,22 +1097,11 @@
 							return
 						}
 						let form = document.createElement('form');
-						//let numbers = document.createElement('input');
-						//let date = document.createElement('input');
 						let seq = document.createElement('input');
 						let typ = document.createElement('input');
 
 						form.method = 'POST';
 						form.action = 'logdel_sql.php';
-						/*
-						numbers.type = 'hidden'; //入力フォームが表示されないように
-						numbers.name = 'k_jun';
-						numbers.value = NO;
-						
-						date.type = 'hidden'; //入力フォームが表示されないように
-						date.name = 'k_ymd';
-						date.value = YMD;
-						*/
 						seq.type = 'hidden';
 						seq.name = 'SEQ';
 						seq.value = p_SEQ;
@@ -1130,8 +1110,6 @@
 						typ.name = 'typ';
 						typ.value = p_typ;
 
-						//form.appendChild(numbers);
-						//form.appendChild(date);
 						form.appendChild(seq);
 						form.appendChild(typ);
 						document.body.appendChild(form);
@@ -1193,17 +1171,26 @@
 								alert('セット数が未入力です')
 								return
 							}else if(!e.currentTarget.elements['shu1'].value){
-								//if(!e.currentTarget.elements['shu2'].value){
-									alert('トレーニング種目が未入力です')
-									return
-								//}
+								alert('トレーニング種目が未入力です')
+								return
 							}
 						}else if(e.target.id==='us'){
 							if(!e.currentTarget.elements['shu1'].value){
-								//if(!e.currentTarget.elements['shu2'].value){
-									alert('トレーニング種目が未入力です')
-									return
-								//}
+								alert('トレーニング種目が未入力です')
+								return
+							}else if(!ymd.value){
+								alert('日付が未入力です')
+								return
+							}else if((!kiroku.value[1] && !kiroku.value[3]) || (kiroku.value[1] == 0 && kiroku.value[3] == 0)){
+								console_log(kiroku.value)
+								alert('距離・時間のいずれかを入力してください')
+								return
+							}
+
+							if(!kiroku.value[0]){//カロリー
+								kiroku.value[0] = 0
+								//alert('重量が未入力です')
+								//return
 							}
 						}
 						//return

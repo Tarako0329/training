@@ -108,7 +108,8 @@ ver1.30.3:リファクタリング:catch_Throwableに修正-commited
 ver1.31.0:サービスワーカー有効化-commited
 ver1.31.1:プライバシーポリシー更新-commited
 ver1.31.2:リファクタリング：例外処理強化：テスト環境テスト中-commited
-ver1.31.2:bugfix
+ver1.31.3:bugfix-commited
+ver1.31.4:bugfix:有酸素登録
 
 
 

@@ -113,7 +113,8 @@ class Utilities {
 			if ($cc)  $mail->addCC($cc);
 			if ($bcc) $mail->addBCC($bcc);
 			// --- 内容設定 ---
-			$mail->isHTML(false);                          // テキスト形式
+			//$mail->isHTML(false);                          // テキスト形式
+			$mail->isHTML($body !== strip_tags($body));                          // HTML形式の場合、自動でtrueになる
 			$mail->Subject = $subject; // 件名
 			$mail->Body    = $body;
 			$mail->send();
