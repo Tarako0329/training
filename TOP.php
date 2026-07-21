@@ -1378,6 +1378,7 @@
 					const loader = ref(false)
 					const renkei_flg = ref(<?php echo $google_refresh_token ? "true" : "false";?>)
 					const Drive_renkei = () => {
+						consile_log("Drive_renkei start")
 						client.requestCode();
 					}
 					const handleAuthCode = (code) => {
