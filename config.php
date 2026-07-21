@@ -19,7 +19,7 @@ if(EXEC_MODE==="Local"){
   define("ROOT_URL","https://".MAIN_DOMAIN."/");
 }
 if(EXEC_MODE==="Product"){
-  $time="2026-04-03";	//リリース日
+  $time="2026-07-21";	//リリース日
 }else{
   $time=date("YmdHis");
 }
@@ -42,7 +42,7 @@ define("PASSWORD", $_ENV["PASS"]);
 define("DB_HOST", $_ENV["SV"]);
 define("DB_NAME", $_ENV["DBNAME"]);
 // DBとの接続
-$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());  //CLASS化
+//$pdo_h = new PDO(DNS, USER_NAME, PASSWORD, get_pdo_options());  //CLASS化
 
 spl_autoload_register(function ($className) {
   // 1. 名前空間のバックスラッシュ '\' を、OS標準のパス区切り文字（通常は '/'）に置換

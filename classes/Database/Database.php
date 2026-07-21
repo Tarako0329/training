@@ -226,10 +226,17 @@ class Database {
     }
     public function rollback_tran($msg=""):void{
       $msg = var_export($msg, true); //配列やオブジェクトも文字列化してログに出力できるようにする
-      $this->log .= "rollback;\n";
-      $this->log .= "/*ERROR SQL:[".$this->sql.";]*/\n";
-      $this->log .= "/*".$msg."*/\n";
-      $this->connect()->rollback();
+      $pdo = $this->connect();
+      if ($pdo->inTransaction()) {
+        $this->log .= "rollback;\n";
+        $this->log .= "/*ERROR SQL:[".$this->sql.";]*/\n";
+        $this->log .= "/*".$msg."*/\n";
+        $pdo->rollback();
+      }else{
+        $this->log .= "/*トランザクション中ではないためrollbackはスキップされました。*/\n";
+        $this->log .= "/*".$msg."*/\n";
+      }
+      //$this->connect()->rollback();
       $this->exec_log();
     }
     public function Exception_rollback(\Throwable $e,String $msg=""):void{
