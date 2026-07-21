@@ -24,8 +24,8 @@
 			if(EXEC_MODE!=="Local"){
 				$accessToken = $client->fetchAccessTokenWithAuthCode($_POST['code']);
 				$client->setAccessToken($accessToken);
-				$payload = $client->verifyIdToken($token['id_token']);
-				//$payload = $client->verifyIdToken($accessToken['id_token']);
+				//$payload = $client->verifyIdToken($token['id_token']);
+				$payload = $client->verifyIdToken($accessToken['id_token']);
 				U::log("\$payload",$payload,4);
 				if ($payload) {
 					$id = $payload['sub']; // これが「識別子ID」です！
