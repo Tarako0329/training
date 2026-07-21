@@ -1,5 +1,4 @@
 <?php
-session_start();
 // 共通ヘッダー
 date_default_timezone_set('Asia/Tokyo');
 require_once "./vendor/autoload.php";
@@ -9,6 +8,9 @@ require_once "functions.php";
 //.envの取得
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
+define("SESSION_NAME",$_ENV["SESSION_NAME"]);
+session_name(SESSION_NAME);
+session_start();
 
 define("MAIN_DOMAIN",$_ENV["MAIN_DOMAIN"]);
 define("EXEC_MODE",$_ENV["KANKYO"]);
