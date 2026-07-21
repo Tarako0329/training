@@ -1389,6 +1389,7 @@
 						loader.value = true
 						axios.post('ajax_Drive_renkei.php', form)
 						.then((response) => {
+								console_log(response.data)
 								if(response.data.status==="success"){
 									alert("連携に成功しました")
 									renkei_flg.value = true
