@@ -23,6 +23,7 @@
 	$new_sheetname = $_POST['sheetname'] ?? "";
 
 	$sheetname = U::exist($db_spsfilename)?$db_spsfilename:$new_sheetname;//新規もしくは既存のファイル名をセット
+	U::log("\$sheetname",$sheetname,4);
 
 	// recording_ajax.php の一部
 	if (U::exist($sheetname) && U::exist($refreshToken) && U::exist($_SESSION['USER_ID'])) {
