@@ -1378,7 +1378,7 @@
 					const loader = ref(false)
 					const renkei_flg = ref(<?php echo $google_refresh_token ? "true" : "false";?>)
 					const Drive_renkei = () => {
-						consile_log("Drive_renkei start")
+						console_log("Drive_renkei start")
 						client.requestCode();
 					}
 					const handleAuthCode = (code) => {
@@ -1403,6 +1403,7 @@
 						})
 					}
 					const set_google_client = () =>{
+						console_log("set_google_client start")
 						loader.value = true
 						client = google.accounts.oauth2.initCodeClient({
 							client_id: '<?php echo GOOGLE_AUTH;?>',
