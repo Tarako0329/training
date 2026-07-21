@@ -111,7 +111,7 @@
 			$msg = "正常終了";
 			$status="success";
 		}catch(\Throwable $e){
-			$db->Exception_rollback($e,"トレーニングログ削除失敗");
+			$db->Exception_rollback($e,"スプレッドシートの作成または更新に失敗しました。");
 			$msg = "スプレッドシートの作成または更新に失敗しました。";
 			$status="error";
 		}

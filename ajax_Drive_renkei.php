@@ -7,7 +7,7 @@
 	define("GOOGLE_AUTH",$_ENV["GOOGLE_AUTH"]);
 	define("GOOGLE_AUTH_SKEY",$_ENV["GOOGLE_AUTH_SKEY"]);
 	//GoogleAuth新規ユーザ登録用
-	log_writer2("\$POST",$_POST,"lv3");
+	U::log("\$POST",$_POST,4);
 	
 	$msg="不正なアクセスです";
 	$status="false";
@@ -25,9 +25,11 @@
 				$accessToken = $client->fetchAccessTokenWithAuthCode($_POST['code']);
 				$client->setAccessToken($accessToken);
 				$payload = $client->verifyIdToken($token['id_token']);
+				//$payload = $client->verifyIdToken($accessToken['id_token']);
+				U::log("\$payload",$payload,4);
 				if ($payload) {
 					$id = $payload['sub']; // これが「識別子ID」です！
-					}
+				}
 			}else{// これはローカルテスト用のダミーデータです。実際のコードでは、fetchAccessTokenWithAuthCode() を使用して取得します。
 				$accessToken = array(
 					"access_token" => "ya29.a0Aa7MYipzNvBymolzDieF-nd85Q4lOxxxxxxx"
