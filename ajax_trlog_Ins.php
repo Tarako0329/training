@@ -29,7 +29,7 @@ $shu = $_POST["shu1"] ?? "";
 $rep2 = ($_POST["rep2"] == "")? 0:$_POST["rep2"];
 $cal = ($_POST["cal"] == "")?0:$_POST["cal"];
 $type = (string)(U::exist($_POST["jiju"] ?? null) ? "2" : $_POST["typ"]);
-$sheetname = ($type === "1") ? "有酸素運動" : "ウェイトトレーニング";
+$sheetname = ($type === "1") ? "'有酸素運動'" : "'ウェイトトレーニング'";
 
 try{
 	$db->begin_tran();
