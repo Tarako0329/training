@@ -49,6 +49,9 @@
 			}
 			log_writer2("\$accessToken",$accessToken,"lv3");
 			if (U::exist($accessToken['refresh_token']) && U::exist($id)) {
+				//ログインにGoogleアカウントを利用していない場合は$_SESSION['USER_ID']を使用する
+				$id = ($_SESSION['USER_ID']!==$id)?$_SESSION['USER_ID']:$id;
+				
 				$SQ = new Security($id,key);
 				$refreshToken = $SQ->encrypt($accessToken['refresh_token']);
 				//リフレッシュトークンの登録
