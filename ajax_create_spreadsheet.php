@@ -13,6 +13,18 @@
 	$msg="不正なアクセスです";
 	$status="false";
 
+	if(!U::exist($_SESSION['USER_ID'])){
+		$msg="一定時間操作がありませんでした。再度ログインしてください。";
+		$status="false";
+		$return_sts = array(
+			"MSG" => $msg
+			,"status" => $status
+		);
+		header('Content-type: application/json');
+		echo json_encode($return_sts, JSON_UNESCAPED_UNICODE);
+		exit();
+	}
+
 	//リフレッシュトークンの取得
 	$row = $db->SELECT("SELECT * FROM users WHERE id = :id",["id"=>$_SESSION['USER_ID']]);
 	$SQ = new Security($_SESSION['USER_ID'],key);
