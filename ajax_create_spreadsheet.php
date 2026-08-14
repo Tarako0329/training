@@ -50,6 +50,12 @@
 					$sheetname = $new_sheetname;//新しいファイル名で再作成する
 					$SpreadSheet = new SpreadSheet($refreshToken, $sheetname);//再作成
 				}
+			}else{
+				if($sheetname !== $new_sheetname){
+					$sheetname = $new_sheetname;//新しいファイル名で再作成する
+					$SpreadSheet = new SpreadSheet($refreshToken, $sheetname);//再作成
+					U::log("既存のファイルはなかったが、ファイル名が新しい場合は新しいファイル名で作成する。",$sheetname,4);
+				}
 			}
 			{
 				$SpreadSheet->createLogSheet("ウェイトトレーニング");
