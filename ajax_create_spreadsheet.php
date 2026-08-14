@@ -31,7 +31,14 @@
 			//スプレッドシートの作成
 			$SpreadSheet = new SpreadSheet($refreshToken, $sheetname);
 
-			if($SpreadSheet->is_new_file){//新規作成の場合
+			//if($SpreadSheet->is_new_file){//新規作成の場合
+			if($SpreadSheet->is_new_file !== true){//ファイル名変更などの場合は既存ファイルを削除してから再作成する
+				if($SpreadSheet->DELETE_SPREADSHEET($sheetname)){
+					U::log("既存のスプレッドシートを削除しました。",$sheetname,4);
+					$SpreadSheet = new SpreadSheet($refreshToken, $new_sheetname);//再作成
+				}
+			}
+			{
 				$SpreadSheet->createLogSheet("ウェイトトレーニング");
 				$SpreadSheet->G_INSERT([['0','目標', $mokuhyou]], "ウェイトトレーニング");
 				$SpreadSheet->G_INSERT([['SEQ', '日付','実施順','種目' ,'重量', '回数','セット数' , 'メモ']], "ウェイトトレーニング");
@@ -79,17 +86,17 @@
 				}, $db->SELECT($sql,["id"=>$_SESSION['USER_ID']]));
 
 				$SpreadSheet->G_INSERT($row,"体組織計測");
-			}else{//更新
+			}/*else{//更新
 				$SpreadSheet->G_UPDATE("0",[['0','目標', $mokuhyou]],"ウェイトトレーニング");
 				//ファイル名更新
 				if($new_sheetname !== $sheetname && U::exist($db_spsfilename)){
 					$rename_result = $SpreadSheet->RENAME_FILE($new_sheetname, $sheetname);
 					if($rename_result === "warning"){
-						log_writer2("ファイル名の不一致",$sheetname."!=".$db_spsfilename,"lv1");
+						U::log("ファイル名の不一致",$sheetname."!=".$db_spsfilename,2);
 						$msg = "ファイル名の不一致のため、ファイル名は更新されませんでした。";
 						$status="warning";
 					}else if($rename_result === "error"){
-						log_writer2("ファイル名の更新に失敗",$sheetname,"lv0");
+						U::log("ファイル名の更新に失敗",$sheetname,1);
 						$msg = "ファイル名の更新に失敗しました。";
 						$status="error";
 					}else{
@@ -97,7 +104,7 @@
 						$sheetname = $new_sheetname;//更新成功したので、以降の処理は新しいファイル名で行う
 					}
 				}
-			}
+			}*/
 
 			//userテーブルの更新
 			$db->begin_tran();

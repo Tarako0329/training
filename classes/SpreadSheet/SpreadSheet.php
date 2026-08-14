@@ -291,6 +291,40 @@ class SpreadSheet {
 		}
 	}
 
+	/**
+	 * 指定した名前のスプレッドシート（ファイル本体）をGoogleドライブから削除する
+	 *
+	 * @param string $fileName 削除したいスプレッドシートのファイル名
+	 * @return bool 成功した場合は true、ファイルが存在しない・エラーの場合は false
+	 */
+	public function DELETE_SPREADSHEET(string $fileName): bool {
+		try {
+			// 1. 指定されたファイル名と同名のスプレッドシート（ゴミ箱以外のもの）を検索
+			$query = "name = '$fileName' and mimeType = 'application/vnd.google-apps.spreadsheet' and trashed = false";
+			$response = $this->driveService->files->listFiles([
+				'q' => $query,
+				'fields' => 'files(id, name)'
+			]);
+
+			// 該当するファイルが見つからない場合は false を返す
+			if (count($response->files) === 0) {
+				log_writer2("DELETE_SPREADSHEET", "削除対象のファイルが見つかりません: {$fileName}", "lv3");
+				return false;
+			}
+
+			// 2. 最初に見つかったファイルのIDを取得して削除を実行
+			$targetFileId = $response->files[0]->id;
+			$this->driveService->files->delete($targetFileId);
+
+			log_writer2("DELETE_SPREADSHEET", "ファイルを削除しました: {$fileName} (ID: {$targetFileId})", "lv3");
+			return true;
+
+		} catch (\Throwable $e) {
+			log_writer2("DELETE_SPREADSHEETでエラーが発生しました", $e->getMessage(), "lv0");
+			return false;
+		}
+	}
+
 	// A列からSEQを探し、行番号（1始まり）を返す
 	private function findRowBySeq($seq, $sheetName) {
 		$sheetName = $this->quoteSheetName($sheetName);
