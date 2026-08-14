@@ -866,6 +866,11 @@
 							})
 						
 						console_log(response.data)
+						if(response.data.kintore_log.length === 0){
+							reloader_info.value = 'トレーニングを記録すると、記録がココに表示されます'
+							console_log('トレログ未登録')
+							return 0
+						}
 						shumoku.value = response.data.shumoku_list
 						kintore_log.value = response.data.kintore_log
 						max_log.value = response.data.max_log
