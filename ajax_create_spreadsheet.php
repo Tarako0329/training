@@ -47,7 +47,8 @@
 			if($SpreadSheet->is_new_file !== true){//ファイル名変更などの場合は既存ファイルを削除してから再作成する
 				if($SpreadSheet->DELETE_SPREADSHEET($sheetname)){
 					U::log("既存のスプレッドシートを削除しました。",$sheetname,4);
-					$SpreadSheet = new SpreadSheet($refreshToken, $new_sheetname);//再作成
+					$sheetname = $new_sheetname;//新しいファイル名で再作成する
+					$SpreadSheet = new SpreadSheet($refreshToken, $sheetname);//再作成
 				}
 			}
 			{
