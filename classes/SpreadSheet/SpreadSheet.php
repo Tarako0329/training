@@ -86,7 +86,7 @@ class SpreadSheet {
  	* @return string 'success' | 'warning' (重複のため作成スキップ) | 'error'
  	*/
 	public function createLogSheet($sheetName):string {
-		$sheetName = $this->quoteSheetName($sheetName);
+		//$sheetName = $this->quoteSheetName($sheetName);
 		$body = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
 			'requests' => [['addSheet' => ['properties' => ['title' => $sheetName]]]]
 		]);
@@ -209,7 +209,7 @@ class SpreadSheet {
  	* @return string 'success' | 'warning' (見つからない) | 'error'
  	*/
 	public function DELETE_SHEET($sheetName) {
-		$sheetName = $this->quoteSheetName($sheetName);
+		//$sheetName = $this->quoteSheetName($sheetName);
 		try {
 				// 1. スプレッドシートの全シート情報を取得してIDを探す
 				$spreadsheet = $this->service->spreadsheets->get($this->spreadsheetId);
@@ -250,8 +250,8 @@ class SpreadSheet {
  	* @return string 'success' | 'warning' (重複のため作成スキップ) | 'error'
  	*/
 	public function RENAME_SHEET($sheetName, $sheetName_new):string {
-		$sheetName = $this->quoteSheetName($sheetName);
-		$sheetName_new = $this->quoteSheetName($sheetName_new);
+		//$sheetName = $this->quoteSheetName($sheetName);
+		//$sheetName_new = $this->quoteSheetName($sheetName_new);
 		try {
 			// 1. スプレッドシートの全シート情報を取得してIDを探す
 			$spreadsheet = $this->service->spreadsheets->get($this->spreadsheetId);
