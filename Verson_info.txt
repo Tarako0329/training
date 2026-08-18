@@ -114,6 +114,7 @@ ver1.31.5:bugfix:未トランザクション時のロールバック制御-commi
 ver1.32.0:googleスプレッドシート仕様変更-commited
 ver1.32.1:ipassでログインしてgoogleドライブ連携をするパターンに対応-commited
 ver1.32.2:細かな修正-commited
+ver1.32.3:細かな修正-commited
 
 
 

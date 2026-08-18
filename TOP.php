@@ -778,7 +778,7 @@
 			
 		</script>
 		<script>//Vus.js
-			const { createApp, ref,shallowRef, onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
+			const { createApp, ref,shallowRef, triggerRef,onMounted, onBeforeMount, computed, VueCookies,watch,nextTick } = Vue;
 			createApp({
 				setup(){
 					const lock_trlog_area = () =>{
@@ -793,11 +793,13 @@
 					const background_show = ref(true)
 					const kintore_log = shallowRef([])
 					const shumoku = shallowRef([])
-					const max_log = shallowRef([])
+					//const max_log = shallowRef([])
+					const max_log = ref([])
 					const max_log_sort = computed(()=>{
-						let temp = max_log.value.sort((a,b)=>{
-							return a.sort-b.sort
-							//return String(a.display_hide1) + a.sort > String(b.display_hide1) + b.sort
+						if (!max_log.value) return []
+
+						let temp = [...max_log.value].sort((a,b)=>{
+							return Number(a.sort)-Number(b.sort)
 						})
 
 						return temp.filter((list)=>{
@@ -867,7 +869,7 @@
 						
 						console_log(response.data)
 						if(response.data.kintore_log.length === 0){
-							reloader_info.value = 'トレーニングを記録すると、記録がココに表示されます'
+							reloader_info.value = 'トレーニングを記録すると、このエリアに内容が表示されます'
 							console_log('トレログ未登録')
 							return 0
 						}
@@ -1285,11 +1287,20 @@
 								max_log_sort.value.forEach((list,index)=>{
 									list.sort = (Number(index) + Number(1)) * Number(100)
 								})
+								/*const updatedList = max_log_sort.value.map((list, index) => {
+  							  list.sort = (Number(index) + Number(1)) * Number(100)
+  							  return list
+  							})
+								console_log(updatedList)
+								max_log.value = updatedList
+								triggerRef(max_log)*/
 							}
 							draggingItem.value.classList.remove('table-primary');
 							draggingItem.value.classList.add('table-info');
 							draggingItem.value = null
 							dragIndex.value = null
+
+							
 						}else{
 							//draggingItem.value = e.target
 							draggingItem.value = document.getElementById(`sort_${max_log_sort.value[p_index].shu}`)
