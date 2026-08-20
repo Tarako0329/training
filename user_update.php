@@ -34,12 +34,12 @@
 
 		$msg="処理完了";
 		$status="success";
-		header("HTTP/1.1 301 Moved Permanently");
-    header("Location: TOP.php");
+		//header("HTTP/1.1 301 Moved Permanently");
+    header("Location: TOP.php", true, 303);
     exit();
 
   }
-	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: index.php?logoff=out");
+	//header("HTTP/1.1 301 Moved Permanently");
+	header("Location: index.php?logoff=out", true, 303);
 	exit();
 ?>

@@ -25,9 +25,8 @@
 		$_SESSION["msg"]="パスワードを更新しました。ログインしてください。";
 	}
    
-  //ログイン失敗
   //リダイレクト
-  header("HTTP/1.1 301 Moved Permanently");
-  header("Location: index.php");
+  //header("HTTP/1.1 301 Moved Permanently");
+  header("Location: index.php", true, 303);
   exit();
 ?>

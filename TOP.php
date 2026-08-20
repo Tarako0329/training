@@ -14,8 +14,8 @@
 		log_writer2("GET",$_GET,"lv3");
 		$_SESSION=[];
 		$_SESSION["msg"] = "ログインしてください。";
-		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: index.php");
+		//header("HTTP/1.1 301 Moved Permanently");
+		header("Location: index.php", true, 303);
 		exit();
 	}
 
@@ -27,8 +27,8 @@
 		$_SESSION=[];
 		$_SESSION["auto_login"] = false;//セッションループ回避用
 		$_SESSION["msg"] = "ログオフしました";
-		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: index.php");
+		//header("HTTP/1.1 301 Moved Permanently");
+		header("Location: index.php", true, 303);
 		exit();
 	}
 
@@ -45,8 +45,8 @@
 		$_SESSION=[];
 		$_SESSION["auto_login"] = false;//セッションループ回避用
 		$_SESSION["msg"] = "ＩＤ 又はパスワードが間違っています。";
-		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: index.php");
+		//header("HTTP/1.1 301 Moved Permanently");
+		header("Location: index.php", true, 303);
 		exit();
 	}
 

@@ -19,8 +19,8 @@ if($_SESSION["msg"] === "ログオフしました"){
 	$msg='登録完了しました。IDとパスワードを入力しログインしてください。';
 }else if (isset($_COOKIE['token']) && $_SESSION["auto_login"] === true) {
 	//自動ログイン
-	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: logincheck.php");
+	//header("HTTP/1.1 301 Moved Permanently");
+	header("Location: logincheck.php", true, 303);
 	exit();
 }else{
 	$msg=$_SESSION["msg"] ?? "";

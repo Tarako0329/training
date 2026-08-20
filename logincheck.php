@@ -53,8 +53,8 @@
 		$_SESSION['USER_ID'] = $id;
 	
 		//リダイレクト
-		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: TOP.php");
+		//header("HTTP/1.1 301 Moved Permanently");
+		header("Location: TOP.php", true, 303);
 		exit();
 	} else {
 		//ログイン失敗
@@ -66,8 +66,8 @@
 		log_writer2("ログイン失敗 \$_SESSION: " , $_SESSION,"lv3");
 		
 		//リダイレクト
-		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: index.php");
+		//header("HTTP/1.1 301 Moved Permanently");
+		header("Location: index.php", true, 303);
 		exit();
 	}
 

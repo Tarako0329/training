@@ -12,8 +12,8 @@ if(isset($_SESSION['USER_ID'])){
 }else if (check_auto_login($_COOKIE['token'])===true) {
 	$id = $_SESSION['USER_ID'];
 }else{
-	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: index.php");
+	//header("HTTP/1.1 301 Moved Permanently");
+	header("Location: index.php", true, 303);
 	exit();
 }
 
@@ -43,9 +43,8 @@ try{
 	$db->Exception_rollback($e,"トレーニングログ削除失敗");
 	$_SESSION["msg"] = "ログ削除に失敗しました。再度お試しください。";
 }
-//ログイン失敗
 //リダイレクト
-header("HTTP/1.1 301 Moved Permanently");
-header("Location: TOP.php");
+//header("HTTP/1.1 301 Moved Permanently");
+header("Location: TOP.php", true, 303);
 exit();
 ?>

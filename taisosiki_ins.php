@@ -7,8 +7,8 @@
 	}else if (check_auto_login($_COOKIE['token'])===true) {
 		$id = $_SESSION['USER_ID'];
 	}else{
-		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: index.php");
+		//header("HTTP/1.1 301 Moved Permanently");
+		header("Location: index.php", true, 303);
 		exit();
 	}
 	
