@@ -1,7 +1,5 @@
 <?php
 	require_once "config.php";
-	//require_once "database.php";
-	//$db = new Database();
 
 	//トランザクション処理
 	if(isset($_SESSION['USER_ID'])){
@@ -34,13 +32,13 @@
 			$db->Exception_rollback($e,"体組織記録登録に失敗");
 		}
 		//リダイレクト
-		header("HTTP/1.1 307 Moved Permanently");
-		header("Location: graph_taisosiki.php");
+		//header("HTTP/1.1 307 Moved Permanently");
+		header("Location: graph_taisosiki.php", true, 303);
 		exit();
 	} 
 	//ログイン失敗
 	//リダイレクト
-	header("HTTP/1.1 301 Moved Permanently");
-	header("Location: index.php");
+	//header("HTTP/1.1 301 Moved Permanently");
+	//header("Location: index.php");
 	exit();
 ?>

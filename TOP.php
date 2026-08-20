@@ -791,7 +791,7 @@
 					}
 
 					const background_show = ref(true)
-					const kintore_log = shallowRef([])
+					const kintore_log = shallowRef([])	//memo :shallowRefを参照するコンピューティッドを直接変更しても無効
 					const shumoku = shallowRef([])
 					//const max_log = shallowRef([])
 					const max_log = ref([])
