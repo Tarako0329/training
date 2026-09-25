@@ -15,13 +15,16 @@ session_start();
 define("MAIN_DOMAIN",$_ENV["MAIN_DOMAIN"]);
 define("EXEC_MODE",$_ENV["KANKYO"]);
 define("APP_NAME",$_ENV["APP_NAME"]);
+/*//テスト環境もhttps化が完了
 if(EXEC_MODE==="Local"){
   define("ROOT_URL","http://".MAIN_DOMAIN."/");
 }else{
   define("ROOT_URL","https://".MAIN_DOMAIN."/");
 }
+*/
+define("ROOT_URL","https://".MAIN_DOMAIN."/");
 if(EXEC_MODE==="Product"){
-  $time="2026-07-21";	//リリース日
+  $time="2026-09-25";	//リリース日
 }else{
   $time=date("YmdHis");
 }

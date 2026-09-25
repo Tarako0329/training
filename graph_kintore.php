@@ -32,7 +32,7 @@ if(count($data) < 3){
 
 //種目の取得
 //全種目
-$sql = "select typ,shu,max(insdatetime) as sort from tr_log where id = :id and typ=0 group by shu ,typ order by sort desc, typ";
+$sql = "SELECT typ,shu,max(insdatetime) as sort from tr_log where id = :id and typ=0 group by shu ,typ order by sort desc, typ";
 $shumoku_list = $db->SELECT($sql,["id" => $id]);
 
 ?>
@@ -72,11 +72,11 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 						<select v-model='g_shu' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
 							<option value='max'>MAX記録</option>
 							<option value='volume'>トレーニング量</option>
-							<option value='growth'>MAX更新前</option>
+							<option value='growth'>MAX/Volume</option>
 						</select>
 					</div>
 					<div class='text-center' style='width:25%;max-width:200px;'>
-						<select v-model='tani' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
+						<select v-show='g_shu!=="growth"' v-model='tani' class='form-select form-select-sm' style='width:100%;max-width:200px;'>
 							<option value='day'>日毎</option>
 							<option value='month'>月毎</option>
 						</select>
@@ -194,16 +194,18 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 				let y2_min = 0
 				let y1_max = null
 
-				watch([gtype,g_shu,tani,shu],()=>{
+				watch([gtype,g_shu,tani,shu],async()=>{
 					if(tani.value==="day" && gtype.value==="hikaku"){
 						gtype.value = "12M"
 					}
 					if(g_shu.value==="growth"){
-						get_growth_data()
+						//get_growth_data()
+						get_growth_data2()
 					}else if(g_shu.value==="max"){
 						get_max_data()
 					}else if(g_shu.value==="volume"){
-						get_volume_data()
+						await get_volume_data()
+						console_log("end2 get_volume_data")
 					}
 					localStorage.setItem('gtype',gtype.value);
 					localStorage.setItem('g_shu',g_shu.value);
@@ -324,14 +326,14 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 						})
 				}
 
-				const get_volume_data = () =>{
+				const get_volume_data = async() =>{
 					console_log("start get_volume_data")
 					y1_max = null
 					const form_data = new FormData()
 					form_data.append(`shu`, shu.value)
 					form_data.append(`gtype`, gtype.value)
 					form_data.append(`tani`, tani.value)
-					axios
+					await axios
 						.post("ajax_get_volume_log.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
 						.then((response) => {
 							console_log(response.data)
@@ -429,13 +431,10 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 								}
 								
 							}else if(gtype.value==='12M'){
-								//color1 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
 								color3 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
-								//color2 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
 								color4 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
 								opacity1 = ', 1)'
 								opacity2 = ', 0.6)'
-								//color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
 								if(tani.value==="month"){
 									datasets.push({
 										'label':response.data.glabel1 
@@ -478,10 +477,11 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 							console_log(`get_volume_data ERROR:${error}`)
 						})
 						.finally(()=>{
+							console_log("end get_volume_data")
 						})
 				}
 
-				const get_growth_data = () =>{
+				/*const get_growth_data = () =>{//マックスを記録した日から１２０日前までのログ
 					console_log("start get_growth_data")
 					y1_max = null
 					y2_min = null
@@ -525,6 +525,96 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 						})
 						.finally(()=>{
 						})
+				}*/
+				
+				const get_growth_data2 = async() =>{//月間のマックス線グラフとボリューム棒グラフ
+					try{
+						console_log("get_growth_data2 start")
+						gtype.value = '12M'
+						tani.value = 'month'
+						y1_max = null
+						const form_data = new FormData()
+						form_data.append(`shu`, shu.value)
+						form_data.append(`gtype`, gtype.value)
+						form_data.append(`tani`, tani.value)
+						const response = await axios.post("ajax_get_volume_log.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
+						console_log(response)
+						kintore_log.value = response.data.kintore_log
+						labels = response.data.labels
+						datasets = []
+
+						color3 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//max
+						color4 = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))	//volume
+						opacity1 = ', 1)'
+						opacity2 = ', 0.6)'
+						datasets.push({
+							'label':response.data.glabel2
+							,'data':response.data.graph_data_total1
+							,'backgroundColor':  color4 + opacity1
+							,'borderColor':  color4 + opacity1
+							//,fill:true
+							//,stepped: 'middle'
+							//,borderWidth: 4
+							//,pointRadius:2
+							,'type':'bar'
+						})
+						x_lable_title = {
+							display:true,
+							text:'月'
+						}
+						
+						graph_title.value = 'Max/Volume 推移'
+						graph_subtitle.value = '直近１年のトレーニング量とMAX相関'
+
+						//MAX
+						response2 = await axios.post("ajax_get_max_log.php",form_data, {headers: {'Content-Type': 'multipart/form-data'}})
+						console_log(response2.data)
+						const skipped = (ctx, value) => ctx.p0.skip || ctx.p1.skip ? value : undefined;
+
+						taijuu.value = response2.data.taisosiki.weight
+						mokuhyou_type.value = response2.data.ms_training.mokuhyou_type
+						if(mokuhyou_type.value==='kg'){
+							mokuhyou_kg.value = response2.data.ms_training.mokuhyou
+						}else{
+							mokuhyou_par.value = response2.data.ms_training.mokuhyou
+							mokuhyou_kg.value = response2.data.taisosiki.weight * response2.data.ms_training.mokuhyou / 100
+						}
+						
+						fill_sts = (mokuhyou_kg.value!==0)?{
+								above: 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 0.3)'
+								, below: 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 0.3)'
+								, target: {value: mokuhyou_kg.value}
+								}:false
+
+						color = 'rgba('+(~~(256 * Math.random()))+','+(~~(256 * Math.random()))+','+ (~~(256 * Math.random()))+', 1)'
+						datasets.push({
+							//'label':response2.data.glabel1
+							'label':'MAX'
+							,'data':response2.data.graph_data1
+							,'backgroundColor': color
+							,borderColor: color
+							,fill:fill_sts
+							,borderWidth: 4
+							,pointRadius:2
+							,pointHitRadius: 10 // Added for larger touch area
+							,segment: {
+      				  borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') ,
+      				  borderDash: ctx => skipped(ctx, [6, 6]),
+      				}
+							,spanGaps: true
+							,'yAxisID':"y2"
+						})
+						
+						y2_min = response2.data.min_val
+						//y1_max = Number((response2.data.max_val < mokuhyou_kg.value)?mokuhyou_kg.value:response2.data.max_val) + Number(10)
+
+						create_graph(document.getElementById('myChart'))
+					}catch(error){
+						console_log("get_growth_data2 エラー発生")
+						console_log(error)
+					}finally{
+						console_log("get_growth_data2 end")
+					}
 				}
 
 				var graph_obj
@@ -622,7 +712,6 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 						//mokuhyou_kg.value = Math.round(Number(mokuhyou_kg.value))
 					}
 					//create_graph(document.getElementById('myChart'))
-					
 				})
 
 				const set_mokuhyou = () =>{
@@ -649,11 +738,12 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 				}
 
 				onMounted(() => {
-					console_log('onMounted'+localStorage.getItem('gtype'))
+					console_log('onMounted/'+localStorage.getItem('gtype'))
 					if(localStorage.getItem('gtype')){gtype.value = localStorage.getItem('gtype')}
 					if(localStorage.getItem('g_shu')){g_shu.value = localStorage.getItem('g_shu')}
 					if(localStorage.getItem('tani')){tani.value = localStorage.getItem('tani')}
 					
+					/*上の値代入によりwatchが稼働してグラフが描画されるので不要
 					if(g_shu.value==="growth"){
 						get_growth_data()
 					}else if(g_shu.value==="max"){
@@ -661,6 +751,7 @@ $shumoku_list = $db->SELECT($sql,["id" => $id]);
 					}else if(g_shu.value==="volume"){
 						get_volume_data()
 					}
+					*/
 				})
 				return{
 					shu,
